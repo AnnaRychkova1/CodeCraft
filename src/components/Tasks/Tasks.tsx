@@ -1,4 +1,5 @@
-import tasks from "../../../data/tasks.json";
+import type { Level, Language, TaskType, Task } from "@/types/types";
+import tasks from "../../../data/tasks.json" assert { type: "json" };
 import { useState } from "react";
 
 import css from "./tasks.module.css";
@@ -6,11 +7,13 @@ import TasksList from "@/components/TasksList/TasksList";
 import Filtering from "@/components/Filtering/Filtering";
 
 export default function Tasks() {
-  const [level, setLevel] = useState<string[]>([]);
-  const [language, setLanguage] = useState<string[]>([]);
-  const [type, setType] = useState<string[]>([]);
+  const [level, setLevel] = useState<Level[]>([]);
+  const [language, setLanguage] = useState<Language[]>([]);
+  const [type, setType] = useState<TaskType[]>([]);
 
-  const filteredTasks = tasks.filter((task) => {
+  const typedTasks = tasks as Task[];
+
+  const filteredTasks = typedTasks.filter((task) => {
     return (
       (level.length === 0 || level.includes(task.level)) &&
       (language.length === 0 || language.includes(task.language)) &&

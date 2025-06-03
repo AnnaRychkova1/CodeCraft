@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": "1",
     "title": "JS Basics",
     "description": "Intro questions for JS",
     "level": "beginner",
@@ -20,7 +20,7 @@
     ]
   },
   {
-    "id": 2,
+    "id": "2",
     "title": "Sum function",
     "description": "Write a function to sum two numbers.",
     "level": "beginner",
@@ -32,7 +32,7 @@
     }
   },
   {
-    "id": 3,
+    "id": "3",
     "title": "Java Basics Quiz",
     "description": "Test your knowledge of core Java concepts.",
     "level": "advanced",
@@ -57,7 +57,7 @@
     ]
   },
   {
-    "id": 4,
+    "id": "4",
     "title": "Add Two Numbers",
     "description": "Write a Python function to add two numbers.",
     "level": "beginner",
@@ -69,7 +69,7 @@
     }
   },
   {
-    "id": 5,
+    "id": "5",
     "title": "Filter Even Numbers",
     "description": "Write a function to filter even numbers from an array.",
     "level": "intermediate",
@@ -81,7 +81,7 @@
     }
   },
   {
-    "id": 6,
+    "id": "6",
     "title": "Palindrome Checker",
     "description": "Write a method to check if a string is a palindrome.",
     "level": "advanced",
@@ -93,7 +93,7 @@
     }
   },
   {
-    "id": 7,
+    "id": "7",
     "title": "Java Fundamentals",
     "description": "Basic theory questions about Java.",
     "level": "beginner",
@@ -113,7 +113,7 @@
     ]
   },
   {
-    "id": 8,
+    "id": "8",
     "title": "Python Syntax & Semantics",
     "description": "Test your understanding of Python rules and features.",
     "level": "intermediate",

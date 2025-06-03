@@ -15,7 +15,7 @@ type Props = {
 
 export default async function TaskPage({ params }: Props) {
   const resolvedParams = await params;
-  const taskId = parseInt(resolvedParams.id, 10);
+  const taskId = resolvedParams.id;
 
   const task = tasks.find((t) => t.id === taskId);
 

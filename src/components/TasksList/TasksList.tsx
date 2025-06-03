@@ -4,30 +4,7 @@ import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
 import css from "./taskslist.module.css";
-
-interface Question {
-  question: string;
-  options: string[];
-  correctAnswer: string;
-}
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  level: "beginner" | "intermediate" | "advanced";
-  language: "javascript" | "python" | "java";
-  type: "theory" | "practice";
-  questions?: Question[];
-  codeTask?: {
-    starterCode: string;
-    expectedOutput: string;
-  };
-}
-
-type Level = "beginner" | "intermediate" | "advanced";
-type Language = "javascript" | "python" | "java";
-type TaskType = "theory" | "practice";
+import type { Task, Level, Language, TaskType } from "@/types/types";
 
 interface TasksListProps {
   tasks: Task[];
