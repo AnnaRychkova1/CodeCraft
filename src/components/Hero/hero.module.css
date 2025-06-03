@@ -1,0 +1,155 @@
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    to right,
+    var(--accent-dark),
+    var(--accent-light)
+  );
+
+  position: relative;
+  overflow: hidden;
+  height: 90vh;
+  padding: 0 1rem;
+  margin: 0;
+}
+
+.heroSection h1 {
+  margin-bottom: 4rem;
+  font-size: 4rem;
+  font-weight: 400;
+  z-index: 1;
+  position: relative;
+  text-align: center;
+  text-transform: capitalize;
+  color: var(--background);
+}
+
+.heroSection h1 span {
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.icon {
+  font-size: 5rem;
+  position: absolute;
+  opacity: 0.8;
+}
+
+/* Random icon positions */
+.i1 {
+  top: 10%;
+  left: 20%;
+  color: var(--btn);
+}
+.i2 {
+  top: 80%;
+  left: 60%;
+  color: var(--btn-hover);
+}
+.i3 {
+  top: 50%;
+  left: 10%;
+  color: var(--accent-light);
+}
+.i4 {
+  top: 70%;
+  left: 80%;
+  color: var(--background);
+}
+.i5 {
+  top: 60%;
+  left: 40%;
+  color: var(--accent-dark);
+}
+.i6 {
+  top: 20%;
+  left: 55%;
+  color: var(--foreground);
+}
+.i7 {
+  top: 20%;
+  left: 75%;
+  color: var(--btn-hover);
+}
+.i8 {
+  top: 80%;
+  left: 30%;
+  color: var(--btn);
+}
+
+/* Animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes floatReverse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(15px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+}
+
+/* Assigning animations */
+.float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.floatReverse {
+  animation: floatReverse 4s ease-in-out infinite;
+}
+
+.spin {
+  animation: spin 6s linear infinite;
+}
+
+.bounce {
+  animation: bounce 3s ease infinite;
+}
+
+.wiggle {
+  animation: wiggle 2s ease-in-out infinite;
+}

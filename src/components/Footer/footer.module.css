@@ -1,0 +1,17 @@
+.footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  margin: 0 1rem;
+  color: var(--accent-light);
+}
+
+.footer a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer img {
+  flex-shrink: 0;
+}

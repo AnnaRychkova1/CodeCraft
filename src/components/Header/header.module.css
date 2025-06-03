@@ -1,0 +1,15 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  margin: 0 1rem;
+}
+
+.slogan {
+  color: var(--foreground);
+  text-shadow: 0 0 8px #caf4ca, 0 0 12px #d5f7d5;
+  font-size: 1.5rem;
+  font-weight: 500;
+}

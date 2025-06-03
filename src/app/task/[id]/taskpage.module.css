@@ -1,0 +1,93 @@
+.backContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.backLink {
+  font-size: 1.25rem;
+  color: var(--btn);
+  text-decoration: underline;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.backLink:hover,
+.backLink:focus {
+  color: var(--btn-hover);
+  transform: scale(1.02);
+  text-decoration: none;
+  outline: none;
+}
+
+.descriptionBox {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.textBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  color: var(--accent-dark);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.description {
+  font-size: 1rem;
+}
+
+.labelBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.levelDescr {
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  font-weight: 700;
+}
+
+.levelDescr svg {
+  font-size: 1.25rem;
+}
+
+.levelBeginner {
+  color: var(--level-beginner);
+}
+.levelIntermediate {
+  color: var(--level-intermediate);
+}
+.levelAdvanced {
+  color: var(--level-advanced);
+}
+
+.languageJavascript {
+  color: var(--color-javascript);
+}
+.languagePython {
+  color: var(--color-python);
+}
+.languageJava {
+  color: var(--color-java);
+}
+
+.typeTheory {
+  color: var(--color-theory);
+}
+.typePractice {
+  color: var(--color-practice);
+}

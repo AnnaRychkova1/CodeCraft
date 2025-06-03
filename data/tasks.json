@@ -1,0 +1,135 @@
+[
+  {
+    "id": 1,
+    "title": "JS Basics",
+    "description": "Intro questions for JS",
+    "level": "beginner",
+    "language": "javascript",
+    "type": "theory",
+    "questions": [
+      {
+        "question": "What is the output of `typeof null`?",
+        "options": ["object", "null", "undefined", "number"],
+        "correctAnswer": "object"
+      },
+      {
+        "question": "Which keyword declares a constant?",
+        "options": ["const", "var", "let", "define"],
+        "correctAnswer": "const"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Sum function",
+    "description": "Write a function to sum two numbers.",
+    "level": "beginner",
+    "language": "javascript",
+    "type": "practice",
+    "codeTask": {
+      "prompt": "Write a function `sum(a, b)` that returns their sum.",
+      "starterCode": "function sum(a, b) {\n  // your code here\n}"
+    }
+  },
+  {
+    "id": 3,
+    "title": "Java Basics Quiz",
+    "description": "Test your knowledge of core Java concepts.",
+    "level": "advanced",
+    "language": "java",
+    "type": "theory",
+    "questions": [
+      {
+        "question": "Which of the following is not a Java primitive type?",
+        "options": ["int", "String", "double", "boolean"],
+        "correctAnswer": "String"
+      },
+      {
+        "question": "What does the `static` keyword mean in Java?",
+        "options": [
+          "Method belongs to the class, not instances",
+          "Method is abstract",
+          "Method is final",
+          "Method is private"
+        ],
+        "correctAnswer": "Method belongs to the class, not instances"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Add Two Numbers",
+    "description": "Write a Python function to add two numbers.",
+    "level": "beginner",
+    "language": "python",
+    "type": "practice",
+    "codeTask": {
+      "prompt": "Create a function `add(a, b)` that returns the sum of a and b.",
+      "starterCode": "def add(a, b):\n    # your code here\n    pass"
+    }
+  },
+  {
+    "id": 5,
+    "title": "Filter Even Numbers",
+    "description": "Write a function to filter even numbers from an array.",
+    "level": "intermediate",
+    "language": "javascript",
+    "type": "practice",
+    "codeTask": {
+      "prompt": "Write a function `filterEvens(arr)` that returns only even numbers from the input array.",
+      "starterCode": "function filterEvens(arr) {\n  // your code here\n}"
+    }
+  },
+  {
+    "id": 6,
+    "title": "Palindrome Checker",
+    "description": "Write a method to check if a string is a palindrome.",
+    "level": "advanced",
+    "language": "java",
+    "type": "practice",
+    "codeTask": {
+      "prompt": "Implement a method `isPalindrome(String s)` that returns true if the string is a palindrome.",
+      "starterCode": "public class Solution {\n    public static boolean isPalindrome(String s) {\n        // your code here\n        return false;\n    }\n}"
+    }
+  },
+  {
+    "id": 7,
+    "title": "Java Fundamentals",
+    "description": "Basic theory questions about Java.",
+    "level": "beginner",
+    "language": "java",
+    "type": "theory",
+    "questions": [
+      {
+        "question": "Which keyword is used to define a class in Java?",
+        "options": ["class", "Class", "define", "struct"],
+        "correctAnswer": "class"
+      },
+      {
+        "question": "Which symbol is used to end a statement in Java?",
+        "options": [";", ":", ".", ","],
+        "correctAnswer": ";"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Python Syntax & Semantics",
+    "description": "Test your understanding of Python rules and features.",
+    "level": "intermediate",
+    "language": "python",
+    "type": "theory",
+    "questions": [
+      {
+        "question": "What is the output of `len([[]])`?",
+        "options": ["0", "1", "2", "Error"],
+        "correctAnswer": "1"
+      },
+      {
+        "question": "Which keyword is used to handle exceptions in Python?",
+        "options": ["try", "catch", "except", "finally"],
+        "correctAnswer": "except"
+      }
+    ]
+  }
+]
