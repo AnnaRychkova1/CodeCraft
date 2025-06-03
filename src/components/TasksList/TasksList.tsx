@@ -12,7 +12,7 @@ interface Question {
 }
 
 interface Task {
-  id: number;
+  id: string;
   title: string;
   description: string;
   level: "beginner" | "intermediate" | "advanced";
