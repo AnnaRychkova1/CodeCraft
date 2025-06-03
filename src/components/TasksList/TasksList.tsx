@@ -9,9 +9,28 @@ interface Task {
   id: number;
   title: string;
   description: string;
-  level: string;
-  language: string;
-  type: string;
+  level: "beginner" | "intermediate" | "advanced";
+  language: "javascript" | "python" | "java";
+  type: "theory" | "practice";
+  questions?: Question[];
+  codeTask?: CodeTask;
+}
+
+interface Question {
+  id: number;
+  questionText: string;
+  options: string[];
+  correctAnswer: string;
+}
+
+interface CodeTask {
+  starterCode: string;
+  tests: TestCase[];
+}
+
+interface TestCase {
+  input: string;
+  expectedOutput: string;
 }
 
 interface TasksListProps {
