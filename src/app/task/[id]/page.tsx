@@ -15,7 +15,7 @@ interface TaskPageProps {
   };
 }
 
-export default async function TaskPage({ params }: TaskPageProps) {
+export default function TaskPage({ params }: TaskPageProps) {
   const { id } = params;
   const taskId = parseInt(id, 10);
 
