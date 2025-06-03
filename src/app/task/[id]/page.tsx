@@ -10,7 +10,7 @@ import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export default async function TaskPage({ params }: Props) {
