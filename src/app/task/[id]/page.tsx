@@ -12,7 +12,6 @@ import { GiHammerBreak } from "react-icons/gi";
 interface TaskPageProps {
   params: {
     id: string;
-    description: string;
   };
 }
 
