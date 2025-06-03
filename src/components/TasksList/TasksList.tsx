@@ -5,6 +5,12 @@ import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
 import css from "./taskslist.module.css";
 
+interface Question {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+}
+
 interface Task {
   id: number;
   title: string;
@@ -13,31 +19,21 @@ interface Task {
   language: "javascript" | "python" | "java";
   type: "theory" | "practice";
   questions?: Question[];
-  codeTask?: CodeTask;
+  codeTask?: {
+    starterCode: string;
+    expectedOutput: string;
+  };
 }
 
-interface Question {
-  id: number;
-  questionText: string;
-  options: string[];
-  correctAnswer: string;
-}
-
-interface CodeTask {
-  starterCode: string;
-  tests: TestCase[];
-}
-
-interface TestCase {
-  input: string;
-  expectedOutput: string;
-}
+type Level = "beginner" | "intermediate" | "advanced";
+type Language = "javascript" | "python" | "java";
+type TaskType = "theory" | "practice";
 
 interface TasksListProps {
   tasks: Task[];
-  setLevel: (val: string[]) => void;
-  setLanguage: (val: string[]) => void;
-  setType: (val: string[]) => void;
+  setLevel: (val: Level[]) => void;
+  setLanguage: (val: Language[]) => void;
+  setType: (val: TaskType[]) => void;
 }
 
 export default function TasksList({
@@ -46,7 +42,10 @@ export default function TasksList({
   setLanguage,
   setType,
 }: TasksListProps) {
-  const handleClick = (value: string, setFn: (val: string[]) => void) => {
+  const handleClick = <T extends Level | Language | TaskType>(
+    value: T,
+    setFn: (val: T[]) => void
+  ) => {
     setFn([value]);
   };
 
