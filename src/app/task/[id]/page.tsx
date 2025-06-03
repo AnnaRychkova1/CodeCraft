@@ -1,4 +1,4 @@
-// import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import tasks from "../../../../data/tasks.json";
 import css from "./taskpage.module.css";
@@ -9,14 +9,20 @@ import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
 
-export default function TaskPage({ params }: { params: { id: string } }) {
+interface TaskPageParams {
+  params: {
+    id: string;
+  };
+}
+
+export default async function TaskPage({ params }: TaskPageParams) {
   const { id } = params;
   const taskId = parseInt(id, 10);
 
   const task = tasks.find((t) => t.id === taskId);
 
   if (!task) {
-    return <p>Task not found</p>;
+    notFound();
   }
 
   // Here you can upload task data by id (for example, fetch)
