@@ -9,7 +9,7 @@ import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
 
-export default async function TaskPage({ params }: { params: { id: string } }) {
+export default function TaskPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const taskId = parseInt(id, 10);
 
