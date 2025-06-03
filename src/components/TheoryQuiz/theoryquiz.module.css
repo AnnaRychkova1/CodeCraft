@@ -1,7 +1,9 @@
 .quizContainer {
+  display: flex;
+  flex-direction: column;
 }
 
-.questionBlock {
+/* .questionBlock {
 }
 
 .question {
@@ -17,4 +19,4 @@
 }
 
 .result {
-}
+} */

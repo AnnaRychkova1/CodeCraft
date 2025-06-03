@@ -1,9 +1,10 @@
 .editorContainer {
   display: flex;
+  flex-direction: column;
 }
 
-.codeArea {
+/* .codeArea {
 }
 
 .runBtn {
-}
+} */
