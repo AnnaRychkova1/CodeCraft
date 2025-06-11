@@ -1,16 +1,162 @@
 .section {
-  margin: 0 1rem;
+  padding: 24px;
 }
 
 .tasks {
-  display: grid;
-  grid-template-columns: 1fr 4fr;
+  display: flex;
   gap: 24px;
   align-items: start;
 }
 
+.sidebar {
+  display: none;
+}
+
 .title {
-  font-size: 2rem;
+  font-size: 1.75rem;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
+}
+
+.topbox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.titleBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  font-size: 1.75rem;
+  color: var(--accent-dark);
+}
+
+.titleFilter {
+  color: var(--accent-dark);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.toggleBtn {
+  display: block;
+  padding: 0px 8px 0px 8px;
+  font-size: 24px;
+  transition: all 0.2s ease;
+  background-color: var(--btn);
+  border: none;
+  color: var(--background);
+  border-radius: 6px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearBtn {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 2px solid var(--accent-light);
+  background-color: transparent;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  max-width: 160px;
+  height: 32px;
+}
+
+.clearBtn:hover,
+.toggleBtn:hover {
+  background-color: var(--btn-hover);
+}
+
+.dropdownWrap {
+  position: relative;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: -112px;
+  margin-top: 8px;
+  background: var(--accent-light);
+  border: 1px solid var(--accent-dark);
+  border-radius: 6px;
+  padding: 16px;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+}
+
+@media only screen and (min-width: 768px) {
+  .title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .topbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .icon {
+    font-size: 2rem;
+  }
+
+  .titleFilter {
+    font-size: 1.5rem;
+  }
+
+  .dropdownMenu {
+    left: -134px;
+  }
+
+  .toggleBtn {
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .clearBtn {
+    border: none;
+    font-size: 1.2rem;
+    height: 40px;
+    padding: 8px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .section {
+    padding: 48px;
+  }
+
+  .sidebar {
+    display: block;
+    width: 240px;
+    flex-shrink: 0;
+  }
+
+  .topbox {
+    gap: 0;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    width: 240px;
+  }
+
+  .title {
+    margin-bottom: 48px;
+  }
+
+  .toggleBtn {
+    display: none;
+  }
 }

@@ -1,66 +1,9 @@
-.filteringContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  position: relative;
-  padding-right: 1rem;
-}
-
-.filteringContainer::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background-image: radial-gradient(circle, #888 1.5px, transparent 1.5px);
-  background-size: 4px 8px;
-  background-repeat: repeat-y;
-}
-
-.topbox {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.titleBox {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.icon {
-  font-size: 2rem;
-  color: var(--accent-dark);
-}
-
-.title {
-  color: var(--accent-dark);
-  font-size: 1.5rem;
-  font-weight: 500;
-}
-
-.clearBtn {
-  padding: 8px;
-  border-radius: 6px;
-  border: none;
-  background-color: transparent;
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
-}
-
-.clearBtn:hover {
-  background-color: var(--btn-hover);
-}
-
 .container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 18px;
 }
 
 .filterContainer {
@@ -68,23 +11,23 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 12px;
   font-size: 1.25rem;
   min-width: 200px;
-  width: 300px;
+  width: 260px;
 }
 
 .optionGroup {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 12px;
   font-size: 1rem;
 }
 
 .optionBox {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 12px;
 }
 
 .optionBtn {

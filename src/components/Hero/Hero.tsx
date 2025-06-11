@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   FaLaptopCode,
   FaTerminal,
@@ -19,10 +20,22 @@ export default function Hero() {
       <SiGithub className={`${css.icon} ${css.spin} ${css.i6}`} />
       <SiPython className={`${css.icon} ${css.floatReverse} ${css.i7}`} />
       <FaJava className={`${css.icon} ${css.bounce} ${css.i8}`} />
-      <h1>
-        Challenge your brain. <br />
-        <span>Code your future.</span>
-      </h1>
+      <div className={css.textContainer}>
+        <h1>
+          Challenge your brain.
+          <br />
+          <span className={css.animation}>Code your future.</span>
+        </h1>
+      </div>
+      <div className={css.imgContainer}>
+        <Image
+          aria-hidden
+          src="/coder-dark.png"
+          alt="Logo CodeCraft"
+          width={400}
+          height={400}
+        />
+      </div>
     </section>
   );
 }

@@ -8,14 +8,18 @@ export default function Header() {
         aria-hidden
         src="/logo.png"
         alt="Logo CodeCraft"
+        className={css.logo}
         width={144}
         height={40}
       />
-      <span className={css.slogan}>Learn. Test. Improve.</span>
+      <span className={css.slogan}>
+        Built by devs, for devs. Learn, practice, and grow with CodeCraft.
+      </span>
       <Image
         aria-hidden
         src="/coder.png"
         alt="Coder CodeCraft"
+        className={css.avatar}
         width={40}
         height={40}
       />
