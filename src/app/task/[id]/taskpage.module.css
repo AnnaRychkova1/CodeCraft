@@ -1,27 +1,11 @@
-.backContainer {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 24px;
-}
-
-.backLink {
-  font-size: 1.25rem;
-  color: var(--btn);
-  text-decoration: underline;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.backLink:hover,
-.backLink:focus {
-  color: var(--btn-hover);
-  transform: scale(1.02);
-  text-decoration: none;
-  outline: none;
+.topSection {
+  padding: 24px;
+  padding-bottom: 0;
 }
 
 .descriptionBox {
   display: flex;
+  flex-direction: column;
   gap: 24px;
   justify-content: space-between;
   align-items: flex-start;
@@ -48,6 +32,24 @@
   flex-direction: column;
   gap: 8px;
   font-size: 0.9rem;
+}
+
+.backLink {
+  width: 160px;
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+  color: var(--btn);
+  text-decoration: underline;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.backLink:hover,
+.backLink:focus {
+  color: var(--btn-hover);
+  transform: scale(1.02);
+  text-decoration: none;
+  outline: none;
 }
 
 .levelDescr {
@@ -90,4 +92,24 @@
 }
 .typePractice {
   color: var(--color-practice);
+}
+
+@media only screen and (min-width: 768px) {
+  .descriptionBox {
+    flex-direction: row-reverse;
+  }
+
+  .backLink {
+    font-size: 1.25rem;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .topSection {
+    padding: 48px;
+    padding-bottom: 0;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
 }

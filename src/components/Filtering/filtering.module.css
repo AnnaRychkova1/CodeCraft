@@ -17,6 +17,10 @@
   width: 260px;
 }
 
+.filterContainer h4 {
+  font-weight: normal;
+}
+
 .optionGroup {
   display: flex;
   flex-direction: column;
@@ -49,9 +53,7 @@
 .optionBtn:hover,
 .optionBtn.active:hover {
   background-color: var(--btn-hover);
-  border-style: double;
-  border-width: 4px;
-  border-color: var(--accent-dark);
+  border: 4px double var(--accent-dark);
 }
 
 .checkmark {

@@ -1,10 +1,97 @@
 .editorContainer {
+  padding: 24px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
 
-/* .codeArea {
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.codeArea {
+  resize: none;
+  overflow: auto;
+  padding: 12px;
+  cursor: default;
+  border-radius: 6px;
+  height: 427.2px;
+  border: 2px solid rgba(17, 121, 18, 0.2);
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.codeArea:hover,
+.codeArea:focus,
+.codeArea:focus-visible {
+  border: 2px solid var(--accent-dark);
+  outline: none;
 }
 
 .runBtn {
-} */
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  padding: 6px 18px;
+  border-radius: 6px;
+  width: 150px;
+  background-color: var(--btn);
+  color: var(--background);
+  font-size: 18px;
+  border: 2px solid var(--accent-dark);
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.runBtn:hover,
+.runBtn:focus {
+  background-color: var(--btn-hover);
+}
+
+.outputBox {
+  margin-top: 12px;
+  font-size: 16px;
+}
+
+.outputBox strong {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.testResult {
+  font-family: var(--font-geist-sans);
+}
+
+.confetti {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2s ease-out;
+  z-index: 9999;
+}
+
+.visible {
+  opacity: 1;
+}
+
+@media only screen and (min-width: 768px) {
+  .runBtn {
+    right: 15px;
+    top: 15px;
+    bottom: 87%;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .editorContainer {
+    padding: 48px;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+}

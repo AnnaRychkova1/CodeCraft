@@ -5,7 +5,25 @@ export type TaskType = "theory" | "practice";
 export interface Question {
   question: string;
   options: string[];
-  correctAnswer: string;
+  correctAnswer: string[];
+}
+
+export interface TheoryQuizProps {
+  questions: Question[];
+}
+
+export interface CodeTaskTest<
+  Input extends unknown[] = unknown[],
+  Output = unknown
+> {
+  input: Input;
+  expected: Output;
+}
+
+export interface CodeTask {
+  prompt: string;
+  starterCode?: string;
+  tests?: CodeTaskTest[];
 }
 
 export interface Task {
@@ -16,8 +34,10 @@ export interface Task {
   language: Language;
   type: TaskType;
   questions?: Question[];
-  codeTask?: {
-    starterCode: string;
-    expectedOutput: string;
-  };
+  codeTask?: CodeTask;
+}
+
+export interface CodeEditorProps {
+  task: CodeTask;
+  language: Language;
 }

@@ -90,7 +90,7 @@ export default function Filtering({
     <div className={css.container}>
       {/* Level Filter */}
       <div className={css.filterContainer}>
-        <label>Level</label>
+        <h4>Level</h4>
         <div className={css.optionGroup}>
           {levels.map(({ value, label, icon }) => (
             <div key={value} className={css.optionBox}>
@@ -117,7 +117,7 @@ export default function Filtering({
 
       {/* Language Filter */}
       <div className={css.filterContainer}>
-        <label>Language</label>
+        <h4>Language</h4>
         <div className={css.optionGroup}>
           {languages.map(({ value, label, icon }) => (
             <div key={value} className={css.optionBox}>
@@ -146,7 +146,7 @@ export default function Filtering({
 
       {/* Type Filter */}
       <div className={css.filterContainer}>
-        <label>Type</label>
+        <h4>Type</h4>
         <div className={css.optionGroup}>
           {types.map(({ value, label, icon }) => (
             <div key={value} className={css.optionBox}>

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import tasks from "../../../../data/tasks.json";
+import tasksData from "../../../../data/tasks.json";
+import { Task } from "@/types/types";
 import css from "./taskpage.module.css";
 import TheoryQuiz from "@/components/TheoryQuiz/TheoryQuiz";
 import CodeEditor from "@/components/CodeEditor/CodeEditor";
@@ -8,7 +9,9 @@ import { MdLooksOne, MdLooksTwo, MdLooks3 } from "react-icons/md";
 import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
+import { formatTextWithLineBreaks } from "@/helpers/formatTextWithLineBreaks";
 
+const tasks: Task[] = tasksData as Task[];
 type Props = {
   params: Promise<{ id: string }>;
 };
@@ -29,18 +32,12 @@ export default async function TaskPage({ params }: Props) {
 
   return (
     <>
-      <section>
-        <div className={css.backContainer}>
-          <Link href="/" className={css.backLink}>
-            ← Back to Home
-          </Link>
-        </div>
+      <section className={css.topSection}>
         <div className={css.descriptionBox}>
-          <div className={css.textBox}>
-            <h2 className={css.title}>{task.title}</h2>
-            <p className={css.description}>{task.description}</p>
-          </div>
           <div className={css.labelBox}>
+            <Link href="/" className={css.backLink}>
+              ← Back to Home
+            </Link>
             <div className={css.levelDescr}>
               <span className={css.label}>Level: </span>
               {
@@ -80,6 +77,19 @@ export default async function TaskPage({ params }: Props) {
               <span>{task.type}</span>
             </div>
           </div>
+          <div className={css.textBox}>
+            <h2 className={css.title}>{task.title}</h2>
+            {task.type === "theory" && task.questions && (
+              <p className={css.description}>
+                {formatTextWithLineBreaks(task.description)}
+              </p>
+            )}
+            {task.type === "practice" && task.codeTask && (
+              <p className={css.description}>
+                {formatTextWithLineBreaks(task.codeTask?.prompt)}
+              </p>
+            )}
+          </div>
         </div>
       </section>
       {task.type === "theory" && task.questions && (
@@ -87,7 +97,7 @@ export default async function TaskPage({ params }: Props) {
       )}
 
       {task.type === "practice" && task.codeTask && (
-        <CodeEditor task={task.codeTask} />
+        <CodeEditor task={task.codeTask} language={task.language} />
       )}
     </>
   );
