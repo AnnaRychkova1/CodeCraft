@@ -1,3 +1,6 @@
+export const config = {
+  runtime: "nodejs",
+};
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@/generated/prisma";
 import { CodeTaskTest, Question } from "@/types/types";
