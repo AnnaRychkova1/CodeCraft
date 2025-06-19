@@ -34,6 +34,9 @@ const eslintConfig = [
       "import/no-unresolved": "off",
       "import/extensions": "off",
       "no-redeclare": "off",
+      "@typescript-eslint/no-unnecessary-type-constraint": "off",
+      "@typescript-eslint/no-wrapper-object-types": "off",
+      "@typescript-eslint/no-unsafe-function-type": "off",
     },
   },
 ];
