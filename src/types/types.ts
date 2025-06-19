@@ -45,10 +45,6 @@ export interface CodeTaskTest<
   expected: Output;
 }
 
-export type PropsTaskPage = {
-  params: { id: string };
-};
-
 export interface CodeTask {
   prompt: string;
   starterCode?: string;

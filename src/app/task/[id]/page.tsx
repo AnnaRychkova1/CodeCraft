@@ -1,11 +1,15 @@
 import { notFound } from "next/navigation";
-import { PropsTaskPage, Task } from "@/types/types";
+import { Task } from "@/types/types";
 import TheoryTest from "@/components/TheoryTest/TheoryTest";
 import CodeEditor from "@/components/CodeEditor/CodeEditor";
 
 import TaskTopSection from "@/components/TaskTopSection/TaskTopSection";
 
-export default async function TaskPage({ params }: PropsTaskPage) {
+export type Props = {
+  params: { id: string };
+};
+
+export default async function TaskPage({ params }: Props) {
   const resolvedParams = await params;
   const taskId = resolvedParams.id;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
