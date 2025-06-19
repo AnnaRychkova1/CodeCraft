@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "CodeCraft is a website for testing your programming language knowledge and practicing in JavaScript, Java, or Python.",
+  "type": "module",
   "keywords": [
     "testing",
     "programming languages",

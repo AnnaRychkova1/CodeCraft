@@ -96,7 +96,7 @@ import { PrismaClient } from "../src/generated/prisma";
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clean existing data (опційно, залежно від вимог)
+  // Clean existing data
   await prisma.task.deleteMany();
 
   // Create a theory task
