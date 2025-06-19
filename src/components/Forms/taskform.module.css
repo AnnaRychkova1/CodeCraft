@@ -58,11 +58,6 @@
   box-shadow: 0px 4px 8px rgba(150, 246, 185, 0.505);
 }
 
-option:hover {
-  /* only for Safari and Firefox */
-  background-color: var(--accent-dark);
-}
-
 .typeContainer {
   display: flex;
   flex-direction: column;

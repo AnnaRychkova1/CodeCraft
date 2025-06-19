@@ -39,6 +39,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+option:hover {
+  /* only for Safari and Firefox */
+  background-color: var(--accent-dark);
+}
+
 .ͼ2 .cm-gutters {
   background-color: rgba(232, 250, 241, 0.6);
   border: 1px dotted rgba(102, 230, 101, 0.4);
