@@ -2,21 +2,32 @@
 
 import type { Level, Language, TaskType, Task } from "@/types/types";
 import { MdFilterList } from "react-icons/md";
-import tasks from "../../../data/tasks.json" assert { type: "json" };
 import { resetFilters } from "@/utils/resetFilters";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import css from "./tasks.module.css";
 import TasksList from "@/components/TasksList/TasksList";
 import Filtering from "@/components/Filtering/Filtering";
 
 export default function Tasks() {
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [level, setLevel] = useState<Level[]>([]);
   const [language, setLanguage] = useState<Language[]>([]);
   const [type, setType] = useState<TaskType[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const typedTasks = tasks as Task[];
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const res = await fetch("/api/tasks");
+      const data = await res.json();
+      setTasks(data);
+    };
+
+    fetchTasks();
+  }, []);
 
   const filteredTasks = typedTasks.filter((task) => {
     return (
@@ -26,6 +37,25 @@ export default function Tasks() {
     );
   });
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowFilters(false);
+      }
+    }
+
+    if (showFilters) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFilters]);
+
   return (
     <section className={css.section}>
       <h2 className={css.title}>Select a Task to Get Started</h2>
@@ -34,7 +64,7 @@ export default function Tasks() {
           <MdFilterList className={css.icon} />
           <h3 className={css.titleFilter}>Filters</h3>
         </div>
-        <div className={css.dropdownWrap}>
+        <div className={css.dropdownWrap} ref={dropdownRef}>
           <button
             className={css.toggleBtn}
             onClick={() => setShowFilters((prev) => !prev)}

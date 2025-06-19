@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskType {
+  theory
+  practice
+}
+
+enum Level {
+  beginner
+  intermediate
+  advanced
+}
+
+enum Language {
+  javascript
+  python
+  java
+}
+
+model Task {
+  id               String           @id @default(uuid())
+  title            String
+  description      String
+  level            Level
+  language         Language
+  type             TaskType
+
+  codeTask         CodeTask?        @relation(fields: [codeTaskId], references: [id], onDelete: Cascade)
+  codeTaskId       String?          @unique
+
+  theoryQuestions  TheoryQuestion[]
+}
+
+model CodeTask {
+  id           String       @id @default(uuid())
+  prompt       String
+  starterCode  String?
+  tests            TestCase[]
+
+  task         Task?        @relation()
+}
+
+model TestCase {
+  id          String       @id @default(uuid())
+  input       Json
+  expected    Json
+  codeTask    CodeTask     @relation(fields: [codeTaskId], references: [id], onDelete: Cascade)
+  codeTaskId  String
+}
+
+model TheoryQuestion {
+  id             String     @id @default(uuid())
+  question       String
+  options        String[]
+  correctAnswer  String[]
+  task           Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId         String
+}

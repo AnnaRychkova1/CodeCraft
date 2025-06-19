@@ -1,52 +1,19 @@
+.editorSection {
+  margin-top: 24px;
+}
+
 .editorContainer {
+  margin: 12px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  position: relative;
-}
-
-.codeArea {
-  resize: none;
-  overflow: auto;
-  padding: 12px;
-  cursor: default;
-  border-radius: 6px;
-  height: 427.2px;
-  border: 2px solid rgba(17, 121, 18, 0.2);
-  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.codeArea:hover,
-.codeArea:focus,
-.codeArea:focus-visible {
-  border: 2px solid var(--accent-dark);
-  outline: none;
-}
-
-.runBtn {
-  position: absolute;
-  right: 15px;
-  bottom: 15px;
-  padding: 6px 18px;
-  border-radius: 6px;
-  width: 150px;
-  background-color: var(--btn);
-  color: var(--background);
-  font-size: 18px;
-  border: 2px solid var(--accent-dark);
-  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.runBtn:hover,
-.runBtn:focus {
-  background-color: var(--btn-hover);
+  max-width: 900px;
+  border: 4px double rgba(17, 121, 18, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--background);
+  z-index: 4;
 }
 
 .outputBox {
@@ -61,6 +28,7 @@
 
 .testResult {
   font-family: var(--font-geist-sans);
+  list-style: none;
 }
 
 .confetti {
@@ -80,18 +48,19 @@
 }
 
 @media only screen and (min-width: 768px) {
-  .runBtn {
-    right: 15px;
-    top: 15px;
-    bottom: 87%;
+  .editorContainer {
+    padding: 24px;
+    margin: 24px;
   }
 }
 
 @media only screen and (min-width: 1024px) {
-  .editorContainer {
-    padding: 48px;
+  .editorSection {
+    margin-left: auto;
+    margin-right: auto;
   }
-}
-
-@media only screen and (min-width: 1440px) {
+  .editorContainer {
+    padding: 24px;
+    margin: 24px auto;
+  }
 }

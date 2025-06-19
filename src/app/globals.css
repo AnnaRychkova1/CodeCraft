@@ -53,6 +53,10 @@ body {
   padding: 6px;
 }
 
+.ͼ1 .cm-content {
+  padding: 12px;
+}
+
 .ͼ2 .cm-activeLineGutter {
   background-color: var(--background);
 }

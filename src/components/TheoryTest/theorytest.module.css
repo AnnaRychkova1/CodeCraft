@@ -1,10 +1,21 @@
-.quizContainer {
+.theorySection {
+  margin-top: 24px;
+}
+
+.theoryContainer {
+  margin: 12px;
   padding: 24px;
   display: flex;
   flex-direction: column;
+  max-width: 900px;
+  border: 4px double rgba(17, 121, 18, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--background);
+  z-index: 4;
 }
 
-.quizContainer h3 {
+.theoryContainer h3 {
   margin-bottom: 12px;
 }
 
@@ -178,13 +189,20 @@
 }
 
 @media only screen and (min-width: 768px) {
-}
-
-@media only screen and (min-width: 1024px) {
-  .quizContainer {
-    padding: 48px;
+  .theoryContainer {
+    padding: 24px;
+    margin: 24px;
   }
 }
 
-@media only screen and (min-width: 1440px) {
+@media only screen and (min-width: 1024px) {
+  .theorySection {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .theoryContainer {
+    padding: 24px;
+    margin: 24px auto;
+  }
 }

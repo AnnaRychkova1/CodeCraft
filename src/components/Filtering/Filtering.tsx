@@ -2,20 +2,15 @@ import { MdLooksOne, MdLooksTwo, MdLooks3 } from "react-icons/md";
 import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
-import type { Level, Language, TaskType } from "@/types/types";
-import type { Dispatch, SetStateAction } from "react";
+import type {
+  Level,
+  Language,
+  TaskType,
+  FilteringProps,
+  FilterOption,
+} from "@/types/types";
 
 import css from "./filtering.module.css";
-
-export interface FilteringProps {
-  level: Level[];
-  setLevel: Dispatch<SetStateAction<Level[]>>;
-  language: Language[];
-  setLanguage: Dispatch<SetStateAction<Language[]>>;
-  type: TaskType[];
-  setType: Dispatch<SetStateAction<TaskType[]>>;
-  onResetFilters: () => void;
-}
 
 const toggleValue = <T extends string>(
   value: T,
@@ -29,7 +24,7 @@ const toggleValue = <T extends string>(
   }
 };
 
-const levels = [
+const levels: FilterOption<Level>[] = [
   {
     value: "beginner",
     label: "Beginner",
@@ -47,7 +42,7 @@ const levels = [
   },
 ] as const;
 
-const languages = [
+const languages: FilterOption<Language>[] = [
   {
     value: "python",
     label: "Python",
@@ -65,7 +60,7 @@ const languages = [
   },
 ] as const;
 
-const types = [
+const types: FilterOption<TaskType>[] = [
   {
     value: "theory",
     label: "Theory",

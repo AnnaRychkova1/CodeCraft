@@ -28,10 +28,10 @@ export function runJavaScriptCode(
         result = Array.isArray(input) ? userFunc(...input) : userFunc(input);
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : String(err);
-        return `not passed: error during execution → ${errorMessage}`;
+        return `not passed: error during execution: ${errorMessage}`;
       }
 
-      const passed = JSON.stringify(result) === JSON.stringify(expected);
+      const passed = String(result) === String(expected);
 
       return passed
         ? "passed"

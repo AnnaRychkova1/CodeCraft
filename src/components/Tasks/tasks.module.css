@@ -83,11 +83,13 @@
 .dropdownMenu {
   position: absolute;
   top: 100%;
-  left: -112px;
-  margin-top: 8px;
+  left: -128px;
+  margin-top: 12px;
   background: var(--accent-light);
-  border: 1px solid var(--accent-dark);
-  border-radius: 6px;
+  border: 4px double rgba(17, 121, 18, 0.2);
+  border-left: 2px solid rgba(17, 121, 18, 0.2);
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
   padding: 16px;
   z-index: 100;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -97,7 +99,6 @@
 @media only screen and (min-width: 768px) {
   .title {
     font-size: 2rem;
-    text-align: center;
     margin-bottom: 24px;
   }
 
@@ -117,7 +118,8 @@
   }
 
   .dropdownMenu {
-    left: -134px;
+    left: -158px;
+    margin-top: 24px;
   }
 
   .toggleBtn {
