@@ -5,17 +5,19 @@ import CodeEditor from "@/components/CodeEditor/CodeEditor";
 
 import TaskTopSection from "@/components/TaskTopSection/TaskTopSection";
 
-export type Props = {
-  params: { id: string };
+type Props = {
+  params: Promise<{ id: string }>;
 };
 
 export default async function TaskPage({ params }: Props) {
-  const resolvedParams = params;
+  const resolvedParams = await params;
   const taskId = resolvedParams.id;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-  const res = await fetch(`${baseUrl}/api/task/${taskId}`);
-
+  // const res = await fetch(`${baseUrl}/api/task/${taskId}`);
+  const res = await fetch(`${baseUrl}/api/task/${taskId}`, {
+    cache: "no-store",
+  });
   if (!res.ok) {
     notFound();
   }
