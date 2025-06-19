@@ -17,6 +17,7 @@
   "license": "MIT",
   "scripts": {
     "seed": "ts-node --project tsconfig.seed.json prisma/seed.ts",
+    "postinstall": "prisma generate",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
