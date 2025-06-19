@@ -10,7 +10,7 @@ export type Props = {
 };
 
 export default async function TaskPage({ params }: Props) {
-  const resolvedParams = await params;
+  const resolvedParams = params;
   const taskId = resolvedParams.id;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
