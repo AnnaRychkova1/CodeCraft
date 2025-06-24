@@ -3,10 +3,12 @@ export const config = {
 };
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Prisma, PrismaClient } from "@/generated/prisma";
+// import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma";
+// import { Prisma, PrismaClient } from "@/generated/prisma";
 import { CodeTaskTest } from "@/types/types";
 
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
