@@ -91,13 +91,13 @@ export type TestEditProps = {
 };
 
 export type TaskFormProps = {
-  formData: Omit<Task, "id">;
-  setFormData: React.Dispatch<React.SetStateAction<Omit<Task, "id">>>;
+  formData: TaskFormData;
+  setFormData: React.Dispatch<React.SetStateAction<TaskFormData>>;
   editId: string | null;
   setEditId: React.Dispatch<React.SetStateAction<string | null>>;
   emptyQuestion: () => Question;
   emptyCodeTask: () => CodeTask;
-  fetchTasks: () => Promise<void>;
+  onSubmitSuccess?: () => void;
 };
 
 export interface PropsPracticeInputs {
@@ -125,3 +125,18 @@ export interface PropsTheoryInputs {
 }
 
 export type PropsTextArea = TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+export interface TaskFormData {
+  title: string;
+  description: string;
+  level: "beginner" | "intermediate" | "advanced";
+  language: "javascript" | "python" | "java";
+  type: "theory" | "practice";
+  theory_question?: Question[];
+  code_task?: CodeTask[];
+}
+
+export interface FeedbackData {
+  email: string;
+  feedback: string;
+}

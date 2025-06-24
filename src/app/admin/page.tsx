@@ -11,8 +11,7 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { CodeTask, Question, Task } from "@/types/types";
 import TaskForm from "@/components/Forms/TaskForm";
 import css from "./pageAdmin.module.css";
-
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+import { createAdminToken, deleteTask, fetchTasks } from "@/services/tasks";
 
 const emptyQuestionTemplate = {
   question: "",
@@ -37,7 +36,7 @@ const createEmptyCodeTask = (): CodeTask => ({
 });
 
 export default function AdminPage() {
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [password, setPassword] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [formData, setFormData] = useState<Omit<Task, "id">>({
@@ -53,17 +52,27 @@ export default function AdminPage() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (isAuthorized) fetchTasks();
-  }, [isAuthorized]);
-
-  const fetchTasks = async () => {
-    const res = await fetch("/api/tasks");
-    const data = await res.json();
-
-    console.log(data);
-    setTasks(data);
+  const loadTasks = async () => {
+    try {
+      const updated = await fetchTasks();
+      setTasks(updated);
+    } catch (err) {
+      console.error("Failed to fetch tasks:", err);
+    }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    if (token) {
+      setIsAdmin(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadTasks();
+    }
+  }, [isAdmin]);
 
   const handleEdit = (task: Task) => {
     setEditId(task.id);
@@ -83,19 +92,36 @@ export default function AdminPage() {
   };
 
   const handleDelete = async (id: string) => {
-    await fetch(`/api/task/${id}`, { method: "DELETE" });
-    fetchTasks();
-  };
-
-  const handleLogin = () => {
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthorized(true);
-    } else {
-      alert("The password is wrong. Try again...");
+    try {
+      await deleteTask(id);
+      const updated = await fetchTasks();
+      setTasks(updated);
+    } catch (error) {
+      console.error("Delete failed:", error);
     }
   };
 
-  if (!isAuthorized) {
+  const handleLogin = async () => {
+    try {
+      const token = await createAdminToken(password);
+      localStorage.setItem("adminToken", token);
+      setIsAdmin(true);
+      setPassword("");
+    } catch (err) {
+      alert("Wrong password or error. Try again...");
+      console.error(err);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    setIsAdmin(false);
+    setPassword("");
+    setEditId(null);
+    router.push("/");
+  };
+
+  if (!isAdmin) {
     return (
       <section className={css.sectionLogin}>
         <h2 className={css.title}>Admin Login</h2>
@@ -118,15 +144,12 @@ export default function AdminPage() {
   return (
     <section className={css.section}>
       <button
-        onClick={() => {
-          setIsAuthorized(false);
-          setPassword("");
-          router.push("/");
-        }}
+        onClick={handleLogout}
         className={`${css.logoutBtn} ${css.loginBtn}`}
       >
         Logout
       </button>
+
       <div>
         <h2 className={css.title}>Admin Task Panel</h2>
         <TaskForm
@@ -136,7 +159,7 @@ export default function AdminPage() {
           setEditId={setEditId}
           emptyQuestion={createEmptyQuestion}
           emptyCodeTask={createEmptyCodeTask}
-          fetchTasks={fetchTasks}
+          onSubmitSuccess={loadTasks}
         />
       </div>
 

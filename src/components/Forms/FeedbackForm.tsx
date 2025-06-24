@@ -1,5 +1,6 @@
 import { useState } from "react";
 import css from "./feedbackform.module.css";
+import { sendFeedback } from "@/services/feedback";
 
 export default function FeedbackForm() {
   const [formData, setFormData] = useState({
@@ -89,26 +90,15 @@ export default function FeedbackForm() {
     setStatus("sending");
 
     try {
-      const res = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        setStatus("success");
-        setFormData({
-          email: "",
-          feedback: "",
-        });
-      } else {
-        setStatus("error");
-      }
+      await sendFeedback(formData);
+      setStatus("success");
+      setFormData({ email: "", feedback: "" });
     } catch (err) {
       console.error(err);
       setStatus("error");
     }
   };
+
   return (
     <form className={css.feedbackBox} onSubmit={handleSubmit}>
       <label htmlFor="feedback">

@@ -4,6 +4,7 @@ import TheoryTest from "@/components/TheoryTest/TheoryTest";
 import CodeEditor from "@/components/CodeEditor/CodeEditor";
 
 import TaskTopSection from "@/components/TaskTopSection/TaskTopSection";
+import { fetchTaskById } from "@/services/tasks";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -12,20 +13,19 @@ type Props = {
 export default async function TaskPage({ params }: Props) {
   const resolvedParams = await params;
   const taskId = resolvedParams.id;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-  const res = await fetch(`${baseUrl}/api/task/${taskId}`, {
-    cache: "no-store",
-  });
+  let task: Task | null = null;
 
-  console.log("res.ok:", res.ok);
-  console.log("res.status:", res.status);
-
-  if (!res.ok) {
+  try {
+    task = await fetchTaskById(taskId);
+  } catch (error) {
+    console.log(error);
     notFound();
   }
 
-  const task: Task = await res.json();
+  if (!task) {
+    notFound();
+  }
 
   return (
     <>

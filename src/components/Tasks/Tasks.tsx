@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import css from "./tasks.module.css";
 import TasksList from "@/components/TasksList/TasksList";
 import Filtering from "@/components/Filtering/Filtering";
+import { fetchTasks } from "@/services/tasks";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -17,34 +18,22 @@ export default function Tasks() {
   const [showFilters, setShowFilters] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // const typedTasks = tasks as Task[];
   const typedTasks = Array.isArray(tasks) ? (tasks as Task[]) : [];
 
   console.log(typedTasks);
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    async function loadTasks() {
       try {
-        const res = await fetch("/api/tasks");
-        if (!res.ok) {
-          console.error("Failed to fetch tasks:", res.statusText);
-          return;
-        }
-
-        const data = await res.json();
-
-        if (!Array.isArray(data)) {
-          console.error("Invalid tasks data:", data);
-          return;
-        }
-
+        const data = await fetchTasks();
         setTasks(data);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
+      } catch (err) {
+        // TODO notification
+        console.error("Error loading tasks:", err);
       }
-    };
+    }
 
-    fetchTasks();
+    loadTasks();
   }, []);
 
   const filteredTasks = typedTasks.filter((task) => {

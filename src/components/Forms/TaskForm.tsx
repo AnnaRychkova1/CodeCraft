@@ -5,6 +5,7 @@ import AutoGrowTextarea from "./AutoGrowTextarea";
 import css from "./taskform.module.css";
 import TheoryInputs from "./TheoryInputs";
 import PracticeInputs from "./PracticeInputs";
+import { createTask, updateTask } from "@/services/tasks";
 
 export default function TaskForm({
   formData,
@@ -13,7 +14,7 @@ export default function TaskForm({
   setEditId,
   emptyQuestion,
   emptyCodeTask,
-  fetchTasks,
+  onSubmitSuccess,
 }: TaskFormProps) {
   const handleChange = (
     e: React.ChangeEvent<
@@ -141,28 +142,31 @@ export default function TaskForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(formData);
+    try {
+      if (editId) {
+        await updateTask(editId, formData);
+      } else {
+        await createTask(formData);
+      }
 
-    const method = editId ? "PUT" : "POST";
-    const url = editId ? `/api/task/${editId}` : "/api/tasks";
+      setFormData({
+        title: "",
+        description: "",
+        level: "beginner",
+        language: "javascript",
+        type: "theory",
+        theory_question: [structuredClone(emptyQuestion())],
+        code_task: [structuredClone(emptyCodeTask())],
+      });
 
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+      setEditId(null);
 
-    setFormData({
-      title: "",
-      description: "",
-      level: "beginner",
-      language: "javascript",
-      type: "theory",
-      theory_question: [structuredClone(emptyQuestion())],
-      code_task: [structuredClone(emptyCodeTask())],
-    });
-    setEditId(null);
-    fetchTasks();
+      if (onSubmitSuccess) {
+        await onSubmitSuccess();
+      }
+    } catch (error) {
+      console.error("Error submitting task:", error);
+    }
   };
 
   return (

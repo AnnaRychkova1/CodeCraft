@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { CodeTaskTest, Question } from "@/types/types";
+import { verifyAdminToken } from "@/utils/verifyAdminToken";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -28,6 +29,8 @@ export default async function handler(
     }
 
     if (req.method === "POST") {
+      const { valid, error } = verifyAdminToken(req, res);
+      if (!valid) return res.status(403).json({ error });
       const {
         title,
         description,

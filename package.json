@@ -28,7 +28,9 @@
     "@sendgrid/mail": "^8.1.5",
     "@supabase/supabase-js": "^2.50.0",
     "@uiw/react-codemirror": "^4.23.13",
+    "bcryptjs": "^3.0.2",
     "dotenv": "^16.5.0",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.3.3",
     "pyodide": "^0.27.7",
     "react": "^19.0.0",
@@ -39,6 +41,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

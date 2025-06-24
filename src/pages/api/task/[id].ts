@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { CodeTaskTest, Question } from "@/types/types";
 
+import { verifyAdminToken } from "@/utils/verifyAdminToken";
+
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -15,6 +17,11 @@ export default async function handler(
 
   if (typeof id !== "string") {
     return res.status(400).json({ error: "Invalid or missing id" });
+  }
+
+  if (["PUT", "DELETE"].includes(req.method || "")) {
+    const { valid, error } = verifyAdminToken(req, res);
+    if (!valid) return res.status(403).json({ error });
   }
 
   try {
@@ -39,6 +46,7 @@ export default async function handler(
 
       return res.status(200).json(task);
     }
+
     if (req.method === "PUT") {
       const {
         title,
@@ -167,7 +175,8 @@ export default async function handler(
       const { error } = await supabase.from("task").delete().eq("id", id);
       if (error) throw error;
 
-      return res.status(204).end();
+      res.status(204).end();
+      return;
     }
 
     res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
