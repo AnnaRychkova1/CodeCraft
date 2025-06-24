@@ -34,78 +34,79 @@ export default async function handler(
         level,
         language,
         type,
-        theoryQuestions,
-        codeTask,
+        theory_question,
+        code_task,
       } = req.body;
 
-      if (!title || !description || !level || !language || !type) {
-        return res.status(400).json({ error: "Missing required fields" });
-      }
-
-      const { data: createdTask, error: insertError } = await supabase
+      const { data: newTask, error: taskInsertError } = await supabase
         .from("task")
-        .insert([
-          {
-            title,
-            description,
-            level,
-            language,
-            type,
-          },
-        ])
+        .insert([{ title, description, level, language, type }])
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (taskInsertError) throw taskInsertError;
 
-      if (type === "theory" && Array.isArray(theoryQuestions)) {
-        const questionsToInsert = (theoryQuestions as Question[]).map((q) => ({
-          ...q,
-          task_id: createdTask.id,
+      const taskId = newTask.id;
+
+      if (type === "theory" && Array.isArray(theory_question)) {
+        const formattedQuestions = theory_question.map((q: Question) => ({
+          task_id: taskId,
+          question: q.question,
+          options: q.options,
+          correct_answer: q.correct_answer,
         }));
 
-        const { error: theoryError } = await supabase
-          .from("theoryQuestions")
-          .insert(questionsToInsert);
+        const { error: insertTheoryError } = await supabase
+          .from("theory_question")
+          .insert(formattedQuestions);
 
-        if (theoryError) throw theoryError;
+        if (insertTheoryError) throw insertTheoryError;
       }
 
-      if (type === "practice" && Array.isArray(codeTask)) {
-        for (const singleTask of codeTask) {
-          const { data: createdCodeTask, error: codeTaskError } = await supabase
-            .from("codeTask")
+      if (type === "practice") {
+        const singleCodeTask = Array.isArray(code_task)
+          ? code_task[0]
+          : code_task;
+
+        if (!singleCodeTask || typeof singleCodeTask !== "object") {
+          return res.status(400).json({ error: "Invalid code_task format" });
+        }
+
+        const { data: createdCodeTask, error: codeTaskInsertError } =
+          await supabase
+            .from("code_task")
             .insert([
               {
-                task_id: createdTask.id,
-                prompt: singleTask.prompt,
-                starterCode: singleTask.starterCode ?? null,
+                task_id: taskId,
+                prompt: singleCodeTask.prompt,
+                starter_code: singleCodeTask.starter_code ?? null,
               },
             ])
             .select()
             .single();
 
-          if (codeTaskError) throw codeTaskError;
+        if (codeTaskInsertError) throw codeTaskInsertError;
 
-          if (Array.isArray(singleTask.tests) && singleTask.tests.length > 0) {
-            const testsToInsert = singleTask.tests.map(
-              (test: CodeTaskTest) => ({
-                code_task_id: createdCodeTask.id,
-                input: test.input,
-                expected: test.expected,
-              })
-            );
+        if (Array.isArray(singleCodeTask.test_case)) {
+          const testCases = singleCodeTask.test_case.map(
+            (test: CodeTaskTest) => ({
+              code_task_id: createdCodeTask.id,
+              input: test.input,
+              expected: test.expected,
+            })
+          );
 
-            const { error: testError } = await supabase
-              .from("tests")
-              .insert(testsToInsert);
+          const { error: testInsertError } = await supabase
+            .from("test_case")
+            .insert(testCases);
 
-            if (testError) throw testError;
-          }
+          if (testInsertError) throw testInsertError;
         }
       }
 
-      return res.status(201).json({ success: true, task: createdTask });
+      return res
+        .status(201)
+        .json({ message: "Task created successfully", id: taskId });
     }
 
     res.setHeader("Allow", ["GET", "POST"]);

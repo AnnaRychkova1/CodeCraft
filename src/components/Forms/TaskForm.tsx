@@ -141,6 +141,8 @@ export default function TaskForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log(formData);
+
     const method = editId ? "PUT" : "POST";
     const url = editId ? `/api/task/${editId}` : "/api/tasks";
 

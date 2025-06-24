@@ -50,17 +50,6 @@ export default async function handler(
         code_task,
       } = req.body;
 
-      console.log("📝 PUT request to update task:", {
-        id,
-        title,
-        description,
-        level,
-        language,
-        type,
-        theory_question,
-        code_task,
-      });
-
       const { error: updateError } = await supabase
         .from("task")
         .update({ title, description, level, language, type })
@@ -69,8 +58,6 @@ export default async function handler(
       if (updateError) throw updateError;
 
       if (type === "theory") {
-        console.log("🧠 Updating theory questions:", theory_question);
-
         await supabase.from("theory_question").delete().eq("task_id", id);
 
         if (Array.isArray(theory_question)) {
@@ -99,8 +86,6 @@ export default async function handler(
         if (!singleCodeTask || typeof singleCodeTask !== "object") {
           return res.status(400).json({ error: "Invalid code_task format" });
         }
-
-        console.log("🛠 Updating practice task:", singleCodeTask);
 
         const { data: existingCodeTask } = await supabase
           .from("code_task")

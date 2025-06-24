@@ -17,6 +17,10 @@ export default async function TaskPage({ params }: Props) {
   const res = await fetch(`${baseUrl}/api/task/${taskId}`, {
     cache: "no-store",
   });
+
+  console.log("res.ok:", res.ok);
+  console.log("res.status:", res.status);
+
   if (!res.ok) {
     notFound();
   }
