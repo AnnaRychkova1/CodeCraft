@@ -1,6 +1,7 @@
-import { PrismaClient } from "../src/generated/prisma";
+// import { PrismaClient } from "../src/generated/prisma";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 async function main() {
   // Clean existing data
