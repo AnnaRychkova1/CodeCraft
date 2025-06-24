@@ -26,41 +26,82 @@ enum Language {
 }
 
 model Task {
-  id               String           @id @default(uuid())
-  title            String
-  description      String
-  level            Level
-  language         Language
-  type             TaskType
+  id              String           @id @default(uuid())
+  title           String
+  description     String
+  level           Level
+  language        Language
+  type            TaskType
+  codeTaskId      String?          @unique
+  codeTask        CodeTask?        @relation("TaskToCodeTask", fields: [codeTaskId], references: [id])
+  theoryQuestions TheoryQuestion[] @relation("TaskToTheory")
+  userTasks       UserTask[]       @relation("TaskToUserTask")
 
-  codeTask         CodeTask?        @relation(fields: [codeTaskId], references: [id], onDelete: Cascade)
-  codeTaskId       String?          @unique
-
-  theoryQuestions  TheoryQuestion[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model CodeTask {
-  id           String       @id @default(uuid())
-  prompt       String
-  starterCode  String?
-  tests            TestCase[]
+  id          String  @id @default(uuid())
+  prompt      String
+  starterCode String?
 
-  task         Task?        @relation()
+  tests TestCase[] @relation("CodeTaskToTests")
+  task  Task?      @relation("TaskToCodeTask")
+
+  // No fields/references here — defined from Task side
 }
 
 model TestCase {
-  id          String       @id @default(uuid())
-  input       Json
-  expected    Json
-  codeTask    CodeTask     @relation(fields: [codeTaskId], references: [id], onDelete: Cascade)
-  codeTaskId  String
+  id       String @id @default(uuid())
+  input    Json
+  expected Json
+
+  codeTaskId String
+  codeTask   CodeTask @relation("CodeTaskToTests", fields: [codeTaskId], references: [id], onDelete: Cascade)
 }
 
 model TheoryQuestion {
-  id             String     @id @default(uuid())
-  question       String
-  options        String[]
-  correctAnswer  String[]
-  task           Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId         String
+  id            String   @id @default(uuid())
+  question      String
+  options       String[]
+  correctAnswer String[]
+
+  taskId String
+  task   Task   @relation("TaskToTheory", fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
+  password String
+  token    String?
+
+  userTasks UserTask[] @relation("UserToUserTask")
+}
+
+model Admin {
+  id       String  @id @default(uuid())
+  password String
+  token    String?
+}
+
+model UserTask {
+  id String @id @default(uuid())
+
+  userId String
+  taskId String
+
+  submitted Boolean @default(false)
+  solution  String? // only for practice
+  result    Float? // only for theory (0.0 - 100.0)
+
+  user User @relation("UserToUserTask", fields: [userId], references: [id], onDelete: Cascade)
+  task Task @relation("TaskToUserTask", fields: [taskId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@unique([userId, taskId])
 }

@@ -17,13 +17,31 @@ export default function Tasks() {
   const [showFilters, setShowFilters] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const typedTasks = tasks as Task[];
+  // const typedTasks = tasks as Task[];
+  const typedTasks = Array.isArray(tasks) ? (tasks as Task[]) : [];
+
+  console.log(typedTasks);
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const res = await fetch("/api/tasks");
-      const data = await res.json();
-      setTasks(data);
+      try {
+        const res = await fetch("/api/tasks");
+        if (!res.ok) {
+          console.error("Failed to fetch tasks:", res.statusText);
+          return;
+        }
+
+        const data = await res.json();
+
+        if (!Array.isArray(data)) {
+          console.error("Invalid tasks data:", data);
+          return;
+        }
+
+        setTasks(data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
     };
 
     fetchTasks();
