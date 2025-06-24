@@ -1,12 +1,11 @@
-export const config = {
-  runtime: "nodejs",
-};
 import type { NextApiRequest, NextApiResponse } from "next";
-// import { PrismaClient } from "@/generated/prisma";
+import { createClient } from "@supabase/supabase-js";
 import { CodeTaskTest, Question } from "@/types/types";
 
-// const prisma = new PrismaClient();
-import { prisma } from "@/lib/prisma";
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,21 +19,23 @@ export default async function handler(
 
   try {
     if (req.method === "GET") {
-      const task = await prisma.task.findUnique({
-        where: { id },
-        include: {
-          theoryQuestions: true,
-          codeTask: {
-            include: {
-              tests: true,
-            },
-          },
-        },
-      });
+      const { data: task, error } = await supabase
+        .from("task")
+        .select(
+          `
+          *,
+          theory_question(*),
+          code_task!fk_task( 
+            *,
+            test_case(*)
+          )
+        `
+        )
+        .eq("id", id)
+        .single();
 
-      if (!task) {
-        return res.status(404).json({ error: "Task not found" });
-      }
+      if (error) throw error;
+      if (!task) return res.status(404).json({ error: "Task not found" });
 
       return res.status(200).json(task);
     }
@@ -50,99 +51,111 @@ export default async function handler(
         codeTask,
       } = req.body;
 
-      await prisma.task.update({
-        where: { id },
-        data: {
-          title,
-          description,
-          level,
-          language,
-          type,
-        },
-      });
+      // Update base task fields
+      const { error: updateError } = await supabase
+        .from("task")
+        .update({ title, description, level, language, type })
+        .eq("id", id);
+
+      if (updateError) throw updateError;
 
       if (type === "theory") {
-        await prisma.theoryQuestion.deleteMany({ where: { taskId: id } });
+        await supabase.from("theory_question").delete().eq("task_id", id);
 
-        if (Array.isArray(theoryQuestions) && theoryQuestions.length > 0) {
-          await prisma.theoryQuestion.createMany({
-            data: theoryQuestions.map((q: Question) => ({
-              taskId: id,
-              question: q.question,
-              options: q.options,
-              correctAnswer: q.correctAnswer,
-            })),
-            skipDuplicates: true,
-          });
+        if (Array.isArray(theoryQuestions)) {
+          const formatted = theoryQuestions.map((q: Question) => ({
+            task_id: id,
+            question: q.question,
+            options: q.options,
+            correct_answer: q.correct_answer,
+          }));
+
+          const { error: insertError } = await supabase
+            .from("theory_question")
+            .insert(formatted);
+
+          if (insertError) throw insertError;
         }
 
-        await prisma.codeTask.deleteMany({ where: { id: id } });
+        await supabase.from("code_task").delete().eq("task_id", id);
       }
 
       if (type === "practice") {
-        const existingCodeTask = await prisma.codeTask.findUnique({
-          where: { id: id },
-        });
+        const { data: existingCodeTask } = await supabase
+          .from("code_task")
+          .select("id")
+          .eq("task_id", id)
+          .single();
 
         if (existingCodeTask) {
-          await prisma.codeTask.update({
-            where: { id: existingCodeTask.id },
-            data: {
+          const { error: codeTaskUpdateError } = await supabase
+            .from("code_task")
+            .update({
               prompt: codeTask.prompt,
-              starterCode: codeTask.starterCode ?? null,
-            },
-          });
+              starter_code: codeTask.starterCode ?? null,
+            })
+            .eq("id", existingCodeTask.id);
 
-          await prisma.testCase.deleteMany({
-            where: { codeTaskId: existingCodeTask.id },
-          });
+          if (codeTaskUpdateError) throw codeTaskUpdateError;
 
-          if (Array.isArray(codeTask.tests) && codeTask.tests.length > 0) {
-            await prisma.testCase.createMany({
-              data: codeTask.tests.map((test: CodeTaskTest) => {
-                if (!Array.isArray(test.input)) {
-                  throw new Error("Each test.input must be an array");
-                }
+          await supabase
+            .from("test_case")
+            .delete()
+            .eq("code_task_id", existingCodeTask.id);
 
-                return {
-                  codeTaskId: existingCodeTask.id,
-                  input: test.input,
-                  expected: test.expected,
-                };
-              }),
-            });
+          if (Array.isArray(codeTask.tests)) {
+            const testCases = codeTask.tests.map((test: CodeTaskTest) => ({
+              code_task_id: existingCodeTask.id,
+              input: test.input,
+              expected: test.expected,
+            }));
+
+            const { error: testsInsertError } = await supabase
+              .from("test_case")
+              .insert(testCases);
+
+            if (testsInsertError) throw testsInsertError;
           }
         } else {
-          await prisma.codeTask.create({
-            data: {
-              task: { connect: { id } },
-              prompt: codeTask.prompt,
-              starterCode: codeTask.starterCode ?? null,
-              tests: {
-                create: (codeTask.tests || []).map((test: CodeTaskTest) => {
-                  if (!Array.isArray(test.input)) {
-                    throw new Error("Each test.input must be an array");
-                  }
-                  return {
-                    input: test.input,
-                    expected: test.expected,
-                  };
-                }),
-              },
-            },
-          });
+          const { data: newCodeTask, error: codeTaskCreateError } =
+            await supabase
+              .from("code_task")
+              .insert([
+                {
+                  task_id: id,
+                  prompt: codeTask.prompt,
+                  starter_code: codeTask.starterCode ?? null,
+                },
+              ])
+              .select()
+              .single();
+
+          if (codeTaskCreateError) throw codeTaskCreateError;
+
+          if (Array.isArray(codeTask.tests)) {
+            const testCases = codeTask.tests.map((test: CodeTaskTest) => ({
+              code_task_id: newCodeTask.id,
+              input: test.input,
+              expected: test.expected,
+            }));
+
+            const { error: testInsertError } = await supabase
+              .from("test_case")
+              .insert(testCases);
+
+            if (testInsertError) throw testInsertError;
+          }
         }
 
-        await prisma.theoryQuestion.deleteMany({ where: { taskId: id } });
+        await supabase.from("theory_question").delete().eq("task_id", id);
       }
 
       return res.status(200).json({ message: "Task updated successfully" });
     }
 
     if (req.method === "DELETE") {
-      await prisma.task.delete({
-        where: { id },
-      });
+      const { error } = await supabase.from("task").delete().eq("id", id);
+      if (error) throw error;
 
       return res.status(204).end();
     }
@@ -150,7 +163,7 @@ export default async function handler(
     res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   } catch (error) {
-    console.error("API Error:", error);
+    console.error("❌ API Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }

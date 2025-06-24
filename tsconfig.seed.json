@@ -1,8 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
-    "target": "ES2017"
+    "module": "commonjs",
+    "target": "es2020",
+    "esModuleInterop": true,
+    "noEmit": true,
+    "strict": true,
+    "types": ["node"]
   },
-  "include": ["prisma/**/*.ts"]
+  "include": ["seed.ts"]
 }

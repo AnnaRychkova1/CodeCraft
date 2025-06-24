@@ -1,17 +1,11 @@
-export const config = {
-  runtime: "nodejs",
-};
-
 import type { NextApiRequest, NextApiResponse } from "next";
-// import type { Prisma } from "@prisma/client";
-// import type { Prisma } from "@/generated/prisma";
-// import { Prisma, PrismaClient } from "@/generated/prisma";
-import { CodeTaskTest } from "@/types/types";
-// import { Prisma } from "@prisma/client";
-// import type { TaskCreateInput } from "@prisma/client";
-import type { Prisma } from "@prisma/client";
+import { createClient } from "@supabase/supabase-js";
+import { CodeTaskTest, Question } from "@/types/types";
 
-import { prisma } from "@/lib/prisma";
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,16 +13,16 @@ export default async function handler(
 ) {
   try {
     if (req.method === "GET") {
-      const tasks = await prisma.task.findMany({
-        include: {
-          codeTask: {
-            include: {
-              tests: true,
-            },
-          },
-          theoryQuestions: true,
-        },
-      });
+      const { data: tasks, error } = await supabase.from("task").select(`
+        *,
+        theory_question(*),
+        code_task!fk_task( 
+          *,
+          test_case(*)
+        )
+      `);
+
+      if (error) throw error;
 
       return res.status(200).json(tasks);
     }
@@ -48,67 +42,81 @@ export default async function handler(
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      const data: Prisma.TaskCreateInput = {
-        title,
-        description,
-        level,
-        language,
-        type,
-        theoryQuestions: undefined,
-        codeTask: undefined,
-      };
-
-      if (type === "theory") {
-        if (Array.isArray(theoryQuestions) && theoryQuestions.length > 0) {
-          data.theoryQuestions = {
-            create: theoryQuestions,
-          };
-        }
-      } else if (type === "practice") {
-        if (!codeTask || !codeTask.prompt) {
-          return res.status(400).json({ error: "Missing codeTask data" });
-        }
-
-        data.codeTask = {
-          create: {
-            prompt: codeTask.prompt,
-            starterCode: codeTask.starterCode ?? null,
-            tests:
-              Array.isArray(codeTask.tests) && codeTask.tests.length > 0
-                ? {
-                    create: codeTask.tests.map((test: CodeTaskTest) => {
-                      if (!Array.isArray(test.input)) {
-                        throw new Error("Each test.input must be an array");
-                      }
-
-                      return {
-                        input: test.input,
-                        expected: test.expected,
-                      };
-                    }),
-                  }
-                : undefined,
+      const { data: createdTask, error: insertError } = await supabase
+        .from("task")
+        .insert([
+          {
+            title,
+            description,
+            level,
+            language,
+            type,
           },
-        };
+        ])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      if (type === "theory" && Array.isArray(theoryQuestions)) {
+        const questionsToInsert = (theoryQuestions as Question[]).map((q) => ({
+          ...q,
+          task_id: createdTask.id,
+        }));
+
+        const { error: theoryError } = await supabase
+          .from("theoryQuestions")
+          .insert(questionsToInsert);
+
+        if (theoryError) throw theoryError;
       }
 
-      const newTask = await prisma.task.create({
-        data,
-        include: {
-          codeTask: {
-            include: { tests: true },
-          },
-          theoryQuestions: true,
-        },
-      });
+      if (type === "practice" && Array.isArray(codeTask)) {
+        for (const singleTask of codeTask) {
+          const { data: createdCodeTask, error: codeTaskError } = await supabase
+            .from("codeTask")
+            .insert([
+              {
+                task_id: createdTask.id,
+                prompt: singleTask.prompt,
+                starterCode: singleTask.starterCode ?? null,
+              },
+            ])
+            .select()
+            .single();
 
-      return res.status(201).json(newTask);
+          if (codeTaskError) throw codeTaskError;
+
+          if (Array.isArray(singleTask.tests) && singleTask.tests.length > 0) {
+            const testsToInsert = singleTask.tests.map(
+              (test: CodeTaskTest) => ({
+                code_task_id: createdCodeTask.id,
+                input: test.input,
+                expected: test.expected,
+              })
+            );
+
+            const { error: testError } = await supabase
+              .from("tests")
+              .insert(testsToInsert);
+
+            if (testError) throw testError;
+          }
+        }
+      }
+
+      return res.status(201).json({ success: true, task: createdTask });
     }
 
     res.setHeader("Allow", ["GET", "POST"]);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
-  } catch (error) {
-    console.error("API error:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("API error:", error.message);
+    } else {
+      console.error("Unknown API error:", error);
+    }
+
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }

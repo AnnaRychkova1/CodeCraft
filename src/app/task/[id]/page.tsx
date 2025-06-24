@@ -14,7 +14,6 @@ export default async function TaskPage({ params }: Props) {
   const taskId = resolvedParams.id;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-  // const res = await fetch(`${baseUrl}/api/task/${taskId}`);
   const res = await fetch(`${baseUrl}/api/task/${taskId}`, {
     cache: "no-store",
   });
@@ -27,12 +26,16 @@ export default async function TaskPage({ params }: Props) {
   return (
     <>
       <TaskTopSection task={task} />
-      {task.type === "theory" && task.theoryQuestions && (
-        <TheoryTest theoryQuestions={task.theoryQuestions} />
+      {task.type === "theory" && task.theory_question && (
+        <TheoryTest theoryQuestions={task.theory_question} />
       )}
 
-      {task.type === "practice" && task.codeTask && (
-        <CodeEditor task={task.codeTask} language={task.language} />
+      {task.type === "practice" && Array.isArray(task.code_task) && (
+        <>
+          {task.code_task.map((codeTask, index) => (
+            <CodeEditor key={index} task={codeTask} language={task.language} />
+          ))}
+        </>
       )}
     </>
   );

@@ -52,14 +52,15 @@ export default function TaskTopSection({ task }: PropsTask) {
         </div>
         <div className={css.textBox}>
           <h2 className={css.title}>{task.title}</h2>
-          {task.type === "theory" && task.theoryQuestions && (
+          {task.type === "theory" && task.theory_question && (
             <p className={css.description}>
               {formatTextWithLineBreaks(task.description)}
             </p>
           )}
-          {task.type === "practice" && task.codeTask && (
+
+          {task.type === "practice" && task.code_task?.[0]?.prompt && (
             <p className={css.description}>
-              {formatTextWithLineBreaks(task.codeTask.prompt)}
+              {formatTextWithLineBreaks(task.code_task[0].prompt)}
             </p>
           )}
         </div>

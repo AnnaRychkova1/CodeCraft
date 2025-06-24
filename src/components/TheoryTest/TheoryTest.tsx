@@ -38,7 +38,7 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
     let correctCount = 0;
 
     theoryQuestions.forEach((q, i) => {
-      const correct = [...q.correctAnswer].sort();
+      const correct = [...q.correct_answer].sort();
       const user = [...(selectedAnswers[i] || [])].sort();
 
       const isCorrect =
@@ -71,7 +71,7 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
     if (!submitted) return;
 
     const question = theoryQuestions[questionIndex];
-    const correctAnswers = question.correctAnswer;
+    const correctAnswers = question.correct_answer;
     const userAnswers = selectedAnswers[questionIndex] || [];
 
     const isSelected = userAnswers.includes(option);
@@ -111,7 +111,7 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
                   {q.options.map((opt) => {
                     const checked = selected.includes(opt);
                     const optionClass = getOptionClass(i, opt);
-                    const isMulti = isMultipleAnswer(q.correctAnswer);
+                    const isMulti = isMultipleAnswer(q.correct_answer);
 
                     return (
                       <li key={opt}>

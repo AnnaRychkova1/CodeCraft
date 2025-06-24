@@ -15,7 +15,7 @@ export default function CodeForm({
   setOutput,
   setShowConfetti,
 }: CodeFormProps) {
-  const codeRef = useRef((task.starterCode || "").replace(/\\n/g, "\n"));
+  const codeRef = useRef((task.starter_code || "").replace(/\\n/g, "\n"));
   const languageExtension = () => {
     switch (language) {
       case "javascript":
@@ -33,7 +33,7 @@ export default function CodeForm({
     e.preventDefault();
     const code = codeRef.current;
 
-    const tests = task.tests || [];
+    const tests = task.test_case || [];
 
     let results: string[] = [];
     if (language === "javascript") {

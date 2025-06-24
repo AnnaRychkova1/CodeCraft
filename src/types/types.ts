@@ -7,8 +7,8 @@ export interface Task {
   level: Level;
   language: Language;
   type: TaskType;
-  theoryQuestions?: Question[];
-  codeTask?: CodeTask;
+  theory_question?: Question[];
+  code_task?: CodeTask[];
 }
 
 export type PropsTask = {
@@ -29,7 +29,7 @@ export interface Question {
   id?: string;
   question: string;
   options: string[];
-  correctAnswer: string[];
+  correct_answer: string[];
 }
 
 export interface TheoryTestProps {
@@ -47,8 +47,8 @@ export interface CodeTaskTest<
 
 export interface CodeTask {
   prompt: string;
-  starterCode?: string;
-  tests?: CodeTaskTest[];
+  starter_code?: string;
+  test_case?: CodeTaskTest[];
 }
 
 export interface FilteringProps {
