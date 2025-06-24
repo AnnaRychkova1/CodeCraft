@@ -46,6 +46,7 @@ export interface CodeTaskTest<
 }
 
 export interface CodeTask {
+  id?: string;
   prompt: string;
   starter_code?: string;
   test_case?: CodeTaskTest[];
@@ -80,7 +81,7 @@ export type CodeFormProps = {
 };
 
 export type TestEditProps = {
-  test: { id?: string; input: unknown[]; expected: unknown };
+  test_case: CodeTaskTest;
   index: number;
   onChange: (
     index: number,
@@ -94,13 +95,13 @@ export type TaskFormProps = {
   setFormData: React.Dispatch<React.SetStateAction<Omit<Task, "id">>>;
   editId: string | null;
   setEditId: React.Dispatch<React.SetStateAction<string | null>>;
-  emptyQuestion: Question;
-  emptyCodeTask: CodeTask;
+  emptyQuestion: () => Question;
+  emptyCodeTask: () => CodeTask;
   fetchTasks: () => Promise<void>;
 };
 
 export interface PropsPracticeInputs {
-  codeTask: CodeTask;
+  code_task: CodeTask;
   onChange: <K extends keyof CodeTask>(key: K, value: CodeTask[K]) => void;
   onTestChange: (
     index: number,
@@ -109,7 +110,7 @@ export interface PropsPracticeInputs {
   onTestRemove: (index: number, testId?: string) => void;
 }
 
-export interface PropsheoryInputs {
+export interface PropsTheoryInputs {
   questions: Question[];
   onChange: (
     index: number,

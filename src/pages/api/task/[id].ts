@@ -39,7 +39,6 @@ export default async function handler(
 
       return res.status(200).json(task);
     }
-
     if (req.method === "PUT") {
       const {
         title,
@@ -47,11 +46,21 @@ export default async function handler(
         level,
         language,
         type,
-        theoryQuestions,
-        codeTask,
+        theory_question,
+        code_task,
       } = req.body;
 
-      // Update base task fields
+      console.log("📝 PUT request to update task:", {
+        id,
+        title,
+        description,
+        level,
+        language,
+        type,
+        theory_question,
+        code_task,
+      });
+
       const { error: updateError } = await supabase
         .from("task")
         .update({ title, description, level, language, type })
@@ -60,10 +69,12 @@ export default async function handler(
       if (updateError) throw updateError;
 
       if (type === "theory") {
+        console.log("🧠 Updating theory questions:", theory_question);
+
         await supabase.from("theory_question").delete().eq("task_id", id);
 
-        if (Array.isArray(theoryQuestions)) {
-          const formatted = theoryQuestions.map((q: Question) => ({
+        if (Array.isArray(theory_question)) {
+          const formatted = theory_question.map((q: Question) => ({
             task_id: id,
             question: q.question,
             options: q.options,
@@ -81,6 +92,16 @@ export default async function handler(
       }
 
       if (type === "practice") {
+        const singleCodeTask = Array.isArray(code_task)
+          ? code_task[0]
+          : code_task;
+
+        if (!singleCodeTask || typeof singleCodeTask !== "object") {
+          return res.status(400).json({ error: "Invalid code_task format" });
+        }
+
+        console.log("🛠 Updating practice task:", singleCodeTask);
+
         const { data: existingCodeTask } = await supabase
           .from("code_task")
           .select("id")
@@ -91,8 +112,8 @@ export default async function handler(
           const { error: codeTaskUpdateError } = await supabase
             .from("code_task")
             .update({
-              prompt: codeTask.prompt,
-              starter_code: codeTask.starterCode ?? null,
+              prompt: singleCodeTask.prompt,
+              starter_code: singleCodeTask.starter_code ?? null,
             })
             .eq("id", existingCodeTask.id);
 
@@ -103,12 +124,14 @@ export default async function handler(
             .delete()
             .eq("code_task_id", existingCodeTask.id);
 
-          if (Array.isArray(codeTask.tests)) {
-            const testCases = codeTask.tests.map((test: CodeTaskTest) => ({
-              code_task_id: existingCodeTask.id,
-              input: test.input,
-              expected: test.expected,
-            }));
+          if (Array.isArray(singleCodeTask.test_case)) {
+            const testCases = singleCodeTask.test_case.map(
+              (test: CodeTaskTest) => ({
+                code_task_id: existingCodeTask.id,
+                input: test.input,
+                expected: test.expected,
+              })
+            );
 
             const { error: testsInsertError } = await supabase
               .from("test_case")
@@ -123,8 +146,8 @@ export default async function handler(
               .insert([
                 {
                   task_id: id,
-                  prompt: codeTask.prompt,
-                  starter_code: codeTask.starterCode ?? null,
+                  prompt: singleCodeTask.prompt,
+                  starter_code: singleCodeTask.starter_code ?? null,
                 },
               ])
               .select()
@@ -132,12 +155,14 @@ export default async function handler(
 
           if (codeTaskCreateError) throw codeTaskCreateError;
 
-          if (Array.isArray(codeTask.tests)) {
-            const testCases = codeTask.tests.map((test: CodeTaskTest) => ({
-              code_task_id: newCodeTask.id,
-              input: test.input,
-              expected: test.expected,
-            }));
+          if (Array.isArray(singleCodeTask.test_case)) {
+            const testCases = singleCodeTask.test_case.map(
+              (test: CodeTaskTest) => ({
+                code_task_id: newCodeTask.id,
+                input: test.input,
+                expected: test.expected,
+              })
+            );
 
             const { error: testInsertError } = await supabase
               .from("test_case")

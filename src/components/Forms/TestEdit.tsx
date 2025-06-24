@@ -1,28 +1,30 @@
-import { FiTrash2 } from "react-icons/fi";
-import { TestEditProps } from "@/types/types";
 import { useEffect, useState } from "react";
-import AutoGrowTextarea from "./AutoGrowTextarea";
+import { FiTrash2 } from "react-icons/fi";
 
+import { TestEditProps } from "@/types/types";
+import AutoGrowTextarea from "./AutoGrowTextarea";
 import css from "./taskform.module.css";
 
 export default function TestEdit({
-  test,
+  test_case,
   index,
   onChange,
   onRemove,
 }: TestEditProps) {
-  const [inputValue, setInputValue] = useState(JSON.stringify(test.input));
-  const [expectedValue, setExpectedValue] = useState(
-    JSON.stringify(test.expected)
+  const [inputValue, setInputValue] = useState<string>(
+    JSON.stringify(test_case.input)
+  );
+  const [expectedValue, setExpectedValue] = useState<string>(
+    JSON.stringify(test_case.expected)
   );
 
   useEffect(() => {
-    setInputValue(JSON.stringify(test.input));
-  }, [test.input]);
+    setInputValue(JSON.stringify(test_case.input));
+  }, [test_case.input]);
 
   useEffect(() => {
-    setExpectedValue(JSON.stringify(test.expected));
-  }, [test.expected]);
+    setExpectedValue(JSON.stringify(test_case.expected));
+  }, [test_case.expected]);
 
   const handleInputBlur = () => {
     let parsedInput: unknown;
@@ -31,10 +33,12 @@ export default function TestEdit({
     } catch {
       parsedInput = inputValue;
     }
-    if (!Array.isArray(parsedInput)) {
-      parsedInput = [parsedInput];
-    }
-    onChange(index, { ...test, input: parsedInput as unknown[] });
+
+    const normalizedInput = Array.isArray(parsedInput)
+      ? parsedInput
+      : [parsedInput];
+
+    onChange(index, { ...test_case, input: normalizedInput });
   };
 
   const handleExpectedBlur = () => {
@@ -44,7 +48,8 @@ export default function TestEdit({
     } catch {
       parsedExpected = expectedValue;
     }
-    onChange(index, { ...test, expected: parsedExpected });
+
+    onChange(index, { ...test_case, expected: parsedExpected });
   };
 
   return (
@@ -72,8 +77,8 @@ export default function TestEdit({
 
       <button
         type="button"
-        onClick={() => onRemove(index, test.id)}
         className={css.deleteTestBtn}
+        onClick={() => onRemove(index, test_case.id)}
       >
         <FiTrash2 />
       </button>

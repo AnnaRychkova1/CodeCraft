@@ -27,15 +27,15 @@ export default function TaskForm({
         setFormData((prev) => ({
           ...prev,
           type: value,
-          theoryQuestions: [structuredClone(emptyQuestion)],
-          codeTask: structuredClone(emptyCodeTask),
+          theory_question: [structuredClone(emptyQuestion())],
+          code_task: [structuredClone(emptyCodeTask())],
         }));
       } else if (value === "practice") {
         setFormData((prev) => ({
           ...prev,
           type: value,
-          codeTask: structuredClone(emptyCodeTask),
-          theoryQuestions: [structuredClone(emptyQuestion)],
+          code_task: [structuredClone(emptyCodeTask())],
+          theory_question: [structuredClone(emptyQuestion())],
         }));
       }
     } else {
@@ -48,9 +48,9 @@ export default function TaskForm({
     key: keyof Question,
     value: string | string[]
   ) => {
-    const updated = [...(formData.theoryQuestions || [])];
+    const updated = [...(formData.theory_question || [])];
     updated[index] = { ...updated[index], [key]: value };
-    setFormData((prev) => ({ ...prev, theoryQuestions: updated }));
+    setFormData((prev) => ({ ...prev, theory_question: updated }));
   };
 
   const handleOptionChange = (
@@ -58,103 +58,85 @@ export default function TaskForm({
     oIndex: number,
     value: string
   ) => {
-    const updated = [...(formData.theoryQuestions || [])];
+    const updated = [...(formData.theory_question || [])];
     updated[qIndex].options[oIndex] = value;
-    setFormData((prev) => ({ ...prev, theoryQuestions: updated }));
+    setFormData((prev) => ({ ...prev, theory_question: updated }));
   };
 
   const handleOptionRemove = (qIndex: number, oIndex: number) => {
-    const updated = [...(formData.theoryQuestions || [])];
-    updated[qIndex].options.splice(oIndex, 1); // Видаляємо опцію
-    setFormData((prev) => ({ ...prev, theoryQuestions: updated }));
+    const updated = [...(formData.theory_question || [])];
+    updated[qIndex].options.splice(oIndex, 1);
+    setFormData((prev) => ({ ...prev, theory_question: updated }));
   };
 
   const handleAddQuestion = () => {
     setFormData((prev) => ({
       ...prev,
-      theoryQuestions: [
-        ...(prev.theoryQuestions || []),
-        structuredClone({ ...emptyQuestion, id: uuidv4() }),
+      theory_question: [
+        ...(prev.theory_question || []),
+        structuredClone({ ...emptyQuestion(), id: uuidv4() }),
       ],
     }));
   };
 
-  const handleCodeTaskChange = <K extends keyof CodeTask>(
-    key: K,
-    value: CodeTask[K]
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      codeTask: {
-        ...(prev.codeTask ?? { prompt: "", starterCode: "", tests: [] }),
-        [key]: value,
-      },
-    }));
-  };
-
-  const handleTestChange = (
-    index: number,
-    updatedTest: { input: unknown[]; expected: unknown }
-  ) => {
-    const updatedTests = [...(formData.codeTask?.tests || [])];
-    updatedTests[index] = updatedTest;
-    handleCodeTaskChange("tests", updatedTests);
-  };
-
-  const handleTestRemove = (index: number) => {
-    const updatedTests = [...(formData.codeTask?.tests || [])];
-    updatedTests.splice(index, 1);
-
-    handleCodeTaskChange("tests", updatedTests);
-  };
-
   const handleQuestionRemove = (index: number) => {
-    const updated = [...(formData.theoryQuestions || [])];
+    const updated = [...(formData.theory_question || [])];
     updated.splice(index, 1);
 
     setFormData((prev) => ({
       ...prev,
-      theoryQuestions: updated,
+      theory_question: updated,
     }));
   };
 
-  // const handleTestRemove = async (index: number, testId?: string) => {
-  //   if (testId) {
-  //     try {
-  //       const res = await fetch(`/api/testcase/${testId}`, {
-  //         method: "DELETE",
-  //       });
-  //       if (!res.ok) throw new Error("Failed to delete test case");
-  //     } catch (error) {
-  //       console.error(error);
-  //       alert("Error deleting test");
-  //       return;
-  //     }
-  //   }
+  const handleCodeTaskChange = <K extends keyof CodeTask>(
+    index: number,
+    key: K,
+    value: CodeTask[K]
+  ) => {
+    setFormData((prev) => {
+      const updatedCodeTasks = [...(prev.code_task || [])];
+      updatedCodeTasks[index] = {
+        ...(updatedCodeTasks[index] ?? {
+          prompt: "",
+          starter_code: "",
+          test_case: [],
+        }),
+        [key]: value,
+      };
+      return { ...prev, code_task: updatedCodeTasks };
+    });
+  };
 
-  //   const updatedTests = [...(formData.codeTask?.tests || [])];
-  //   updatedTests.splice(index, 1);
-  //   handleCodeTaskChange("tests", updatedTests);
-  // };
+  const handleTestChange = (
+    taskIndex: number,
+    testIndex: number,
+    updatedTest: { input: unknown[]; expected: unknown }
+  ) => {
+    setFormData((prev) => {
+      const updatedCodeTasks = [...(prev.code_task || [])];
+      const updatedTests = [...(updatedCodeTasks[taskIndex]?.test_case || [])];
+      updatedTests[testIndex] = updatedTest;
+      updatedCodeTasks[taskIndex] = {
+        ...updatedCodeTasks[taskIndex],
+        test_case: updatedTests,
+      };
+      return { ...prev, code_task: updatedCodeTasks };
+    });
+  };
 
-  // const handleQuestionRemove = async (index: number, questionId?: string) => {
-  //   if (questionId) {
-  //     try {
-  //       const res = await fetch(`/api/theory-question/${questionId}`, {
-  //         method: "DELETE",
-  //       });
-  //       if (!res.ok) throw new Error("Failed to delete theory question");
-  //     } catch (error) {
-  //       console.error(error);
-  //       alert("Error deleting question");
-  //       return;
-  //     }
-  //   }
-
-  //   const updated = [...(formData.theoryQuestions || [])];
-  //   updated.splice(index, 1);
-  //   setFormData((prev) => ({ ...prev, theoryQuestions: updated }));
-  // };
+  const handleTestRemove = (taskIndex: number, testIndex: number) => {
+    setFormData((prev) => {
+      const updatedCodeTasks = [...(prev.code_task || [])];
+      const updatedTests = [...(updatedCodeTasks[taskIndex]?.test_case || [])];
+      updatedTests.splice(testIndex, 1);
+      updatedCodeTasks[taskIndex] = {
+        ...updatedCodeTasks[taskIndex],
+        test_case: updatedTests,
+      };
+      return { ...prev, code_task: updatedCodeTasks };
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,8 +156,8 @@ export default function TaskForm({
       level: "beginner",
       language: "javascript",
       type: "theory",
-      theoryQuestions: [structuredClone(emptyQuestion)],
-      codeTask: structuredClone(emptyCodeTask),
+      theory_question: [structuredClone(emptyQuestion())],
+      code_task: [structuredClone(emptyCodeTask())],
     });
     setEditId(null);
     fetchTasks();
@@ -238,7 +220,7 @@ export default function TaskForm({
 
         {formData.type === "theory" && (
           <TheoryInputs
-            questions={formData.theoryQuestions || []}
+            questions={formData.theory_question || []}
             onChange={handleQuestionChange}
             onOptionChange={handleOptionChange}
             onOptionRemove={handleOptionRemove}
@@ -247,22 +229,24 @@ export default function TaskForm({
             setQuestions={(newQuestions) =>
               setFormData((prev) => ({
                 ...prev,
-                theoryQuestions: newQuestions,
+                theory_question: newQuestions,
               }))
             }
           />
         )}
 
-        {formData.type === "practice" && (
-          <PracticeInputs
-            codeTask={
-              formData.codeTask ?? { prompt: "", starterCode: "", tests: [] }
-            }
-            onChange={handleCodeTaskChange}
-            onTestChange={handleTestChange}
-            onTestRemove={handleTestRemove}
-          />
-        )}
+        {formData.type === "practice" &&
+          formData.code_task?.map((codeTaskItem, idx) => (
+            <PracticeInputs
+              key={idx}
+              code_task={codeTaskItem}
+              onChange={(key, value) => handleCodeTaskChange(idx, key, value)}
+              onTestChange={(testIndex, updatedTest) =>
+                handleTestChange(idx, testIndex, updatedTest)
+              }
+              onTestRemove={(testIndex) => handleTestRemove(idx, testIndex)}
+            />
+          ))}
       </div>
 
       <button type="submit" className={css.createUpdateBtn}>

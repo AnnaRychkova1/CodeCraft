@@ -1,11 +1,12 @@
 import { FiPlus } from "react-icons/fi";
 import AutoGrowTextarea from "./AutoGrowTextarea";
 import TestEdit from "./TestEdit";
+
 import { PropsPracticeInputs } from "@/types/types";
 import css from "./taskform.module.css";
 
 export default function PracticeInputs({
-  codeTask,
+  code_task,
   onChange,
   onTestChange,
   onTestRemove,
@@ -13,27 +14,32 @@ export default function PracticeInputs({
   return (
     <div className={css.typeContainer}>
       <h3 className={css.typeTitle}>Practice Code Task</h3>
+
       <AutoGrowTextarea
-        value={codeTask.prompt}
+        value={code_task.prompt}
         name="prompt"
-        onChange={(e) => onChange("prompt", e.target.value)}
+        onChange={(e) => {
+          onChange("prompt", e.target.value);
+        }}
         placeholder="Prompt"
         rows={1}
       />
+
       <AutoGrowTextarea
-        value={codeTask.starterCode}
-        name="starterCode"
-        onChange={(e) => onChange("starterCode", e.target.value)}
+        value={code_task.starter_code}
+        name="starter_code"
+        onChange={(e) => onChange("starter_code", e.target.value)}
         placeholder="Starter Code"
         rows={2}
       />
 
       <div className={css.testsContainer}>
         <p className={css.testTitle}>Tests</p>
-        {(codeTask.tests || []).map((test, index) => (
+
+        {(code_task.test_case || []).map((test, index) => (
           <TestEdit
             key={index}
-            test={test}
+            test_case={test}
             index={index}
             onChange={onTestChange}
             onRemove={onTestRemove}
@@ -43,9 +49,9 @@ export default function PracticeInputs({
         <button
           type="button"
           onClick={() =>
-            onChange("tests", [
-              ...(codeTask.tests || []),
-              { input: [], expected: "" },
+            onChange("test_case", [
+              ...(code_task.test_case || []),
+              { input: [], expected: "", id: crypto.randomUUID() },
             ])
           }
           className={css.addBtn}

@@ -14,18 +14,27 @@ import css from "./pageAdmin.module.css";
 
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
-const emptyQuestion: Question = {
-  id: uuidv4(),
+const emptyQuestionTemplate = {
   question: "",
   options: ["", ""],
-  correctAnswer: [""],
+  correct_answer: [""],
 };
 
-const emptyCodeTask: CodeTask = {
+const emptyCodeTaskTemplate = {
   prompt: "",
-  starterCode: "",
-  tests: [],
+  starter_code: "",
+  test_case: [],
 };
+
+const createEmptyQuestion = (): Question => ({
+  id: uuidv4(),
+  ...structuredClone(emptyQuestionTemplate),
+});
+
+const createEmptyCodeTask = (): CodeTask => ({
+  id: uuidv4(),
+  ...structuredClone(emptyCodeTaskTemplate),
+});
 
 export default function AdminPage() {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -37,8 +46,8 @@ export default function AdminPage() {
     level: "beginner",
     language: "javascript",
     type: "theory",
-    theoryQuestions: [structuredClone(emptyQuestion)],
-    codeTask: structuredClone(emptyCodeTask),
+    theory_question: [createEmptyQuestion()],
+    code_task: [createEmptyCodeTask()],
   });
   const [editId, setEditId] = useState<string | null>(null);
 
@@ -51,6 +60,8 @@ export default function AdminPage() {
   const fetchTasks = async () => {
     const res = await fetch("/api/tasks");
     const data = await res.json();
+
+    console.log(data);
     setTasks(data);
   };
 
@@ -62,8 +73,12 @@ export default function AdminPage() {
       level: task.level,
       language: task.language,
       type: task.type,
-      theoryQuestions: task.theoryQuestions || [structuredClone(emptyQuestion)],
-      codeTask: task.codeTask || structuredClone(emptyCodeTask),
+      theory_question: task.theory_question?.length
+        ? task.theory_question
+        : [createEmptyQuestion()],
+      code_task: task.code_task?.length
+        ? task.code_task
+        : [createEmptyCodeTask()],
     });
   };
 
@@ -119,8 +134,8 @@ export default function AdminPage() {
           setFormData={setFormData}
           editId={editId}
           setEditId={setEditId}
-          emptyQuestion={emptyQuestion}
-          emptyCodeTask={emptyCodeTask}
+          emptyQuestion={createEmptyQuestion}
+          emptyCodeTask={createEmptyCodeTask}
           fetchTasks={fetchTasks}
         />
       </div>

@@ -1,7 +1,7 @@
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import AutoGrowTextarea from "./AutoGrowTextarea";
 import css from "./taskform.module.css";
-import { PropsheoryInputs } from "@/types/types";
+import { PropsTheoryInputs } from "@/types/types";
 
 export default function TheoryInputs({
   questions,
@@ -11,7 +11,7 @@ export default function TheoryInputs({
   onQuestionRemove,
   onAddQuestion,
   setQuestions,
-}: PropsheoryInputs) {
+}: PropsTheoryInputs) {
   return (
     <div className={css.typeContainer}>
       <h3 className={css.typeTitle}>Theory Questions</h3>
@@ -73,7 +73,7 @@ export default function TheoryInputs({
             </button>
 
             <p className={css.questionTitle}>Correct answer</p>
-            {(q.correctAnswer.length > 0 ? q.correctAnswer : [""]).map(
+            {(q.correct_answer.length > 0 ? q.correct_answer : [""]).map(
               (answer, aIndex) => (
                 <div
                   key={`correct-${aIndex}`}
@@ -82,21 +82,21 @@ export default function TheoryInputs({
                   <AutoGrowTextarea
                     value={answer}
                     onChange={(e) => {
-                      const updatedAnswers = [...q.correctAnswer];
+                      const updatedAnswers = [...q.correct_answer];
                       updatedAnswers[aIndex] = e.target.value;
-                      onChange(index, "correctAnswer", updatedAnswers);
+                      onChange(index, "correct_answer", updatedAnswers);
                     }}
                     placeholder={`Correct Answer ${aIndex + 1}`}
                     rows={1}
                   />
-                  {q.correctAnswer.length > 1 && (
+                  {q.correct_answer.length > 1 && (
                     <button
                       type="button"
                       onClick={() => {
-                        const updated = q.correctAnswer.filter(
+                        const updated = q.correct_answer.filter(
                           (_, i) => i !== aIndex
                         );
-                        onChange(index, "correctAnswer", updated);
+                        onChange(index, "correct_answer", updated);
                       }}
                       className={css.deleteBtn}
                     >
@@ -110,7 +110,7 @@ export default function TheoryInputs({
             <button
               type="button"
               onClick={() => {
-                onChange(index, "correctAnswer", [...q.correctAnswer, ""]);
+                onChange(index, "correct_answer", [...q.correct_answer, ""]);
               }}
               className={css.addBtn}
             >
