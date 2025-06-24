@@ -4,9 +4,12 @@ export const config = {
 
 import type { NextApiRequest, NextApiResponse } from "next";
 // import type { Prisma } from "@prisma/client";
-import type { Prisma } from "@/generated/prisma";
+// import type { Prisma } from "@/generated/prisma";
 // import { Prisma, PrismaClient } from "@/generated/prisma";
 import { CodeTaskTest } from "@/types/types";
+// import { Prisma } from "@prisma/client";
+// import type { TaskCreateInput } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
