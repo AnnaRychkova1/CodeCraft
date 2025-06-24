@@ -30,6 +30,7 @@ export default function TasksList({
               className={css.textBox}
               role="link"
               tabIndex={0}
+              prefetch={false}
             >
               <h2 className={css.title}>{task.title}</h2>
               <p className={css.description}>{task.description}</p>
