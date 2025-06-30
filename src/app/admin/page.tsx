@@ -11,7 +11,12 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { CodeTask, Question, Task } from "@/types/types";
 import TaskForm from "@/components/Forms/TaskForm";
 import css from "./pageAdmin.module.css";
-import { createAdminToken, deleteTask, fetchTasks } from "@/services/tasks";
+import {
+  deleteTask,
+  fetchTaskById,
+  fetchTasks,
+  getAdminAccess,
+} from "@/services/tasks";
 
 const emptyQuestionTemplate = {
   question: "",
@@ -39,6 +44,8 @@ export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [password, setPassword] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<Task, "id">>({
     title: "",
     description: "",
@@ -48,14 +55,12 @@ export default function AdminPage() {
     theory_question: [createEmptyQuestion()],
     code_task: [createEmptyCodeTask()],
   });
-  const [editId, setEditId] = useState<string | null>(null);
 
   const router = useRouter();
 
   const loadTasks = async () => {
     try {
       const updated = await fetchTasks();
-      // console.log(updated);
       setTasks(updated);
     } catch (err) {
       console.error("Failed to fetch tasks:", err);
@@ -75,36 +80,48 @@ export default function AdminPage() {
     }
   }, [isAdmin]);
 
-  const handleEdit = (task: Task) => {
-    setEditId(task.id);
-    setFormData({
-      title: task.title,
-      description: task.description,
-      level: task.level,
-      language: task.language,
-      type: task.type,
-      theory_question: task.theory_question?.length
-        ? task.theory_question
-        : [createEmptyQuestion()],
-      code_task: task.code_task?.length
-        ? task.code_task
-        : [createEmptyCodeTask()],
-    });
-  };
-
-  const handleDelete = async (id: string) => {
+  const handleEdit = async (task: Task) => {
     try {
-      await deleteTask(id);
-      const updated = await fetchTasks();
-      setTasks(updated);
+      const fullTask = await fetchTaskById(task.id);
+      setEditId(fullTask.id);
+      setFormData({
+        title: fullTask.title,
+        description: fullTask.description,
+        level: fullTask.level,
+        language: fullTask.language,
+        type: fullTask.type,
+        theory_question: fullTask.theory_question?.length
+          ? fullTask.theory_question
+          : [createEmptyQuestion()],
+        code_task: fullTask.code_task?.length
+          ? fullTask.code_task
+          : [createEmptyCodeTask()],
+      });
     } catch (error) {
-      console.error("Delete failed:", error);
+      console.error("Failed to fetch full task:", error);
+      alert("Failed to load task data for editing.");
     }
   };
 
-  const handleLogin = async () => {
+  const handleDelete = async (id: string) => {
+    const confirmDelete = confirm("Are you sure?");
+    if (!confirmDelete) return;
+
+    setDeletingTaskId(id);
     try {
-      const token = await createAdminToken(password);
+      await deleteTask(id);
+      await loadTasks();
+    } catch (error) {
+      console.error("Delete failed:", error);
+      alert("Failed to delete.");
+    } finally {
+      setDeletingTaskId(null);
+    }
+  };
+
+  const handleAccess = async () => {
+    try {
+      const token = await getAdminAccess(password);
       localStorage.setItem("adminToken", token);
       setIsAdmin(true);
       setPassword("");
@@ -114,7 +131,7 @@ export default function AdminPage() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogoutAdmin = () => {
     localStorage.removeItem("adminToken");
     setIsAdmin(false);
     setPassword("");
@@ -124,8 +141,8 @@ export default function AdminPage() {
 
   if (!isAdmin) {
     return (
-      <section className={css.sectionLogin}>
-        <h2 className={css.title}>Admin Login</h2>
+      <section className={css.sectionAccess}>
+        <h2 className={css.title}>Admin Access</h2>
         <input
           type="password"
           placeholder="Enter your password"
@@ -133,9 +150,9 @@ export default function AdminPage() {
           onChange={(e) => setPassword(e.target.value)}
           className={css.adminInput}
         />
-        <div className={css.buttonLoginContainer}>
-          <button onClick={handleLogin} className={css.loginBtn}>
-            Login
+        <div className={css.buttonAccessContainer}>
+          <button onClick={handleAccess} className={css.accessBtn}>
+            Get Access
           </button>
         </div>
       </section>
@@ -145,8 +162,8 @@ export default function AdminPage() {
   return (
     <section className={css.section}>
       <button
-        onClick={handleLogout}
-        className={`${css.logoutBtn} ${css.loginBtn}`}
+        onClick={handleLogoutAdmin}
+        className={`${css.logoutBtn} ${css.accessBtn}`}
       >
         Logout
       </button>
@@ -219,8 +236,13 @@ export default function AdminPage() {
                   <button
                     onClick={() => handleDelete(task.id)}
                     className={css.deleteBtn}
+                    disabled={deletingTaskId === task.id}
                   >
-                    <FiTrash2 size={20} />
+                    {deletingTaskId === task.id ? (
+                      "Deleting..."
+                    ) : (
+                      <FiTrash2 size={20} />
+                    )}
                   </button>
                 </div>
               </li>

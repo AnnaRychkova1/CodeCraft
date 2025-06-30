@@ -13,15 +13,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    // const { data: tasks, error } = await supabase.from("task")
-    //   .select(`
-    //   *,
-    //   theory_question(*),
-    //   code_task!fk_task(
-    //     *,
-    //     test_case(*)
-    //   )
-    // `);
     const { data: tasks, error } = await supabase.from("task").select(`
       id,
       title,

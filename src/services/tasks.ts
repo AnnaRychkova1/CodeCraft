@@ -1,15 +1,13 @@
 import { TaskFormData } from "@/types/types";
 
-// const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
-
 function getToken() {
   return typeof window !== "undefined"
     ? localStorage.getItem("adminToken")
     : null;
 }
 
-export async function createAdminToken(password: string): Promise<string> {
-  const res = await fetch("/api/admin/token", {
+export async function getAdminAccess(password: string): Promise<string> {
+  const res = await fetch("/api/admin/access", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -44,12 +42,7 @@ export async function fetchTasks() {
 }
 
 export async function fetchTaskById(taskId: string) {
-  // const res = await fetch(`${BASE_URL}/api/task/${taskId}`, {
-  //   // cache: "no-store",
-  //   next: { revalidate: 60 },
-  // });
   const res = await fetch(`/api/public/task/${taskId}`, {
-    // cache: "no-store",
     next: { revalidate: 60 },
   });
 

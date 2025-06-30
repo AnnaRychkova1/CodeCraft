@@ -7,10 +7,7 @@ const supabase = createClient(
 );
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("Hello");
   const { id } = req.query;
-
-  console.log("from server", id);
 
   if (typeof id !== "string") {
     return res.status(400).json({ error: "Invalid or missing id" });
@@ -20,7 +17,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     res.setHeader("Allow", ["GET"]);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-
   try {
     const { data: task, error } = await supabase
       .from("task")
@@ -39,8 +35,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     if (error) throw error;
     if (!task) return res.status(404).json({ error: "Task not found" });
-
-    console.log(task);
 
     return res.status(200).json(task);
   } catch (error) {
