@@ -1,6 +1,6 @@
 import { TaskFormData } from "@/types/types";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+// const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
 function getToken() {
   return typeof window !== "undefined"
@@ -28,7 +28,7 @@ export async function createAdminToken(password: string): Promise<string> {
 
 export async function fetchTasks() {
   try {
-    const res = await fetch("/api/tasks");
+    const res = await fetch("/api/public/tasks");
     if (!res.ok) {
       throw new Error(`Failed to fetch tasks: ${res.statusText}`);
     }
@@ -44,8 +44,13 @@ export async function fetchTasks() {
 }
 
 export async function fetchTaskById(taskId: string) {
-  const res = await fetch(`${baseUrl}/api/task/${taskId}`, {
-    cache: "no-store",
+  // const res = await fetch(`${BASE_URL}/api/task/${taskId}`, {
+  //   // cache: "no-store",
+  //   next: { revalidate: 60 },
+  // });
+  const res = await fetch(`/api/public/task/${taskId}`, {
+    // cache: "no-store",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) {
@@ -60,7 +65,7 @@ export async function createTask(formData: TaskFormData) {
   const token = getToken();
   if (!token) throw new Error("No admin token found");
 
-  const res = await fetch("/api/tasks", {
+  const res = await fetch("/api/admin/tasks", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -77,7 +82,7 @@ export async function updateTask(editId: string, formData: TaskFormData) {
   const token = getToken();
   if (!token) throw new Error("No admin token found");
 
-  const res = await fetch(`/api/task/${editId}`, {
+  const res = await fetch(`/api/admin/task/${editId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -94,7 +99,7 @@ export async function deleteTask(id: string): Promise<void> {
   const token = getToken();
   if (!token) throw new Error("No admin token found");
 
-  const response = await fetch(`/api/task/${id}`, {
+  const response = await fetch(`/api/admin/task/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,

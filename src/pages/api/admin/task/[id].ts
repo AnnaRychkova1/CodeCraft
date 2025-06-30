@@ -1,52 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { CodeTaskTest, Question } from "@/types/types";
-
-import { verifyAdminToken } from "@/utils/verifyAdminToken";
+import { adminAuthMiddleware } from "@/lib/adminAuthMiddleware";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const adminHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
 
   if (typeof id !== "string") {
     return res.status(400).json({ error: "Invalid or missing id" });
   }
 
-  if (["PUT", "DELETE"].includes(req.method || "")) {
-    const { valid, error } = verifyAdminToken(req, res);
-    if (!valid) return res.status(403).json({ error });
-  }
-
   try {
-    if (req.method === "GET") {
-      const { data: task, error } = await supabase
-        .from("task")
-        .select(
-          `
-          *,
-          theory_question(*),
-          code_task!fk_task( 
-            *,
-            test_case(*)
-          )
-        `
-        )
-        .eq("id", id)
-        .single();
-
-      if (error) throw error;
-      if (!task) return res.status(404).json({ error: "Task not found" });
-
-      return res.status(200).json(task);
-    }
-
     if (req.method === "PUT") {
       const {
         title,
@@ -175,14 +144,15 @@ export default async function handler(
       const { error } = await supabase.from("task").delete().eq("id", id);
       if (error) throw error;
 
-      res.status(204).end();
-      return;
+      return res.status(204).end();
     }
 
-    res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
+    res.setHeader("Allow", ["PUT", "DELETE"]);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   } catch (error) {
     console.error("❌ API Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
+
+export default adminAuthMiddleware(adminHandler);

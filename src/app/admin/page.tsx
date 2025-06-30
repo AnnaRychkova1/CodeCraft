@@ -55,6 +55,7 @@ export default function AdminPage() {
   const loadTasks = async () => {
     try {
       const updated = await fetchTasks();
+      // console.log(updated);
       setTasks(updated);
     } catch (err) {
       console.error("Failed to fetch tasks:", err);
