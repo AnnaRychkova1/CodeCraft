@@ -1,57 +1,84 @@
 "use client";
 
-import { Task } from "@/types/types";
+import { use, useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+
+import { CodeTask, Task } from "@/types/types";
+import { fetchTaskById } from "@/services/tasks";
+import Loader from "@/components/Loader/Loader";
 import TheoryTest from "@/components/TheoryTest/TheoryTest";
 import CodeEditor from "@/components/CodeEditor/CodeEditor";
-
 import TaskTopSection from "@/components/TaskTopSection/TaskTopSection";
-import { use, useEffect, useState } from "react";
-import { fetchTaskById } from "@/services/tasks";
 
-export default function TaskPage({
-  params,
-}: {
+type Props = {
   params: Promise<{ id: string }>;
-}) {
-  const { id: taskId } = use(params);
+};
+
+export default function TaskPage({ params }: Props) {
+  const { id } = use(params);
 
   const [task, setTask] = useState<Task | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function loadTask() {
+      setLoading(true);
+      setLoadError(false);
       try {
-        const data = await fetchTaskById(taskId);
-        setTask(data);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Unknown error");
+        const fetchedTask = await fetchTaskById(id);
+        if (!fetchedTask) {
+          setLoadError(true);
+          toast.error("Task not found");
+          return;
         }
+        setTask(fetchedTask);
+        toast.success("Task loaded successfully", { id: "load-success" });
+      } catch (error: unknown) {
+        setLoadError(true);
+        toast.error(
+          error instanceof Error ? error.message : "Failed to load task",
+          { id: "load-error" }
+        );
+      } finally {
+        setLoading(false);
       }
-    };
+    }
 
-    fetchData();
-  }, [taskId]);
+    loadTask();
+  }, [id]);
 
-  if (error) return <div>Error: {error}</div>;
-  if (!task) return <div>Loading...</div>;
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!id) {
+    return <Loader />;
+  }
+
+  if (loadError || !task) {
+    return (
+      <>
+        <div style={{ textAlign: "center", padding: "2rem" }}>
+          <p>Failed to load task.</p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <TaskTopSection task={task} />
+
       {task.type === "theory" && task.theory_question && (
         <TheoryTest theoryQuestions={task.theory_question} />
       )}
 
-      {task.type === "practice" && Array.isArray(task.code_task) && (
-        <>
-          {task.code_task.map((codeTask, index) => (
-            <CodeEditor key={index} task={codeTask} language={task.language} />
-          ))}
-        </>
-      )}
+      {task.type === "practice" &&
+        Array.isArray(task.code_task) &&
+        task.code_task.map((codeTask: CodeTask, index: number) => (
+          <CodeEditor key={index} task={codeTask} language={task.language} />
+        ))}
     </>
   );
 }

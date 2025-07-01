@@ -98,6 +98,7 @@ export type TaskFormProps = {
   emptyQuestion: () => Question;
   emptyCodeTask: () => CodeTask;
   onSubmitSuccess?: () => void;
+  cancelEdit: () => void;
 };
 
 export interface PropsPracticeInputs {

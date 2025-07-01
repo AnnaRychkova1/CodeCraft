@@ -89,8 +89,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res
       .status(201)
       .json({ message: "Task created successfully", id: taskId });
-  } catch (error: unknown) {
-    console.error("POST API error:", error);
+  } catch (error) {
+    console.error("API error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

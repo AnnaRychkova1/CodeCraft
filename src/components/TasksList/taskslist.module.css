@@ -28,11 +28,6 @@
     8px 8px 12px rgba(185, 246, 195, 0.95);
 }
 
-.noResult {
-  font-size: 1.5rem;
-  margin-left: 24px;
-}
-
 .textBox {
   display: flex;
   flex-direction: column;

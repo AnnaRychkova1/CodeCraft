@@ -1,3 +1,22 @@
+.formWrapper {
+  position: relative;
+  min-height: 500px;
+}
+
+.loaderOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(231, 249, 245, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
 .taskTextarea {
   overflow: hidden;
   resize: none;
@@ -203,7 +222,19 @@
 }
 
 .createUpdateBtn:hover,
-.createUpdateBtnn:focus {
+.createUpdateBtn:focus {
+  background-color: var(--btn-hover);
+}
+.cancelBtn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 18px;
+  color: var(--foreground);
+  background-color: rgba(193, 249, 196, 0.6);
+}
+
+.cancelBtn:hover {
   background-color: var(--btn-hover);
 }
 

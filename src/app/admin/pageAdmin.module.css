@@ -189,6 +189,11 @@
   margin-left: 24px;
 }
 
+.expiredWarning {
+  color: crimson;
+  text-align: center;
+}
+
 @media only screen and (min-width: 768px) {
   .section {
     display: grid;

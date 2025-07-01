@@ -1,14 +1,16 @@
 "use client";
 
-import type { Level, Language, TaskType, Task } from "@/types/types";
 import { MdFilterList } from "react-icons/md";
-import { resetFilters } from "@/utils/resetFilters";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
 
-import css from "./tasks.module.css";
+import { resetFilters } from "@/utils/resetFilters";
+import { fetchTasks } from "@/services/tasks";
+import type { Level, Language, TaskType, Task } from "@/types/types";
 import TasksList from "@/components/TasksList/TasksList";
 import Filtering from "@/components/Filtering/Filtering";
-import { fetchTasks } from "@/services/tasks";
+import Loader from "@/components/Loader/Loader";
+import css from "./tasks.module.css";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -16,20 +18,28 @@ export default function Tasks() {
   const [language, setLanguage] = useState<Language[]>([]);
   const [type, setType] = useState<TaskType[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const typedTasks = Array.isArray(tasks) ? (tasks as Task[]) : [];
 
-  console.log(typedTasks);
-
   useEffect(() => {
     async function loadTasks() {
+      setLoading(true);
+      setLoadError(false);
       try {
         const data = await fetchTasks();
         setTasks(data);
       } catch (err) {
-        // TODO notification
-        console.error("Error loading tasks:", err);
+        setLoadError(true);
+        toast.error(
+          `Error verifying session. Please login again. ${
+            err instanceof Error ? err.message : String(err)
+          }`
+        );
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -132,12 +142,26 @@ export default function Tasks() {
           />
         </aside>
 
-        <TasksList
-          tasks={filteredTasks}
-          setLevel={setLevel}
-          setLanguage={setLanguage}
-          setType={setType}
-        />
+        <div className={css.listWrapper}>
+          {loading ? (
+            <div className={css.loaderOverlay}>
+              <Loader />
+            </div>
+          ) : loadError ? (
+            <div className={css.noResult}>Failed to load tasks.</div>
+          ) : filteredTasks.length > 0 ? (
+            <TasksList
+              tasks={filteredTasks}
+              setLevel={setLevel}
+              setLanguage={setLanguage}
+              setType={setType}
+            />
+          ) : (
+            <div className={css.noResult}>
+              No tasks match the selected filters.
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

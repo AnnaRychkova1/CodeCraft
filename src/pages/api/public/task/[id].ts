@@ -38,7 +38,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     return res.status(200).json(task);
   } catch (error) {
-    console.error("❌ API Error:", error);
+    console.error("API Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }

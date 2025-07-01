@@ -1,15 +1,12 @@
 import { FeedbackData } from "@/types/types";
+import { handleResponse } from "@/utils/handleResponse";
 
-export async function sendFeedback(data: FeedbackData): Promise<Response> {
-  const response = await fetch("/api/feedback", {
+export async function sendFeedback(data: FeedbackData) {
+  const res = await fetch("/api/public/feedback/feedback", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to send feedback");
-  }
-
-  return response;
+  return handleResponse(res);
 }

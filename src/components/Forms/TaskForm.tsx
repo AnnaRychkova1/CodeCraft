@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 import { CodeTask, Question, TaskFormProps } from "@/types/types";
 import AutoGrowTextarea from "./AutoGrowTextarea";
@@ -6,6 +8,7 @@ import css from "./taskform.module.css";
 import TheoryInputs from "./TheoryInputs";
 import PracticeInputs from "./PracticeInputs";
 import { createTask, updateTask } from "@/services/tasks";
+import Loader from "../Loader/Loader";
 
 export default function TaskForm({
   formData,
@@ -15,7 +18,10 @@ export default function TaskForm({
   emptyQuestion,
   emptyCodeTask,
   onSubmitSuccess,
+  cancelEdit,
 }: TaskFormProps) {
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -139,125 +145,153 @@ export default function TaskForm({
     });
   };
 
+  const clearForm = () => {
+    setFormData({
+      title: "",
+      description: "",
+      level: "beginner",
+      language: "javascript",
+      type: "theory",
+      theory_question: [structuredClone(emptyQuestion())],
+      code_task: [structuredClone(emptyCodeTask())],
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       if (editId) {
         await updateTask(editId, formData);
+        toast.success("Task updated successfully");
       } else {
         await createTask(formData);
+        toast.success("Task created successfully");
       }
 
-      setFormData({
-        title: "",
-        description: "",
-        level: "beginner",
-        language: "javascript",
-        type: "theory",
-        theory_question: [structuredClone(emptyQuestion())],
-        code_task: [structuredClone(emptyCodeTask())],
-      });
+      clearForm();
 
       setEditId(null);
 
       if (onSubmitSuccess) {
         await onSubmitSuccess();
       }
-    } catch (error) {
-      console.error("Error submitting task:", error);
+    } catch {
+      toast.error("Failed to submit task");
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (loading) {
+    return <Loader />;
+  }
   return (
-    <form onSubmit={handleSubmit} className={css.taskForm}>
-      <div className={css.formContent}>
-        <AutoGrowTextarea
-          name="title"
-          aria-label="Title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Title"
-          rows={1}
-          required
-        />
-
-        <AutoGrowTextarea
-          name="description"
-          aria-label="Description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Description"
-          rows={2}
-        />
-        <div className={css.selectContainer}>
-          <select
-            name="language"
-            value={formData.language}
+    <div className={css.formWrapper}>
+      {loading && (
+        <div className={css.loaderOverlay}>
+          <Loader />
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className={css.taskForm}>
+        <div className={css.formContent}>
+          <AutoGrowTextarea
+            name="title"
+            aria-label="Title"
+            value={formData.title}
             onChange={handleChange}
-            className={css.select}
-          >
-            <option value="javascript">JavaScript</option>
-            <option value="python">Python</option>
-            <option value="java">Java</option>
-          </select>
+            placeholder="Title"
+            rows={1}
+            required
+          />
 
-          <select
-            name="level"
-            value={formData.level}
+          <AutoGrowTextarea
+            name="description"
+            aria-label="Description"
+            value={formData.description}
             onChange={handleChange}
-            className={css.select}
-          >
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
+            placeholder="Description"
+            rows={2}
+          />
+          <div className={css.selectContainer}>
+            <select
+              name="language"
+              value={formData.language}
+              onChange={handleChange}
+              className={css.select}
+            >
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+            </select>
 
-          <select
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            className={css.select}
-          >
-            <option value="theory">Theory</option>
-            <option value="practice">Practice</option>
-          </select>
+            <select
+              name="level"
+              value={formData.level}
+              onChange={handleChange}
+              className={css.select}
+            >
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className={css.select}
+            >
+              <option value="theory">Theory</option>
+              <option value="practice">Practice</option>
+            </select>
+          </div>
+
+          {formData.type === "theory" && (
+            <TheoryInputs
+              questions={formData.theory_question || []}
+              onChange={handleQuestionChange}
+              onOptionChange={handleOptionChange}
+              onOptionRemove={handleOptionRemove}
+              onQuestionRemove={handleQuestionRemove}
+              onAddQuestion={handleAddQuestion}
+              setQuestions={(newQuestions) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  theory_question: newQuestions,
+                }))
+              }
+            />
+          )}
+
+          {formData.type === "practice" &&
+            formData.code_task?.map((codeTaskItem, idx) => (
+              <PracticeInputs
+                key={idx}
+                code_task={codeTaskItem}
+                onChange={(key, value) => handleCodeTaskChange(idx, key, value)}
+                onTestChange={(testIndex, updatedTest) =>
+                  handleTestChange(idx, testIndex, updatedTest)
+                }
+                onTestRemove={(testIndex) => handleTestRemove(idx, testIndex)}
+              />
+            ))}
         </div>
 
-        {formData.type === "theory" && (
-          <TheoryInputs
-            questions={formData.theory_question || []}
-            onChange={handleQuestionChange}
-            onOptionChange={handleOptionChange}
-            onOptionRemove={handleOptionRemove}
-            onQuestionRemove={handleQuestionRemove}
-            onAddQuestion={handleAddQuestion}
-            setQuestions={(newQuestions) =>
-              setFormData((prev) => ({
-                ...prev,
-                theory_question: newQuestions,
-              }))
-            }
-          />
+        <button type="submit" className={css.createUpdateBtn}>
+          {loading ? "Saving..." : editId ? "Update Task" : "Create Task"}
+        </button>
+        {editId ? (
+          <button onClick={cancelEdit} className={css.cancelBtn} type="button">
+            Cancel Edit
+          </button>
+        ) : (
+          <button onClick={clearForm} className={css.cancelBtn} type="button">
+            Clear Form
+          </button>
         )}
-
-        {formData.type === "practice" &&
-          formData.code_task?.map((codeTaskItem, idx) => (
-            <PracticeInputs
-              key={idx}
-              code_task={codeTaskItem}
-              onChange={(key, value) => handleCodeTaskChange(idx, key, value)}
-              onTestChange={(testIndex, updatedTest) =>
-                handleTestChange(idx, testIndex, updatedTest)
-              }
-              onTestRemove={(testIndex) => handleTestRemove(idx, testIndex)}
-            />
-          ))}
-      </div>
-
-      <button type="submit" className={css.createUpdateBtn}>
-        {editId ? "Update Task" : "Create Task"}
-      </button>
-    </form>
+      </form>
+    </div>
   );
 }

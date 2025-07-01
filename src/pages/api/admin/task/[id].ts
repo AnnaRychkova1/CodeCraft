@@ -144,13 +144,13 @@ const adminHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       const { error } = await supabase.from("task").delete().eq("id", id);
       if (error) throw error;
 
-      return res.status(204).end();
+      return res.status(200).json({ message: "Task deleted" });
     }
 
     res.setHeader("Allow", ["PUT", "DELETE"]);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   } catch (error) {
-    console.error("❌ API Error:", error);
+    console.error("API Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

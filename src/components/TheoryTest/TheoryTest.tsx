@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { toast } from "react-hot-toast";
 import Confetti from "react-confetti";
 import css from "./theorytest.module.css";
 import { TheoryTestProps } from "@/types/types";
@@ -16,6 +17,8 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
   const [scorePercent, setScorePercent] = useState<number | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiVisible, setConfettiVisible] = useState(false);
+
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const handleSelect = (index: number, answer: string, isMulti: boolean) => {
     if (submitted) return;
@@ -54,6 +57,8 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
 
     if (percent === 100) {
       setShowConfetti(true);
+    } else {
+      toast.error("Some answers are incorrect. Please review your answers.");
     }
   };
 
@@ -95,6 +100,12 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
       };
     }
   }, [showConfetti]);
+
+  useEffect(() => {
+    if (submitted && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [submitted]);
 
   return (
     <section className={css.theorySection}>
@@ -153,14 +164,14 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
         )}
 
         {submitted && (
-          <>
+          <div ref={resultsRef}>
             <p className={css.score}>
               You scored: {scorePercent?.toFixed(0)}% correct answers
             </p>
             <button className={css.retryBtn} onClick={handleRetry}>
               Try Again
             </button>
-          </>
+          </div>
         )}
 
         {showConfetti && (

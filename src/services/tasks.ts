@@ -1,4 +1,5 @@
-import { TaskFormData } from "@/types/types";
+import { Task, TaskFormData } from "@/types/types";
+import { handleResponse } from "@/utils/handleResponse";
 
 function getToken() {
   return typeof window !== "undefined"
@@ -7,7 +8,7 @@ function getToken() {
 }
 
 export async function getAdminAccess(password: string): Promise<string> {
-  const res = await fetch("/api/admin/access", {
+  const res = await fetch("/api/admin/access/access", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -15,42 +16,41 @@ export async function getAdminAccess(password: string): Promise<string> {
     body: JSON.stringify({ password }),
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to create admin token");
-  }
-
-  const data = await res.json();
+  const data = await handleResponse<{ token: string }>(res);
   localStorage.setItem("adminToken", data.token);
   return data.token;
 }
 
+export const verifyAdminToken = async (token: string): Promise<boolean> => {
+  const res = await fetch("/api/admin/access/verifyToken", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await handleResponse<{ valid: boolean }>(res);
+  return data.valid === true;
+};
+
 export async function fetchTasks() {
-  try {
-    const res = await fetch("/api/public/tasks");
-    if (!res.ok) {
-      throw new Error(`Failed to fetch tasks: ${res.statusText}`);
-    }
-    const data = await res.json();
-    if (!Array.isArray(data)) {
-      throw new Error("Invalid tasks data format");
-    }
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
+  const res = await fetch("/api/public/tasks");
+  const data = await handleResponse<Task[]>(res);
+
+  if (!Array.isArray(data)) {
+    throw new Error("Invalid tasks data format");
   }
+  return data;
 }
 
 export async function fetchTaskById(taskId: string) {
-  const res = await fetch(`/api/public/task/${taskId}`, {
-    next: { revalidate: 60 },
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const res = await fetch(`${baseUrl}/api/public/task/${taskId}`, {
+    cache: "no-store",
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch task");
-  }
-
-  return res.json();
+  return handleResponse<Task>(res);
 }
 
 // only admin
@@ -67,8 +67,7 @@ export async function createTask(formData: TaskFormData) {
     body: JSON.stringify(formData),
   });
 
-  if (!res.ok) throw new Error("Failed to create task");
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function updateTask(editId: string, formData: TaskFormData) {
@@ -84,23 +83,19 @@ export async function updateTask(editId: string, formData: TaskFormData) {
     body: JSON.stringify(formData),
   });
 
-  if (!res.ok) throw new Error("Failed to update task");
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function deleteTask(id: string): Promise<void> {
   const token = getToken();
   if (!token) throw new Error("No admin token found");
 
-  const response = await fetch(`/api/admin/task/${id}`, {
+  const res = await fetch(`/api/admin/task/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error?.error || "Failed to delete task");
-  }
+  await handleResponse(res);
 }

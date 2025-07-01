@@ -10,12 +10,15 @@ import { GiHammerBreak } from "react-icons/gi";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { CodeTask, Question, Task } from "@/types/types";
 import TaskForm from "@/components/Forms/TaskForm";
+import Loader from "@/components/Loader/Loader";
+import { toast } from "react-hot-toast";
 import css from "./pageAdmin.module.css";
 import {
   deleteTask,
   fetchTaskById,
   fetchTasks,
   getAdminAccess,
+  verifyAdminToken,
 } from "@/services/tasks";
 
 const emptyQuestionTemplate = {
@@ -42,9 +45,14 @@ const createEmptyCodeTask = (): CodeTask => ({
 
 export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [password, setPassword] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [loggingIn, setLoggingIn] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+
   const [editId, setEditId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<Task, "id">>({
     title: "",
@@ -59,26 +67,58 @@ export default function AdminPage() {
   const router = useRouter();
 
   const loadTasks = async () => {
+    setLoading(true);
+    setLoadError(false);
     try {
       const updated = await fetchTasks();
       setTasks(updated);
-    } catch (err) {
-      console.error("Failed to fetch tasks:", err);
+    } catch (err: unknown) {
+      toast.error(`${err instanceof Error ? err.message : String(err)}`);
+      setLoadError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("adminToken");
-    if (token) {
-      setIsAdmin(true);
-    }
+    const checkToken = async () => {
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        setSessionExpired(false);
+        return;
+      }
+
+      try {
+        const isValid = await verifyAdminToken(token);
+        if (isValid) {
+          setIsAdmin(true);
+          setSessionExpired(false);
+        } else {
+          localStorage.removeItem("adminToken");
+          setIsAdmin(false);
+          setSessionExpired(true);
+          toast.error("Session expired. Please login again.");
+        }
+      } catch (err: unknown) {
+        localStorage.removeItem("adminToken");
+        setIsAdmin(false);
+        setSessionExpired(true);
+        toast.error(
+          `Error verifying session. Please login again. ${
+            err instanceof Error ? err.message : String(err)
+          }`
+        );
+      }
+    };
+
+    checkToken();
   }, []);
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin && !sessionExpired) {
       loadTasks();
     }
-  }, [isAdmin]);
+  }, [isAdmin, sessionExpired]);
 
   const handleEdit = async (task: Task) => {
     try {
@@ -97,10 +137,27 @@ export default function AdminPage() {
           ? fullTask.code_task
           : [createEmptyCodeTask()],
       });
-    } catch (error) {
-      console.error("Failed to fetch full task:", error);
-      alert("Failed to load task data for editing.");
+    } catch (err) {
+      toast.error(
+        `Failed to load task for editing: ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
     }
+  };
+
+  const cancelEdit = () => {
+    setEditId(null);
+    setFormData({
+      title: "",
+      description: "",
+      level: "beginner",
+      language: "javascript",
+      type: "theory",
+      theory_question: [createEmptyQuestion()],
+      code_task: [createEmptyCodeTask()],
+    });
+    toast("Edit cancelled", { icon: "✖️" });
   };
 
   const handleDelete = async (id: string) => {
@@ -110,32 +167,43 @@ export default function AdminPage() {
     setDeletingTaskId(id);
     try {
       await deleteTask(id);
+      toast.success("Task deleted successfully");
       await loadTasks();
-    } catch (error) {
-      console.error("Delete failed:", error);
-      alert("Failed to delete.");
+    } catch (err) {
+      toast.error(
+        `Failed to delete task: ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
     } finally {
       setDeletingTaskId(null);
     }
   };
 
   const handleAccess = async () => {
+    setLoggingIn(true);
     try {
       const token = await getAdminAccess(password);
       localStorage.setItem("adminToken", token);
       setIsAdmin(true);
       setPassword("");
+      toast.success("Admin access granted");
     } catch (err) {
-      alert("Wrong password or error. Try again...");
-      console.error(err);
+      toast.error(`${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setLoggingIn(false);
     }
   };
 
   const handleLogoutAdmin = () => {
+    const confirmDelete = confirm("Are you sure?");
+    if (!confirmDelete) return;
     localStorage.removeItem("adminToken");
     setIsAdmin(false);
     setPassword("");
     setEditId(null);
+    toast.success("Logged out successfully");
+
     router.push("/");
   };
 
@@ -143,6 +211,11 @@ export default function AdminPage() {
     return (
       <section className={css.sectionAccess}>
         <h2 className={css.title}>Admin Access</h2>
+        {sessionExpired && (
+          <p className={css.expiredWarning}>
+            Session expired. Please login again.
+          </p>
+        )}
         <input
           type="password"
           placeholder="Enter your password"
@@ -150,15 +223,22 @@ export default function AdminPage() {
           onChange={(e) => setPassword(e.target.value)}
           className={css.adminInput}
         />
-        <div className={css.buttonAccessContainer}>
-          <button onClick={handleAccess} className={css.accessBtn}>
-            Get Access
-          </button>
-        </div>
+        {loggingIn ? (
+          <Loader />
+        ) : (
+          <div className={css.buttonAccessContainer}>
+            <button
+              onClick={handleAccess}
+              className={css.accessBtn}
+              disabled={loggingIn}
+            >
+              Get Access
+            </button>
+          </div>
+        )}
       </section>
     );
   }
-
   return (
     <section className={css.section}>
       <button
@@ -178,14 +258,19 @@ export default function AdminPage() {
           emptyQuestion={createEmptyQuestion}
           emptyCodeTask={createEmptyCodeTask}
           onSubmitSuccess={loadTasks}
+          cancelEdit={cancelEdit}
         />
       </div>
 
       <div>
         <h2 className={css.title}>Tasks</h2>
-        <ul className={css.tasksList}>
-          {tasks.length > 0 ? (
-            tasks.map((task) => (
+        {loading ? (
+          <Loader />
+        ) : loadError ? (
+          <div className={css.noResult}>Failed to load tasks.</div>
+        ) : tasks.length > 0 ? (
+          <ul className={css.tasksList}>
+            {tasks.map((task) => (
               <li key={task.id} className={css.task}>
                 <div className={css.taskInfo}>
                   <h3>{task.title}</h3>
@@ -246,11 +331,11 @@ export default function AdminPage() {
                   </button>
                 </div>
               </li>
-            ))
-          ) : (
-            <li className={css.noResult}>No tasks yet.</li>
-          )}
-        </ul>
+            ))}
+          </ul>
+        ) : (
+          <div className={css.noResult}>No tasks yet.</div>
+        )}
       </div>
     </section>
   );

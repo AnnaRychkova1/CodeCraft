@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+
 import { MdLooksOne, MdLooksTwo, MdLooks3 } from "react-icons/md";
 import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
@@ -22,7 +23,7 @@ export default function TasksList({
 
   return (
     <ul className={css.tasksContainer}>
-      {tasks.length > 0 ? (
+      {tasks.length > 0 &&
         tasks.map((task) => (
           <li key={task.id} className={css.taskItem}>
             <Link
@@ -86,10 +87,7 @@ export default function TasksList({
               </button>
             </div>
           </li>
-        ))
-      ) : (
-        <li className={css.noResult}>No tasks match your filters.</li>
-      )}
+        ))}
     </ul>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 
 import css from "./codeeditor.module.css";
@@ -11,6 +11,8 @@ export default function CodeEditor({ task, language }: CodeEditorProps) {
   const [output, setOutput] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiVisible, setConfettiVisible] = useState(false);
+
+  const outputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (showConfetti) {
@@ -31,6 +33,12 @@ export default function CodeEditor({ task, language }: CodeEditorProps) {
     }
   }, [showConfetti]);
 
+  useEffect(() => {
+    if (output.length > 0 && outputRef.current) {
+      outputRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [output]);
+
   return (
     <section className={css.editorSection}>
       <div className={css.editorContainer}>
@@ -41,7 +49,7 @@ export default function CodeEditor({ task, language }: CodeEditorProps) {
           setShowConfetti={setShowConfetti}
         />
         {output.length > 0 && (
-          <div className={css.outputBox}>
+          <div className={css.outputBox} ref={outputRef}>
             <strong>Results:</strong>
             {output.map((result, index) => {
               const isPassed = result === "passed";

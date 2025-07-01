@@ -1,6 +1,8 @@
 import { useState } from "react";
-import css from "./feedbackform.module.css";
+import { toast } from "react-hot-toast";
 import { sendFeedback } from "@/services/feedback";
+import Loader from "@/components/Loader/Loader";
+import css from "./feedbackform.module.css";
 
 export default function FeedbackForm() {
   const [formData, setFormData] = useState({
@@ -93,71 +95,80 @@ export default function FeedbackForm() {
       await sendFeedback(formData);
       setStatus("success");
       setFormData({ email: "", feedback: "" });
+      toast.success("Feedback sent successfully!");
     } catch (err) {
-      console.error(err);
+      const message = err instanceof Error ? err.message : "Unknown error";
+      toast.error(message);
       setStatus("error");
     }
   };
 
   return (
-    <form className={css.feedbackBox} onSubmit={handleSubmit}>
-      <label htmlFor="feedback">
-        Have feedback? Let&rsquo;s make CodeCraft better together.
-      </label>
-      <div className={css.inputContainer}>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="Your Email"
-          required
-          value={formData.email}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          className={css.formEmail}
-          autoComplete="off"
-        />
-        {errors.email && (
-          <p className={css.error} id="email-error">
-            {errors.email}
-          </p>
-        )}
-      </div>
-      <div className={css.inputContainer}>
-        <textarea
-          id="feedback"
-          name="feedback"
-          rows={6}
-          placeholder="Your Feedback"
-          value={formData.feedback}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          required
-          className={css.formMessage}
-        ></textarea>
-        {errors.feedback && (
-          <p className={css.error} id="feedback-error">
-            {errors.feedback}
-          </p>
-        )}
-      </div>
+    <div className={css.formWrapper}>
+      {status === "sending" && (
+        <div className={css.loaderOverlay}>
+          <Loader />
+        </div>
+      )}
+      <form className={css.feedbackBox} onSubmit={handleSubmit}>
+        <label htmlFor="feedback">
+          Have feedback? Let&rsquo;s make CodeCraft better together.
+        </label>
+        <div className={css.inputContainer}>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Your Email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            className={css.formEmail}
+            autoComplete="off"
+          />
+          {errors.email && (
+            <p className={css.error} id="email-error">
+              {errors.email}
+            </p>
+          )}
+        </div>
+        <div className={css.inputContainer}>
+          <textarea
+            id="feedback"
+            name="feedback"
+            rows={6}
+            placeholder="Your Feedback"
+            value={formData.feedback}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            required
+            className={css.formMessage}
+          ></textarea>
+          {errors.feedback && (
+            <p className={css.error} id="feedback-error">
+              {errors.feedback}
+            </p>
+          )}
+        </div>
 
-      <div className={css.btnContainer}>
-        <button
-          type="submit"
-          disabled={status === "sending"}
-          className={css.sendBtn}
-        >
-          {status === "sending" ? "Sending..." : "Send"}
-        </button>
-      </div>
+        <div className={css.btnContainer}>
+          <button
+            type="submit"
+            disabled={status === "sending"}
+            className={css.sendBtn}
+          >
+            {status === "sending" ? "Sending..." : "Send"}
+          </button>
+        </div>
 
-      {/* {status === "success" && (
+        {/* {status === "success" && (
       <p className={css.success}>Thank you! 🎉</p>
     )}
     {status === "error" && (
       <p className={css.error}>Something went wrong. 😢</p>
     )} */}
-    </form>
+      </form>
+    </div>
   );
 }
