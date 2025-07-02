@@ -1,0 +1,43 @@
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(127, 159, 152, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--background);
+  padding: 32px;
+  border-radius: 8px;
+  border: 4px double var(--accent-dark);
+  max-width: 400px;
+  text-align: center;
+}
+
+.modalActions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.modalActions button {
+  width: 84px;
+  padding: 8px 12px;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background-color: rgba(103, 233, 104, 0.6);
+  border: none;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 16px;
+}
+
+.modalActions button:hover {
+  color: var(--background);
+  background-color: var(--btn-hover);
+}

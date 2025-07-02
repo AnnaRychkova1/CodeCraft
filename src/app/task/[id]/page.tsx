@@ -58,11 +58,9 @@ export default function TaskPage({ params }: Props) {
 
   if (loadError || !task) {
     return (
-      <>
-        <div style={{ textAlign: "center", padding: "2rem" }}>
-          <p>Failed to load task.</p>
-        </div>
-      </>
+      <div style={{ textAlign: "center", padding: "2rem" }}>
+        <p>Failed to load task.</p>
+      </div>
     );
   }
 

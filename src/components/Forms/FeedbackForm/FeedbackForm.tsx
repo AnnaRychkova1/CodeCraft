@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { usePathname } from "next/navigation";
 import { sendFeedback } from "@/services/feedback";
 import Loader from "@/components/Loader/Loader";
 import css from "./feedbackform.module.css";
 
 export default function FeedbackForm() {
+  const pathname = usePathname();
   const [formData, setFormData] = useState({
     email: "",
     feedback: "",
@@ -28,6 +30,11 @@ export default function FeedbackForm() {
     },
     feedback: "Message is required.",
   };
+
+  useEffect(() => {
+    setErrors({});
+    setStatus("idle");
+  }, [pathname]);
 
   const validateField = (name: string, value: string): boolean => {
     const trimmedValue = value.trim();
@@ -75,6 +82,13 @@ export default function FeedbackForm() {
     }
   };
 
+  const handleFocus = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name } = e.target;
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
   const handleBlur = (
     e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -87,7 +101,10 @@ export default function FeedbackForm() {
     const emailValid = validateField("email", formData.email);
     const feedbackValid = validateField("feedback", formData.feedback);
 
-    if (!emailValid || !feedbackValid) return;
+    if (!emailValid || !feedbackValid) {
+      toast.error("Please fill out all required fields correctly.");
+      return;
+    }
 
     setStatus("sending");
 
@@ -96,6 +113,7 @@ export default function FeedbackForm() {
       setStatus("success");
       setFormData({ email: "", feedback: "" });
       toast.success("Feedback sent successfully!");
+      setErrors({});
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
       toast.error(message);
@@ -110,7 +128,12 @@ export default function FeedbackForm() {
           <Loader />
         </div>
       )}
-      <form className={css.feedbackBox} onSubmit={handleSubmit}>
+      <form
+        className={css.feedbackBox}
+        onSubmit={handleSubmit}
+        noValidate
+        id="feedbackForm"
+      >
         <label htmlFor="feedback">
           Have feedback? Let&rsquo;s make CodeCraft better together.
         </label>
@@ -126,6 +149,7 @@ export default function FeedbackForm() {
             onBlur={handleBlur}
             className={css.formEmail}
             autoComplete="off"
+            onFocus={handleFocus}
           />
           {errors.email && (
             <p className={css.error} id="email-error">
@@ -144,6 +168,7 @@ export default function FeedbackForm() {
             onBlur={handleBlur}
             required
             className={css.formMessage}
+            onFocus={handleFocus}
           ></textarea>
           {errors.feedback && (
             <p className={css.error} id="feedback-error">
@@ -157,17 +182,11 @@ export default function FeedbackForm() {
             type="submit"
             disabled={status === "sending"}
             className={css.sendBtn}
+            form="feedbackForm"
           >
             {status === "sending" ? "Sending..." : "Send"}
           </button>
         </div>
-
-        {/* {status === "success" && (
-      <p className={css.success}>Thank you! 🎉</p>
-    )}
-    {status === "error" && (
-      <p className={css.error}>Something went wrong. 😢</p>
-    )} */}
       </form>
     </div>
   );

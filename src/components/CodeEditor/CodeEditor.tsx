@@ -5,7 +5,7 @@ import Confetti from "react-confetti";
 
 import css from "./codeeditor.module.css";
 import { CodeEditorProps } from "@/types/types";
-import CodeForm from "../Forms/CodeForm";
+import CodeForm from "../Forms/CodeForm/CodeForm";
 
 export default function CodeEditor({ task, language }: CodeEditorProps) {
   const [output, setOutput] = useState<string[]>([]);

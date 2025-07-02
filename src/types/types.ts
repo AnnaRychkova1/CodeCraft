@@ -141,3 +141,20 @@ export interface FeedbackData {
   email: string;
   feedback: string;
 }
+
+export interface AdminAccessFormProps {
+  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+  sessionExpired: boolean;
+}
+
+export interface AdminDashboardProps {
+  isAdmin: boolean;
+  sessionExpired: boolean;
+  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface AdminTasksListProps {
+  tasks: Task[];
+  handleEdit: (taskId: string) => void;
+  loadTasks: () => Promise<void>;
+}

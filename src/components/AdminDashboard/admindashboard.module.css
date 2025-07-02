@@ -1,0 +1,62 @@
+.section {
+  position: relative;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  justify-content: center;
+}
+
+.accessBtn {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: rgba(103, 233, 104, 0.6);
+  border: none;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 18px;
+  width: 200px;
+}
+
+.accessBtn:hover,
+.accessBtn:focus {
+  color: var(--background);
+  background-color: var(--btn-hover);
+}
+
+.logoutBtn {
+  position: absolute;
+  right: 24px;
+  top: -18px;
+  width: 160px;
+}
+
+.title {
+  color: var(--accent-dark);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.noResult {
+  font-size: 1rem;
+  margin-left: 24px;
+}
+
+@media only screen and (min-width: 768px) {
+  .section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .sectionLogin {
+    padding: 48px;
+    padding-top: 24px;
+  }
+
+  .section {
+    padding: 48px;
+    padding-top: 24px;
+  }
+}

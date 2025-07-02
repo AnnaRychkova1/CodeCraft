@@ -6,6 +6,7 @@ import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 
 import { Toaster } from "react-hot-toast";
+import { ConfirmProvider } from "@/components/ConfirmModal/ConfirmModalContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,12 +35,14 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.png" type="image/png" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <div className={styles.page}>
-          <Header />
-          <Toaster />
-          <main>{children}</main>
-          <Footer />
-        </div>
+        <ConfirmProvider>
+          <div className={styles.page}>
+            <Header />
+            <Toaster />
+            <main>{children}</main>
+            <Footer />
+          </div>
+        </ConfirmProvider>
       </body>
     </html>
   );

@@ -31,6 +31,7 @@ export default function PracticeInputs({
         onChange={(e) => onChange("starter_code", e.target.value)}
         placeholder="Starter Code"
         rows={2}
+        required
       />
 
       <div className={css.testsContainer}>

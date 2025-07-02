@@ -8,7 +8,7 @@ import css from "./taskform.module.css";
 import TheoryInputs from "./TheoryInputs";
 import PracticeInputs from "./PracticeInputs";
 import { createTask, updateTask } from "@/services/tasks";
-import Loader from "../Loader/Loader";
+import Loader from "@/components/Loader/Loader";
 
 export default function TaskForm({
   formData,
@@ -157,9 +157,130 @@ export default function TaskForm({
     });
   };
 
+  const validateForm = () => {
+    if (!formData.title.trim()) {
+      toast.error("Title is required");
+      return false;
+    }
+
+    if (!formData.description.trim()) {
+      toast.error("Description is required");
+      return false;
+    }
+
+    if (formData.type === "theory") {
+      if (!formData.theory_question || formData.theory_question.length === 0) {
+        toast.error("At least one theory question is required");
+        return false;
+      }
+
+      for (const [index, q] of formData.theory_question.entries()) {
+        if (!q.question.trim()) {
+          toast.error(`Question ${index + 1} is missing text`);
+          return false;
+        }
+
+        if (!Array.isArray(q.options) || q.options.length < 2) {
+          toast.error(`Question ${index + 1} must have at least 2 options`);
+          return false;
+        }
+
+        if (q.options.some((opt) => !opt.trim())) {
+          toast.error(`Question ${index + 1} contains an empty option`);
+          return false;
+        }
+
+        if (
+          !Array.isArray(q.correct_answer) ||
+          q.correct_answer.length === 0 ||
+          q.correct_answer.every((ans) => !ans.trim())
+        ) {
+          toast.error(
+            `Question ${index + 1} must have at least one valid correct answer`
+          );
+          return false;
+        }
+
+        const invalidCorrectAnswers = q.correct_answer.filter(
+          (ans) => !q.options.includes(ans.trim())
+        );
+        if (invalidCorrectAnswers.length > 0) {
+          toast.error(
+            `Correct answer(s) in question ${
+              index + 1
+            } must match available options`
+          );
+          return false;
+        }
+      }
+    }
+
+    if (formData.type === "practice") {
+      if (!formData.code_task || formData.code_task.length === 0) {
+        toast.error("At least one practice task is required");
+        return false;
+      }
+
+      for (const [index, task] of formData.code_task.entries()) {
+        if (!task.prompt?.trim()) {
+          toast.error(`Practice task ${index + 1} needs a prompt`);
+          return false;
+        }
+
+        if (!task.starter_code?.trim()) {
+          toast.error(`Practice task ${index + 1} needs starter code`);
+          return false;
+        }
+
+        if (!Array.isArray(task.test_case) || task.test_case.length === 0) {
+          toast.error(
+            `Practice task ${index + 1} must have at least one test case`
+          );
+          return false;
+        }
+
+        for (const [testIndex, test] of task.test_case.entries()) {
+          // 1. Check that input exists and is an array with at least one value
+          if (
+            !Array.isArray(test.input) ||
+            test.input.length === 0 ||
+            test.input.every((val) => val === "" || val === null)
+          ) {
+            toast.error(
+              `Test case ${testIndex + 1} in task ${
+                index + 1
+              } has invalid or empty input (must be JSON array)`
+            );
+            return false;
+          }
+
+          // 2. Check that expected is defined and not empty
+          if (
+            typeof test.expected === "undefined" ||
+            test.expected === null ||
+            (typeof test.expected === "string" && test.expected.trim() === "")
+          ) {
+            toast.error(
+              `Test case ${testIndex + 1} in task ${
+                index + 1
+              } is missing expected output`
+            );
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
     setLoading(true);
+
+    console.log(formData);
 
     try {
       if (editId) {
@@ -194,7 +315,7 @@ export default function TaskForm({
           <Loader />
         </div>
       )}
-      <form onSubmit={handleSubmit} className={css.taskForm}>
+      <form onSubmit={handleSubmit} className={css.taskForm} noValidate>
         <div className={css.formContent}>
           <AutoGrowTextarea
             name="title"
@@ -202,8 +323,8 @@ export default function TaskForm({
             value={formData.title}
             onChange={handleChange}
             placeholder="Title"
-            rows={1}
             required
+            rows={1}
           />
 
           <AutoGrowTextarea
@@ -213,6 +334,7 @@ export default function TaskForm({
             onChange={handleChange}
             placeholder="Description"
             rows={2}
+            required
           />
           <div className={css.selectContainer}>
             <select

@@ -1,3 +1,14 @@
+.clickBlocker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 99;
+  background: transparent;
+  pointer-events: all;
+}
+
 .section {
   padding: 24px;
 }
@@ -83,13 +94,11 @@
 .dropdownMenu {
   position: absolute;
   top: 100%;
-  left: -128px;
+  left: -104px;
   margin-top: 12px;
   background: var(--accent-light);
   border: 4px double rgba(17, 121, 18, 0.2);
-  border-left: 2px solid rgba(17, 121, 18, 0.2);
-  border-top-right-radius: 6px;
-  border-bottom-right-radius: 6px;
+  border-radius: 6px;
   padding: 16px;
   z-index: 100;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -141,7 +150,7 @@
   }
 
   .dropdownMenu {
-    left: -158px;
+    left: -134px;
     margin-top: 24px;
   }
 

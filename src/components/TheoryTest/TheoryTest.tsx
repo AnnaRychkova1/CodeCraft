@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import Confetti from "react-confetti";
-import css from "./theorytest.module.css";
 import { TheoryTestProps } from "@/types/types";
+import css from "./theorytest.module.css";
 
 const isMultipleAnswer = (correctAnswer: string[]): boolean =>
   correctAnswer.length > 1;
@@ -18,7 +18,17 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiVisible, setConfettiVisible] = useState(false);
 
-  const resultsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (showConfetti) {
+      setConfettiVisible(true);
+      const hide = setTimeout(() => setConfettiVisible(false), 5000);
+      const remove = setTimeout(() => setShowConfetti(false), 7000);
+      return () => {
+        clearTimeout(hide);
+        clearTimeout(remove);
+      };
+    }
+  }, [showConfetti]);
 
   const handleSelect = (index: number, answer: string, isMulti: boolean) => {
     if (submitted) return;
@@ -89,24 +99,6 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
     return undefined;
   };
 
-  useEffect(() => {
-    if (showConfetti) {
-      setConfettiVisible(true);
-      const hide = setTimeout(() => setConfettiVisible(false), 5000);
-      const remove = setTimeout(() => setShowConfetti(false), 7000);
-      return () => {
-        clearTimeout(hide);
-        clearTimeout(remove);
-      };
-    }
-  }, [showConfetti]);
-
-  useEffect(() => {
-    if (submitted && resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [submitted]);
-
   return (
     <section className={css.theorySection}>
       <div className={css.theoryContainer}>
@@ -164,14 +156,14 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
         )}
 
         {submitted && (
-          <div ref={resultsRef}>
+          <>
             <p className={css.score}>
               You scored: {scorePercent?.toFixed(0)}% correct answers
             </p>
             <button className={css.retryBtn} onClick={handleRetry}>
               Try Again
             </button>
-          </div>
+          </>
         )}
 
         {showConfetti && (
