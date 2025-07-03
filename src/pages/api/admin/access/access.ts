@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { serialize } from "cookie";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -34,7 +35,7 @@ export default async function handler(
       return res.status(401).json({ error: "Wrong password" });
     }
 
-    const token = jwt.sign(
+    const adminToken = jwt.sign(
       { role: "admin", id: admin.id },
       process.env.JWT_SECRET!,
       {
@@ -42,7 +43,17 @@ export default async function handler(
       }
     );
 
-    return res.status(200).json({ token });
+    const cookie = serialize("adminToken", adminToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 2,
+    });
+
+    res.setHeader("Set-Cookie", cookie);
+
+    return res.status(200).json({ adminToken });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ error: "Internal Server Error" });

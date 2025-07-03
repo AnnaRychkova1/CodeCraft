@@ -3,35 +3,33 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { verifyAdminToken } from "@/services/tasks";
+import { useAdminAuth } from "@/context/AdminAuthContext";
 import AdminAccess from "@/components/Forms/AdminAccess/AdminAccess";
 import AdminDashboard from "@/components/AdminDashboard/AdminDashboard";
 
 export default function AdminPage() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const admin = useAdminAuth();
+  const logoutAdmin = admin.logoutAdmin;
+  const adminToken = admin.adminToken;
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
-    const checkToken = async () => {
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        setSessionExpired(false);
-        return;
-      }
+    const verify = async () => {
+      if (!adminToken) return;
 
       try {
-        const isValid = await verifyAdminToken(token);
-        if (isValid) {
-          setIsAdmin(true);
-          setSessionExpired(false);
+        const valid = await verifyAdminToken();
+
+        if (valid) {
+          setIsVerified(true);
         } else {
-          localStorage.removeItem("adminToken");
-          setIsAdmin(false);
+          logoutAdmin();
           setSessionExpired(true);
           toast.error("Session expired. Please login again.");
         }
-      } catch (err: unknown) {
-        localStorage.removeItem("adminToken");
-        setIsAdmin(false);
+      } catch (err) {
+        logoutAdmin();
         setSessionExpired(true);
         toast.error(
           `Error verifying session. Please login again. ${
@@ -41,16 +39,15 @@ export default function AdminPage() {
       }
     };
 
-    checkToken();
-  }, []);
+    verify();
+  }, [adminToken, logoutAdmin]);
 
-  return isAdmin ? (
-    <AdminDashboard
-      isAdmin={isAdmin}
-      sessionExpired={sessionExpired}
-      setIsAdmin={setIsAdmin}
-    />
+  return isVerified ? (
+    <AdminDashboard sessionExpired={sessionExpired} />
   ) : (
-    <AdminAccess setIsAdmin={setIsAdmin} sessionExpired={sessionExpired} />
+    <AdminAccess
+      sessionExpired={sessionExpired}
+      setSessionExpired={setSessionExpired}
+    />
   );
 }

@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import styles from "./page.module.css";
+import { Toaster } from "react-hot-toast";
+import { cookies } from "next/headers";
+import { AuthProvider } from "@/context/AuthContext";
+import { AdminAuthProvider } from "@/context/AdminAuthContext";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
-
-import { Toaster } from "react-hot-toast";
 import { ConfirmProvider } from "@/components/ConfirmModal/ConfirmModalContext";
+import "./globals.css";
+import "./common.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,25 +26,32 @@ export const metadata: Metadata = {
     "CodeCraft is a website for testing your programming language knowledge and practicing in JavaScript, Java, or Python.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const cookieStore = await cookies();
+  const adminToken = cookieStore.get("adminToken")?.value || null;
+  const userToken = cookieStore.get("userToken")?.value || null;
   return (
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.png" type="image/png" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ConfirmProvider>
-          <div className={styles.page}>
-            <Header />
-            <Toaster />
-            <main>{children}</main>
-            <Footer />
-          </div>
-        </ConfirmProvider>
+        <AdminAuthProvider adminToken={adminToken}>
+          <AuthProvider userToken={userToken}>
+            <ConfirmProvider>
+              <div className="page">
+                <Header />
+                <Toaster />
+                <main>{children}</main>
+                <Footer />
+              </div>
+            </ConfirmProvider>
+          </AuthProvider>
+        </AdminAuthProvider>
       </body>
     </html>
   );

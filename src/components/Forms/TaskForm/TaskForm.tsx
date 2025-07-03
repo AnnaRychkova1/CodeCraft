@@ -240,7 +240,6 @@ export default function TaskForm({
         }
 
         for (const [testIndex, test] of task.test_case.entries()) {
-          // 1. Check that input exists and is an array with at least one value
           if (
             !Array.isArray(test.input) ||
             test.input.length === 0 ||
@@ -254,7 +253,6 @@ export default function TaskForm({
             return false;
           }
 
-          // 2. Check that expected is defined and not empty
           if (
             typeof test.expected === "undefined" ||
             test.expected === null ||
@@ -279,8 +277,6 @@ export default function TaskForm({
 
     if (!validateForm()) return;
     setLoading(true);
-
-    console.log(formData);
 
     try {
       if (editId) {

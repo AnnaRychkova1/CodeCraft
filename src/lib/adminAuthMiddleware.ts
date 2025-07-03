@@ -3,15 +3,17 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 export function adminAuthMiddleware(handler: NextApiHandler): NextApiHandler {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const adminToken = req.cookies.adminToken;
+
+    if (!adminToken) {
       return res.status(401).json({ error: "Unauthorized: No token provided" });
     }
 
-    const token = authHeader.split(" ")[1];
-
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+      const decoded = jwt.verify(
+        adminToken,
+        process.env.JWT_SECRET!
+      ) as JwtPayload;
 
       if (decoded.role !== "admin") {
         return res
@@ -23,7 +25,6 @@ export function adminAuthMiddleware(handler: NextApiHandler): NextApiHandler {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
 
-    // return handler(req, res);
     await handler(req, res);
   };
 }

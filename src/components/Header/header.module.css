@@ -1,7 +1,7 @@
 .header {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
   padding: 24px;
@@ -16,17 +16,30 @@
   transition: transform 0.3s ease;
 }
 
-.avatar {
-  display: none;
-  transition: all 0.3s ease;
-}
-
-.slogan {
+.sloganContainer {
   color: var(--foreground);
   text-shadow: 0 0 8px #caf4ca, 0 0 12px #d5f7d5;
   font-size: 1.25rem;
   font-weight: 500;
   text-align: center;
+  width: auto;
+}
+
+.logoContainer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.authTopContainer {
+  display: flex;
+  gap: 12px;
+}
+
+.authContainer {
+  display: none;
 }
 
 @media only screen and (min-width: 768px) {
@@ -43,14 +56,32 @@
   .slogan {
     font-size: 1.5rem;
   }
+
+  .logoContainer {
+    width: fit-content;
+  }
+
+  .authContainer {
+    display: flex;
+    gap: 12px;
+  }
+
+  .authTopContainer {
+    display: none;
+  }
 }
 
 @media only screen and (min-width: 1024px) {
   .header {
-    align-items: center;
     padding: 24px 48px;
   }
-  .avatar {
-    display: block;
+}
+
+@media only screen and (min-width: 1440px) {
+  .header {
+    align-items: center;
+  }
+  .authContainer {
+    gap: 24px;
   }
 }

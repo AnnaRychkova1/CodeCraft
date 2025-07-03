@@ -14,11 +14,16 @@ export default function AdminTasksList({
   tasks,
   handleEdit,
   loadTasks,
+  sessionExpired,
 }: AdminTasksListProps) {
   const confirm = useConfirm();
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
+    if (sessionExpired) {
+      toast.error("Session expired. Please login again.");
+      return;
+    }
     confirm({
       message: "Are you sure you want to delete this task?",
       onConfirm: async () => {

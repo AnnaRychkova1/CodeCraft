@@ -143,18 +143,45 @@ export interface FeedbackData {
 }
 
 export interface AdminAccessFormProps {
-  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
   sessionExpired: boolean;
+  setSessionExpired: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface AdminDashboardProps {
-  isAdmin: boolean;
   sessionExpired: boolean;
-  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface AdminTasksListProps {
   tasks: Task[];
   handleEdit: (taskId: string) => void;
   loadTasks: () => Promise<void>;
+  sessionExpired: boolean;
+}
+
+export type ApiResponseMessage = {
+  message: string;
+  id?: string;
+};
+
+export interface Admin {
+  password: string;
+}
+
+export interface AdminAuthContextType {
+  adminToken: string | null;
+  loginAdmin: (adminToken: string) => void;
+  logoutAdmin: () => void;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthContextType {
+  userToken: string | null;
+  loginUser: (userToken: string) => void;
+  logoutUser: () => void;
 }

@@ -3,12 +3,13 @@ import { toast } from "react-hot-toast";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { AdminAccessFormProps } from "@/types/types";
 import { getAdminAccess } from "@/services/tasks";
+import { useAdminAuth } from "@/context/AdminAuthContext";
 import Loader from "@/components/Loader/Loader";
 import css from "./adminaccess.module.css";
 
 export default function AdminAccessForm({
-  setIsAdmin,
   sessionExpired,
+  setSessionExpired,
 }: AdminAccessFormProps) {
   const [password, setPassword] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
@@ -16,6 +17,8 @@ export default function AdminAccessForm({
   const [blockTimeLeft, setBlockTimeLeft] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState(0);
+
+  const { loginAdmin } = useAdminAuth();
 
   const minutes = Math.floor((blockTimeLeft || 0) / 60000);
   const seconds = Math.floor(((blockTimeLeft || 0) % 60000) / 1000)
@@ -73,12 +76,13 @@ export default function AdminAccessForm({
     }
 
     try {
-      const token = await getAdminAccess(password);
-      localStorage.setItem("adminToken", token);
+      const adminToken = await getAdminAccess(password);
+      localStorage.setItem("adminToken", adminToken);
+      loginAdmin(adminToken);
       localStorage.setItem("loginAttempts", "0");
       setLoginAttempts(0);
-      setIsAdmin(true);
       setPassword("");
+      setSessionExpired(false);
       toast.success("Admin access granted");
     } catch {
       const updatedAttempts = loginAttempts + 1;
@@ -102,15 +106,13 @@ export default function AdminAccessForm({
   };
 
   return (
-    <section className={css.sectionAccess}>
-      <h2 className={css.title}>Admin Access</h2>
+    <section className="sectionAuth">
+      <h2 className="title">Admin Access</h2>
       {sessionExpired && (
-        <p className={css.expiredWarning}>
-          Session expired. Please login again.
-        </p>
+        <p className="accessWarning">Session expired. Please login again.</p>
       )}
       {isBlocked && (
-        <p className={css.expiredWarning}>
+        <p className="accessWarning">
           Too many failed attempts. Please try again in {minutes}:{seconds}{" "}
           minutes.
         </p>
@@ -127,7 +129,7 @@ export default function AdminAccessForm({
           onKeyDown={(e) => e.key === "Enter" && handleAccess()}
         />
         <span
-          className={css.eyeIcon}
+          className="eyeIcon"
           onClick={() => setShowPassword((prev) => !prev)}
         >
           {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -139,7 +141,7 @@ export default function AdminAccessForm({
         <div className={css.buttonAccessContainer}>
           <button
             onClick={handleAccess}
-            className={css.accessBtn}
+            className={`loginBtn ${css.accessBtn}`}
             disabled={loggingIn}
           >
             Get Access

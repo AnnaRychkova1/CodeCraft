@@ -3,7 +3,12 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AdminDashboardProps, CodeTask, Question, Task } from "@/types/types";
-import { fetchTaskById, fetchTasks } from "@/services/tasks";
+import {
+  fetchTaskById,
+  fetchTasks,
+  logoutAdminService,
+} from "@/services/tasks";
+import { useAdminAuth } from "@/context/AdminAuthContext";
 import { useConfirm } from "@/components/ConfirmModal/ConfirmModalContext";
 import TaskForm from "@/components/Forms/TaskForm/TaskForm";
 import Loader from "@/components/Loader/Loader";
@@ -33,11 +38,10 @@ const createEmptyCodeTask = (): CodeTask => ({
 });
 
 export default function AdminDashboard({
-  isAdmin,
   sessionExpired,
-  setIsAdmin,
 }: AdminDashboardProps) {
   const confirm = useConfirm();
+  const { logoutAdmin, adminToken } = useAdminAuth();
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
@@ -54,10 +58,10 @@ export default function AdminDashboard({
   });
 
   useEffect(() => {
-    if (isAdmin && !sessionExpired) {
+    if (adminToken && !sessionExpired) {
       loadTasks();
     }
-  }, [isAdmin, sessionExpired]);
+  }, [adminToken, sessionExpired]);
 
   const loadTasks = async () => {
     setLoading(true);
@@ -74,6 +78,10 @@ export default function AdminDashboard({
   };
 
   const handleEdit = async (id: string) => {
+    if (sessionExpired) {
+      toast.error("Session expired. Please login again.");
+      return;
+    }
     try {
       const fullTask = await fetchTaskById(id);
 
@@ -118,55 +126,65 @@ export default function AdminDashboard({
   const handleLogoutAdmin = () => {
     confirm({
       message: "Are you sure you want to log out?",
-      onConfirm: () => {
+      onConfirm: async () => {
         localStorage.removeItem("adminToken");
-        setIsAdmin(false);
-        setEditId(null);
-        toast.success("Logged out successfully");
-        router.push("/");
+        try {
+          await logoutAdminService();
+          logoutAdmin();
+          setEditId(null);
+          toast.success("Logged out successfully");
+          localStorage.removeItem("adminToken");
+          router.push("/");
+        } catch (error) {
+          toast.error(
+            error instanceof Error ? error.message : "Failed to logout"
+          );
+        }
       },
     });
   };
 
   return (
-    <section className={css.section}>
+    <>
       <button
         onClick={handleLogoutAdmin}
-        className={`${css.logoutBtn} ${css.accessBtn}`}
+        className={`logoutBtn ${css.accessBtn}`}
       >
         Logout
       </button>
-
-      <div>
-        <h2 className={css.title}>Admin Task Panel</h2>
-        <TaskForm
-          formData={formData}
-          setFormData={setFormData}
-          editId={editId}
-          setEditId={setEditId}
-          emptyQuestion={createEmptyQuestion}
-          emptyCodeTask={createEmptyCodeTask}
-          onSubmitSuccess={loadTasks}
-          cancelEdit={cancelEdit}
-        />
-      </div>
-
-      <div>
-        <h2 className={css.title}>Tasks</h2>
-        {loading ? (
-          <Loader />
-        ) : loadError ? (
-          <div className={css.noResult}>Failed to load tasks.</div>
-        ) : tasks.length > 0 ? (
-          <AdminTasksList
-            tasks={tasks}
-            handleEdit={handleEdit}
-            loadTasks={loadTasks}
+      <section className={css.section}>
+        <div>
+          <h2 className={css.title}>Admin Task Panel</h2>
+          <TaskForm
+            formData={formData}
+            setFormData={setFormData}
+            editId={editId}
+            setEditId={setEditId}
+            emptyQuestion={createEmptyQuestion}
+            emptyCodeTask={createEmptyCodeTask}
+            onSubmitSuccess={loadTasks}
+            cancelEdit={cancelEdit}
           />
-        ) : (
-          <div className={css.noResult}>No tasks yet.</div>
-        )}
-      </div>
-    </section>
+        </div>
+
+        <div>
+          <h2 className={css.title}>Tasks</h2>
+          {loading ? (
+            <Loader />
+          ) : loadError ? (
+            <div className={css.noResult}>Failed to load tasks.</div>
+          ) : tasks.length > 0 ? (
+            <AdminTasksList
+              tasks={tasks}
+              handleEdit={handleEdit}
+              loadTasks={loadTasks}
+              sessionExpired={sessionExpired}
+            />
+          ) : (
+            <div className={css.noResult}>No tasks yet.</div>
+          )}
+        </div>
+      </section>
+    </>
   );
 }

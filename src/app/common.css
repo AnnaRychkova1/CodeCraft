@@ -1,0 +1,92 @@
+.sectionAuth {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  padding: 24px;
+  padding-top: 12px;
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+.title {
+  color: var(--accent-dark);
+  text-align: center;
+}
+
+.accessWarning {
+  color: crimson;
+  text-align: center;
+}
+
+.redirectContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.redirectLink {
+  padding: 8px 12px;
+  color: var(--btn);
+  font-size: 20px;
+  text-decoration: underline;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease, color 0.3s ease;
+  display: inline-block;
+}
+
+.redirectLink:hover,
+.redirectLink:focus {
+  transform: scale(1.05);
+  color: var(--btn-hover);
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--btn);
+}
+
+.eyeIcon:hover {
+  color: var(--btn-hover);
+}
+
+.loginBtn,
+.logoutBtn {
+  padding: 6px 8px;
+  border-radius: 4px;
+  background-color: rgba(103, 233, 104, 0.6);
+  border: none;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 18px;
+  width: 126px;
+}
+
+.loginBtn:hover,
+.loginBtn:focus,
+.logoutBtn:hover,
+.logoutBtn:focus {
+  color: var(--background);
+  background-color: var(--btn-hover);
+}
+
+@media only screen and (min-width: 768px) {
+  .loginBtn,
+  .logoutBtn {
+    padding: 8px 12px;
+    width: 156px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .sectionAuth {
+    padding: 48px;
+    padding-top: 24px;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+}

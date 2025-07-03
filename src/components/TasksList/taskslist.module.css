@@ -157,13 +157,6 @@
 }
 
 @media only screen and (min-width: 1440px) {
-  /* .tasksContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px 32px;
-    padding-left: 48px;
-  } */
-
   .taskItem {
     flex-basis: calc((100% - 64px) / 3);
     min-width: 260px;

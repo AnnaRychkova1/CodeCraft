@@ -1,11 +1,5 @@
-import { Task, TaskFormData } from "@/types/types";
+import { ApiResponseMessage, Task, TaskFormData } from "@/types/types";
 import { handleResponse } from "@/utils/handleResponse";
-
-function getToken() {
-  return typeof window !== "undefined"
-    ? localStorage.getItem("adminToken")
-    : null;
-}
 
 export async function getAdminAccess(password: string): Promise<string> {
   const res = await fetch("/api/admin/access/access", {
@@ -13,28 +7,39 @@ export async function getAdminAccess(password: string): Promise<string> {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify({ password }),
   });
 
-  const data = await handleResponse<{ token: string }>(res);
-  localStorage.setItem("adminToken", data.token);
-  return data.token;
+  const data = await handleResponse<{ adminToken: string }>(res);
+  return data.adminToken;
 }
 
-export const verifyAdminToken = async (token: string): Promise<boolean> => {
+export const verifyAdminToken = async (): Promise<boolean> => {
   const res = await fetch("/api/admin/access/verifyToken", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: "include",
   });
 
   const data = await handleResponse<{ valid: boolean }>(res);
   return data.valid === true;
 };
 
-export async function fetchTasks() {
+export async function logoutAdminService(): Promise<void> {
+  const res = await fetch("/api/admin/access/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Logout failed");
+  }
+
+  await handleResponse(res);
+}
+
+export async function fetchTasks(): Promise<Task[]> {
   const res = await fetch("/api/public/tasks");
   const data = await handleResponse<Task[]>(res);
 
@@ -44,7 +49,7 @@ export async function fetchTasks() {
   return data;
 }
 
-export async function fetchTaskById(taskId: string) {
+export async function fetchTaskById(taskId: string): Promise<Task> {
   const res = await fetch(`/api/public/task/${taskId}`, {
     cache: "no-store",
   });
@@ -53,48 +58,45 @@ export async function fetchTaskById(taskId: string) {
 }
 
 // only admin
-export async function createTask(formData: TaskFormData) {
-  const token = getToken();
-  if (!token) throw new Error("No admin token found");
-
+export async function createTask(
+  formData: TaskFormData
+): Promise<ApiResponseMessage> {
   const res = await fetch("/api/admin/tasks", {
     method: "POST",
+    credentials: "include",
+    body: JSON.stringify(formData),
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(formData),
   });
 
   return handleResponse(res);
 }
 
-export async function updateTask(editId: string, formData: TaskFormData) {
-  const token = getToken();
-  if (!token) throw new Error("No admin token found");
-
+export async function updateTask(
+  editId: string,
+  formData: TaskFormData
+): Promise<ApiResponseMessage> {
   const res = await fetch(`/api/admin/task/${editId}`, {
     method: "PUT",
+    credentials: "include",
+    body: JSON.stringify(formData),
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(formData),
   });
 
   return handleResponse(res);
 }
 
-export async function deleteTask(id: string): Promise<void> {
-  const token = getToken();
-  if (!token) throw new Error("No admin token found");
-
+export async function deleteTask(id: string): Promise<ApiResponseMessage> {
   const res = await fetch(`/api/admin/task/${id}`, {
     method: "DELETE",
+    credentials: "include",
     headers: {
-      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
 
-  await handleResponse(res);
+  return handleResponse(res);
 }
