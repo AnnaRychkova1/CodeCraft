@@ -1,4 +1,4 @@
-import type { Level, Language, TaskType } from "@/types/types";
+import type { Level, Language, TaskType } from "@/types/tasksTypes";
 
 export function resetFilters(
   setLevel: (val: Level[]) => void,

@@ -1,4 +1,4 @@
-import { CodeTaskTest } from "@/types/types";
+import { CodeTaskTest } from "@/types/tasksTypes";
 
 export function runPythonCode(code: string, tests: CodeTaskTest[]): string[] {
   console.log(code);
