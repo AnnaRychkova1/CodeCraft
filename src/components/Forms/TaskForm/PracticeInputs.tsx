@@ -2,7 +2,7 @@ import { FiPlus } from "react-icons/fi";
 import type { PracticeInputsProps } from "@/types/tasksTypes";
 import TestEdit from "./TestEdit";
 import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
-import css from "./taskForm.module.css";
+import css from "./TaskForm.module.css";
 
 export default function PracticeInputs({
   code_task,

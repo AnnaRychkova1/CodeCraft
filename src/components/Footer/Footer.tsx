@@ -4,7 +4,7 @@ import { FaCode, FaJava } from "react-icons/fa";
 import { SiGithub, SiJavascript, SiPython } from "react-icons/si";
 import Image from "next/image";
 import FeedbackForm from "../Forms/FeedbackForm/FeedbackForm";
-import css from "./footer.module.css";
+import css from "./Footer.module.css";
 
 export default function Footer() {
   return (

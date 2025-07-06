@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { sendFeedback } from "@/services/feedback";
 import Loader from "@/components/Loader/Loader";
 import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
-import css from "./feedbackForm.module.css";
+import css from "./FeedbackForm.module.css";
 
 export default function FeedbackForm() {
   const pathname = usePathname();

@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import type { TextAreaProps } from "@/types/commonTypes";
-import css from "./autoGrowTextarea.module.css";
+import css from "./AutoGrowTextarea.module.css";
 
 export default function AutoGrowTextarea({
   value,

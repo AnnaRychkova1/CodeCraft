@@ -9,7 +9,7 @@ import { runJavaScriptCode } from "@/utils/runJavaScriptCode";
 import { runPythonCode } from "@/utils/runPythonCode";
 import { runJavaCode } from "@/utils/runJavaCode";
 import Loader from "@/components/Loader/Loader";
-import css from "./codeForm.module.css";
+import css from "./CodeForm.module.css";
 
 export default function CodeForm({
   task,

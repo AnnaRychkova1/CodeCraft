@@ -8,7 +8,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import type { RegisterUserDto } from "@/types/userTypes";
 import { registerUser } from "@/services/user";
 import Loader from "@/components/Loader/Loader";
-import css from "./authForms.module.css";
+import css from "./AuthForms.module.css";
 
 export default function RegisterForm() {
   const [name, setName] = useState("");

@@ -11,7 +11,7 @@ import { useConfirm } from "@/components/Modals/ConfirmModal/ConfirmModal";
 import TaskForm from "@/components/Forms/TaskForm/TaskForm";
 import AdminTasksList from "@/components/AdminTasksList/AdminTasksList";
 import Loader from "@/components/Loader/Loader";
-import css from "./adminDashboard.module.css";
+import css from "./AdminDashboard.module.css";
 
 const emptyQuestionTemplate = {
   question: "",

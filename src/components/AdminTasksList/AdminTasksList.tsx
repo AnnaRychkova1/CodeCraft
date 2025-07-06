@@ -8,7 +8,7 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 import type { AdminTasksListProps } from "@/types/adminTypes";
 import { deleteTask } from "@/services/tasks";
 import { useConfirm } from "@/components/Modals/ConfirmModal/ConfirmModal";
-import css from "./adminTasksList.module.css";
+import css from "./AdminTasksList.module.css";
 
 export default function AdminTasksList({
   tasks,

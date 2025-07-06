@@ -5,7 +5,7 @@ import type { AdminAccessFormProps } from "@/types/adminTypes";
 import { getAdminAccess } from "@/services/admin";
 import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
 import Loader from "@/components/Loader/Loader";
-import css from "./adminAccess.module.css";
+import css from "./AdminAccess.module.css";
 
 export default function AdminAccessForm({
   sessionExpired,

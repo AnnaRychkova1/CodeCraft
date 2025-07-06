@@ -6,7 +6,7 @@ import { toast } from "react-hot-toast";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import type { LoginUserDto } from "@/types/userTypes";
 import Loader from "@/components/Loader/Loader";
-import css from "./authForms.module.css";
+import css from "./AuthForms.module.css";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
