@@ -1,0 +1,130 @@
+.tasksList {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  list-style: none;
+  max-width: 640px;
+}
+
+.task {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 6px;
+  border: 2px solid rgba(17, 121, 18, 0.2);
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0px 4px 8px rgba(150, 246, 185, 0.505);
+  min-width: 280px;
+  width: 100%;
+}
+
+.task:hover {
+  box-shadow: -4px -4px 6px rgba(184, 250, 188, 0.95),
+    4px 4px 6px rgba(185, 246, 195, 0.95);
+}
+
+.taskInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.title {
+  color: var(--accent-dark);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.labelContainer {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 6px;
+}
+
+.iconBox {
+  border: none;
+  background-color: transparent;
+  line-height: 0;
+}
+
+.iconBox svg {
+  font-size: 1.5rem;
+}
+
+.levelBeginner {
+  color: var(--level-beginner);
+}
+.levelIntermediate {
+  color: var(--level-intermediate);
+}
+.levelAdvanced {
+  color: var(--level-advanced);
+}
+
+.languageJavascript {
+  color: var(--color-javascript);
+}
+.languagePython {
+  color: var(--color-python);
+}
+.languageJava {
+  color: var(--color-java);
+}
+
+.typeTheory {
+  color: var(--color-theory);
+}
+.typePractice {
+  color: var(--color-practice);
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.editBtn,
+.deleteBtn {
+  border-radius: 4px;
+  background-color: transparent;
+  border: none;
+  opacity: 0.7;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.editBtn {
+  color: var(--btn);
+}
+
+.deleteBtn {
+  color: crimson;
+}
+
+.editBtn:hover,
+.deleteBtn:hover,
+.editBtn:focus,
+.deleteBtn:focus {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+@media only screen and (min-width: 1024px) {
+  .tasksList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    position: relative;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .task {
+    flex-basis: calc((100% - 48px) / 2);
+    min-width: 260px;
+  }
+}
