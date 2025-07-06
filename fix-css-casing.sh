@@ -1,37 +1,42 @@
 #!/bin/bash
 
-echo "⏳ Force renaming all .module.css files to CamelCase..."
+echo "⏳ Fixing file casing on Git for Vercel build..."
 
-find ./src/components -type f -name "*.module.css" | while read filepath; do
+files=(
+  "src/components/AdminDashboard/AdminDashboard.module.css"
+  "src/components/AdminTasksList/AdminTasksList.module.css"
+  "src/components/CodeEditor/CodeEditor.module.css"
+  "src/components/Filtering/Filtering.module.css"
+  "src/components/Tasks/Tasks.module.css"
+  "src/components/Footer/Footer.module.css"
+)
+
+for filepath in "${files[@]}"; do
   dir=$(dirname "$filepath")
   filename=$(basename "$filepath")
 
+  # Отримуємо base ім'я без розширення
   base="${filename%.module.css}"
 
+  # Робимо CamelCase (припускаємо, що base вже у правильному форматі)
+  # Але на всяк випадок — зробимо першу літеру великою:
+  camelcase="$(tr '[:lower:]' '[:upper:]' <<< ${base:0:1})${base:1}.module.css"
 
-  camelcase=$(echo "$base" | sed -E 's/(^|[^a-zA-Z0-9])([a-z])/\U\2/g')
+  newfilepath="$dir/$camelcase"
 
+  # Якщо шлях уже правильний — пропускаємо
+  if [ "$filepath" != "$newfilepath" ]; then
+    echo "Перейменовую $filepath -> $newfilepath"
 
-  if [[ "$camelcase" == "$base" ]]; then
-    camelcase="$(echo ${base:0:1} | tr '[:lower:]' '[:upper:]')${base:1}"
-  fi
-
-  newfilename="${camelcase}.module.css"
-
- 
-  if [ "$filename" != "$newfilename" ]; then
-    echo "🔁 $filepath → $dir/$newfilename"
-
-    git mv "$filepath" "$dir/temp.module.css" || mv "$filepath" "$dir/temp.module.css"
-    git mv "$dir/temp.module.css" "$dir/$newfilename" || mv "$dir/temp.module.css" "$dir/$newfilename"
+    # git mv не завжди спрацьовує при зміні лише регістру, тому робимо через тимчасове ім'я
+    git mv "$filepath" "$dir/temp.module.css"
+    git mv "$dir/temp.module.css" "$newfilepath"
   else
-    
-    echo "🔄 Refreshing $filepath"
-    git mv "$filepath" "$dir/temp.module.css" || mv "$filepath" "$dir/temp.module.css"
-    git mv "$dir/temp.module.css" "$filepath" || mv "$dir/temp.module.css" "$filepath"
+    echo "$filepath уже в правильному форматі."
   fi
 done
 
-echo "✅ Done. Don't forget to commit and push:"
-echo "git commit -m 'Force fix casing in module.css filenames to CamelCase'"
+echo "Готово. Тепер виконай:"
+echo "git commit -m 'Fix file casing for CSS modules for Vercel build'"
 echo "git push"
+
