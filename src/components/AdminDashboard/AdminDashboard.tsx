@@ -2,18 +2,16 @@ import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AdminDashboardProps, CodeTask, Question, Task } from "@/types/types";
-import {
-  fetchTaskById,
-  fetchTasks,
-  logoutAdminService,
-} from "@/services/tasks";
-import { useAdminAuth } from "@/context/AdminAuthContext";
-import { useConfirm } from "@/components/ConfirmModal/ConfirmModalContext";
+import type { CodeTask, Question, Task } from "@/types/types";
+import type { AdminDashboardProps } from "@/types/admin";
+import { fetchTaskById, fetchTasks } from "@/services/tasks";
+import { removeAdminAccess } from "@/services/admin";
+import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
+import { useConfirm } from "@/components/Modals/ConfirmModal/ConfirmModal";
 import TaskForm from "@/components/Forms/TaskForm/TaskForm";
-import Loader from "@/components/Loader/Loader";
 import AdminTasksList from "@/components/AdminTasksList/AdminTasksList";
-import css from "./admindashboard.module.css";
+import Loader from "@/components/Loader/Loader";
+import css from "./adminDashboard.module.css";
 
 const emptyQuestionTemplate = {
   question: "",
@@ -85,7 +83,6 @@ export default function AdminDashboard({
     try {
       const fullTask = await fetchTaskById(id);
 
-      console.log(fullTask);
       setEditId(fullTask.id);
       setFormData({
         title: fullTask.title,
@@ -129,16 +126,14 @@ export default function AdminDashboard({
       onConfirm: async () => {
         localStorage.removeItem("adminToken");
         try {
-          await logoutAdminService();
+          await removeAdminAccess();
           logoutAdmin();
           setEditId(null);
           toast.success("Logged out successfully");
           localStorage.removeItem("adminToken");
           router.push("/");
-        } catch (error) {
-          toast.error(
-            error instanceof Error ? error.message : "Failed to logout"
-          );
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : "Failed to logout");
         }
       },
     });

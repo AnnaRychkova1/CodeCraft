@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import Confetti from "react-confetti";
-import { TheoryTestProps } from "@/types/types";
-import css from "./theorytest.module.css";
+import type { TheoryTestProps } from "@/types/types";
+import css from "./theoryTest.module.css";
 
 const isMultipleAnswer = (correctAnswer: string[]): boolean =>
   correctAnswer.length > 1;

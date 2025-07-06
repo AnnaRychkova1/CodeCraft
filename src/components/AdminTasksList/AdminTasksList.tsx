@@ -5,10 +5,10 @@ import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
-import { AdminTasksListProps } from "@/types/types";
+import type { AdminTasksListProps } from "@/types/admin";
 import { deleteTask } from "@/services/tasks";
-import { useConfirm } from "@/components/ConfirmModal/ConfirmModalContext";
-import css from "./admintaskslist.module.css";
+import { useConfirm } from "@/components/Modals/ConfirmModal/ConfirmModal";
+import css from "./adminTasksList.module.css";
 
 export default function AdminTasksList({
   tasks,

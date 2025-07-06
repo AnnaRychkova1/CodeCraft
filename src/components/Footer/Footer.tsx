@@ -3,8 +3,8 @@
 import { FaCode, FaJava } from "react-icons/fa";
 import { SiGithub, SiJavascript, SiPython } from "react-icons/si";
 import Image from "next/image";
-import css from "./footer.module.css";
 import FeedbackForm from "../Forms/FeedbackForm/FeedbackForm";
+import css from "./footer.module.css";
 
 export default function Footer() {
   return (

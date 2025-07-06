@@ -9,7 +9,6 @@ import type {
   FilteringProps,
   FilterOption,
 } from "@/types/types";
-
 import css from "./filtering.module.css";
 
 const toggleValue = <T extends string>(

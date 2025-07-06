@@ -1,44 +1,6 @@
 import { ApiResponseMessage, Task, TaskFormData } from "@/types/types";
 import { handleResponse } from "@/utils/handleResponse";
 
-export async function getAdminAccess(password: string): Promise<string> {
-  const res = await fetch("/api/admin/access/access", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ password }),
-  });
-
-  const data = await handleResponse<{ adminToken: string }>(res);
-  return data.adminToken;
-}
-
-export const verifyAdminToken = async (): Promise<boolean> => {
-  const res = await fetch("/api/admin/access/verifyToken", {
-    method: "POST",
-    credentials: "include",
-  });
-
-  const data = await handleResponse<{ valid: boolean }>(res);
-  return data.valid === true;
-};
-
-export async function logoutAdminService(): Promise<void> {
-  const res = await fetch("/api/admin/access/logout", {
-    method: "POST",
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Logout failed");
-  }
-
-  await handleResponse(res);
-}
-
 export async function fetchTasks(): Promise<Task[]> {
   const res = await fetch("/api/public/tasks");
   const data = await handleResponse<Task[]>(res);

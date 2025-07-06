@@ -10,6 +10,7 @@
 
 .accessBtn {
   position: absolute;
+  z-index: 99;
   right: 24px;
   top: 16px;
 }

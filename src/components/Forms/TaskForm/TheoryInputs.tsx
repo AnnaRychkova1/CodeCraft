@@ -1,7 +1,7 @@
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import AutoGrowTextarea from "./AutoGrowTextarea";
-import css from "./taskform.module.css";
-import { PropsTheoryInputs } from "@/types/types";
+import { TheoryInputsProps } from "@/types/types";
+import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
+import css from "./taskForm.module.css";
 
 export default function TheoryInputs({
   questions,
@@ -11,7 +11,7 @@ export default function TheoryInputs({
   onQuestionRemove,
   onAddQuestion,
   setQuestions,
-}: PropsTheoryInputs) {
+}: TheoryInputsProps) {
   return (
     <div className={css.typeContainer}>
       <h3 className={css.typeTitle}>Theory Questions</h3>

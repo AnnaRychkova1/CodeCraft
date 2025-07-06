@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { PropsTask } from "@/types/types";
-import css from "./taskTopSection.module.css";
 import { MdLooksOne, MdLooksTwo, MdLooks3 } from "react-icons/md";
 import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
+import type { PropsTask } from "@/types/types";
 import { formatTextWithLineBreaks } from "@/helpers/formatTextWithLineBreaks";
+import css from "./taskTopSection.module.css";
 
 export default function TaskTopSection({ task }: PropsTask) {
   return (

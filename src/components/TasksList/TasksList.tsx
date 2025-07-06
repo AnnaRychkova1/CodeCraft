@@ -1,12 +1,11 @@
 "use client";
 import Link from "next/link";
-
 import { MdLooksOne, MdLooksTwo, MdLooks3 } from "react-icons/md";
 import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
-import css from "./taskslist.module.css";
 import type { Level, Language, TaskType, TasksListProps } from "@/types/types";
+import css from "./tasksList.module.css";
 
 export default function TasksList({
   tasks,

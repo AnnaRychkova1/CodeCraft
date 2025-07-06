@@ -1,16 +1,15 @@
 import { FiPlus } from "react-icons/fi";
-import AutoGrowTextarea from "./AutoGrowTextarea";
+import type { PracticeInputsProps } from "@/types/types";
 import TestEdit from "./TestEdit";
-
-import { PropsPracticeInputs } from "@/types/types";
-import css from "./taskform.module.css";
+import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
+import css from "./taskForm.module.css";
 
 export default function PracticeInputs({
   code_task,
   onChange,
   onTestChange,
   onTestRemove,
-}: PropsPracticeInputs) {
+}: PracticeInputsProps) {
   return (
     <div className={css.typeContainer}>
       <h3 className={css.typeTitle}>Practice Code Task</h3>

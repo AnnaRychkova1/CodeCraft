@@ -1,16 +1,7 @@
 "use client";
 import { createContext, useContext, useState, ReactNode } from "react";
-import css from "./confirmmodal.module.css";
-
-type ConfirmConfig = {
-  message: string;
-  onConfirm: () => void;
-  onCancel?: () => void;
-};
-
-type ConfirmContextType = {
-  confirm: (config: ConfirmConfig) => void;
-};
+import type { ConfirmConfig, ConfirmContextType } from "@/types/types";
+import css from "./confirmModal.module.css";
 
 const ConfirmContext = createContext<ConfirmContextType | null>(null);
 

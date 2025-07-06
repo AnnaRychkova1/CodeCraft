@@ -3,7 +3,8 @@ import { toast } from "react-hot-toast";
 import { usePathname } from "next/navigation";
 import { sendFeedback } from "@/services/feedback";
 import Loader from "@/components/Loader/Loader";
-import css from "./feedbackform.module.css";
+import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
+import css from "./feedbackForm.module.css";
 
 export default function FeedbackForm() {
   const pathname = usePathname();
@@ -76,10 +77,7 @@ export default function FeedbackForm() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    if (errors[name as keyof typeof errors]) {
-      validateField(name, value);
-    }
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleFocus = (
@@ -98,10 +96,12 @@ export default function FeedbackForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const emailValid = validateField("email", formData.email);
-    const feedbackValid = validateField("feedback", formData.feedback);
+    const validFields = ["email", "feedback"];
+    const allValid = validFields.every((field) =>
+      validateField(field, formData[field as keyof typeof formData])
+    );
 
-    if (!emailValid || !feedbackValid) {
+    if (!allValid) {
       toast.error("Please fill out all required fields correctly.");
       return;
     }
@@ -114,9 +114,12 @@ export default function FeedbackForm() {
       setFormData({ email: "", feedback: "" });
       toast.success("Feedback sent successfully!");
       setErrors({});
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error";
-      toast.error(message);
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error && err.message
+          ? err.message
+          : "An unexpected error occurred during sending your feedback"
+      );
       setStatus("error");
     }
   };
@@ -158,7 +161,7 @@ export default function FeedbackForm() {
           )}
         </div>
         <div className={css.inputContainer}>
-          <textarea
+          <AutoGrowTextarea
             id="feedback"
             name="feedback"
             rows={6}
@@ -169,7 +172,7 @@ export default function FeedbackForm() {
             required
             className={css.formMessage}
             onFocus={handleFocus}
-          ></textarea>
+          ></AutoGrowTextarea>
           {errors.feedback && (
             <p className={css.error} id="feedback-error">
               {errors.feedback}

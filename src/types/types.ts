@@ -11,9 +11,9 @@ export interface Task {
   code_task?: CodeTask[];
 }
 
-export type PropsTask = {
+export interface PropsTask {
   task: Task;
-};
+}
 
 export type Level = "beginner" | "intermediate" | "advanced";
 export type Language = "javascript" | "python" | "java";
@@ -73,14 +73,14 @@ export interface CodeEditorProps {
   language: Language;
 }
 
-export type CodeFormProps = {
+export interface CodeFormProps {
   task: CodeEditorProps["task"];
   language: CodeEditorProps["language"];
   setOutput: React.Dispatch<React.SetStateAction<string[]>>;
   setShowConfetti: React.Dispatch<React.SetStateAction<boolean>>;
-};
+}
 
-export type TestEditProps = {
+export interface TestEditProps {
   test_case: CodeTaskTest;
   index: number;
   onChange: (
@@ -88,9 +88,9 @@ export type TestEditProps = {
     updatedTest: { input: unknown[]; expected: unknown }
   ) => void;
   onRemove: (index: number, testId?: string) => void;
-};
+}
 
-export type TaskFormProps = {
+export interface TaskFormProps {
   formData: TaskFormData;
   setFormData: React.Dispatch<React.SetStateAction<TaskFormData>>;
   editId: string | null;
@@ -99,9 +99,9 @@ export type TaskFormProps = {
   emptyCodeTask: () => CodeTask;
   onSubmitSuccess?: () => void;
   cancelEdit: () => void;
-};
+}
 
-export interface PropsPracticeInputs {
+export interface PracticeInputsProps {
   code_task: CodeTask;
   onChange: <K extends keyof CodeTask>(key: K, value: CodeTask[K]) => void;
   onTestChange: (
@@ -111,7 +111,7 @@ export interface PropsPracticeInputs {
   onTestRemove: (index: number, testId?: string) => void;
 }
 
-export interface PropsTheoryInputs {
+export interface TheoryInputsProps {
   questions: Question[];
   onChange: (
     index: number,
@@ -125,7 +125,17 @@ export interface PropsTheoryInputs {
   setQuestions: (questions: Question[]) => void;
 }
 
-export type PropsTextArea = TextareaHTMLAttributes<HTMLTextAreaElement>;
+export type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+export interface ConfirmConfig {
+  message: string;
+  onConfirm: () => void;
+  onCancel?: () => void;
+}
+
+export interface ConfirmContextType {
+  confirm: (config: ConfirmConfig) => void;
+}
 
 export interface TaskFormData {
   title: string;
@@ -137,51 +147,7 @@ export interface TaskFormData {
   code_task?: CodeTask[];
 }
 
-export interface FeedbackData {
-  email: string;
-  feedback: string;
-}
-
-export interface AdminAccessFormProps {
-  sessionExpired: boolean;
-  setSessionExpired: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export interface AdminDashboardProps {
-  sessionExpired: boolean;
-}
-
-export interface AdminTasksListProps {
-  tasks: Task[];
-  handleEdit: (taskId: string) => void;
-  loadTasks: () => Promise<void>;
-  sessionExpired: boolean;
-}
-
-export type ApiResponseMessage = {
+export interface ApiResponseMessage {
   message: string;
   id?: string;
-};
-
-export interface Admin {
-  password: string;
-}
-
-export interface AdminAuthContextType {
-  adminToken: string | null;
-  loginAdmin: (adminToken: string) => void;
-  logoutAdmin: () => void;
-}
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-}
-
-export interface AuthContextType {
-  userToken: string | null;
-  loginUser: (userToken: string) => void;
-  logoutUser: () => void;
 }

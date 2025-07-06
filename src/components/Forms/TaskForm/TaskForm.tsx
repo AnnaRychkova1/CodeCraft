@@ -1,14 +1,14 @@
+import TheoryInputs from "./TheoryInputs";
 import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-
-import { CodeTask, Question, TaskFormProps } from "@/types/types";
-import AutoGrowTextarea from "./AutoGrowTextarea";
-import css from "./taskform.module.css";
-import TheoryInputs from "./TheoryInputs";
-import PracticeInputs from "./PracticeInputs";
+import type { CodeTask, Question, TaskFormProps } from "@/types/types";
 import { createTask, updateTask } from "@/services/tasks";
 import Loader from "@/components/Loader/Loader";
+import PracticeInputs from "./PracticeInputs";
+import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
+
+import css from "./taskForm.module.css";
 
 export default function TaskForm({
   formData,
@@ -294,8 +294,12 @@ export default function TaskForm({
       if (onSubmitSuccess) {
         await onSubmitSuccess();
       }
-    } catch {
-      toast.error("Failed to submit task");
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error && err.message
+          ? err.message
+          : "An unexpected error occurred during sending the task."
+      );
     } finally {
       setLoading(false);
     }

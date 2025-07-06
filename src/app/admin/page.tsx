@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { verifyAdminToken } from "@/services/tasks";
-import { useAdminAuth } from "@/context/AdminAuthContext";
+import { verifyAdminToken } from "@/services/admin";
+import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
 import AdminAccess from "@/components/Forms/AdminAccess/AdminAccess";
 import AdminDashboard from "@/components/AdminDashboard/AdminDashboard";
 

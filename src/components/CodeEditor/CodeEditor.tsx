@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
-
-import css from "./codeeditor.module.css";
-import { CodeEditorProps } from "@/types/types";
+import type { CodeEditorProps } from "@/types/types";
 import CodeForm from "../Forms/CodeForm/CodeForm";
+import css from "./codeEditor.module.css";
 
 export default function CodeEditor({ task, language }: CodeEditorProps) {
   const [output, setOutput] = useState<string[]>([]);

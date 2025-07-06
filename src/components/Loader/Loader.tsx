@@ -1,6 +1,6 @@
 import { PulseLoader } from "react-spinners";
-import css from "./loader.module.css";
 import type { FC } from "react";
+import css from "./loader.module.css";
 
 const Loader: FC = () => {
   return (

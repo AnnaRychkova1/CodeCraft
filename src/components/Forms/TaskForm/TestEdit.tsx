@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
-
-import { TestEditProps } from "@/types/types";
-import AutoGrowTextarea from "./AutoGrowTextarea";
-import css from "./taskform.module.css";
+import type { TestEditProps } from "@/types/types";
+import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
+import css from "./taskForm.module.css";
 
 export default function TestEdit({
   test_case,

@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
-import { AuthProvider } from "@/context/AuthContext";
-import { AdminAuthProvider } from "@/context/AdminAuthContext";
+import { AdminAuthProvider } from "@/components/Providers/AdminAuthProvider";
+import { AuthProvider } from "@/components/Providers/AuthProvider";
+import { ConfirmProvider } from "@/components/Modals/ConfirmModal/ConfirmModal";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
-import { ConfirmProvider } from "@/components/ConfirmModal/ConfirmModalContext";
 import "./globals.css";
 import "./common.css";
 
@@ -33,7 +33,6 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies();
   const adminToken = cookieStore.get("adminToken")?.value || null;
-  const userToken = cookieStore.get("userToken")?.value || null;
   return (
     <html lang="en">
       <head>
@@ -41,7 +40,7 @@ export default async function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AdminAuthProvider adminToken={adminToken}>
-          <AuthProvider userToken={userToken}>
+          <AuthProvider>
             <ConfirmProvider>
               <div className="page">
                 <Header />

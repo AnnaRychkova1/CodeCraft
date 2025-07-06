@@ -1,12 +1,12 @@
 import { useRef, useEffect } from "react";
-import css from "./taskform.module.css";
-import { PropsTextArea } from "@/types/types";
+import type { TextAreaProps } from "@/types/types";
+import css from "./autoGrowTextarea.module.css";
 
 export default function AutoGrowTextarea({
   value,
   className,
   ...props
-}: PropsTextArea) {
+}: TextAreaProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function AutoGrowTextarea({
           ref.current.style.height = `${ref.current.scrollHeight}px`;
         }
       }}
-      className={`${css.taskTextarea} ${className ?? ""}`}
+      className={`${css.autoGrowTextarea} ${className ?? ""}`}
     />
   );
 }

@@ -1,13 +1,17 @@
 "use client";
 import Image from "next/image";
-import { useAuth } from "@/context/AuthContext";
+import { useSession, signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
+import { useConfirm } from "../Modals/ConfirmModal/ConfirmModal";
 import css from "./header.module.css";
 
 export default function Header() {
-  const { userToken, logoutUser } = useAuth();
+  const { status } = useSession();
+  const isUser = status === "authenticated";
+
   const router = useRouter();
   const pathname = usePathname();
+  const confirm = useConfirm();
 
   const hideAuthButtons = ["/login", "/register", "/admin"].includes(
     pathname as string
@@ -15,6 +19,13 @@ export default function Header() {
 
   const handleLogin = () => {
     router.push("/login");
+  };
+
+  const handleLogout = () => {
+    confirm({
+      message: "Are you sure you want to log out?",
+      onConfirm: () => signOut(),
+    });
   };
 
   return (
@@ -37,8 +48,8 @@ export default function Header() {
               width={40}
               height={40}
             />
-            {userToken ? (
-              <button onClick={logoutUser} className="logoutBtn">
+            {isUser ? (
+              <button onClick={() => signOut()} className="logoutBtn">
                 Logout
               </button>
             ) : (
@@ -64,8 +75,8 @@ export default function Header() {
             width={40}
             height={40}
           />
-          {userToken ? (
-            <button onClick={logoutUser} className="logoutBtn">
+          {isUser ? (
+            <button onClick={handleLogout} className="logoutBtn">
               Logout
             </button>
           ) : (

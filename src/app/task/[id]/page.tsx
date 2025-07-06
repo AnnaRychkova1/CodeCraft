@@ -2,8 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-
-import { CodeTask, Task } from "@/types/types";
+import type { CodeTask, Task } from "@/types/types";
 import { fetchTaskById } from "@/services/tasks";
 import Loader from "@/components/Loader/Loader";
 import TheoryTest from "@/components/TheoryTest/TheoryTest";
