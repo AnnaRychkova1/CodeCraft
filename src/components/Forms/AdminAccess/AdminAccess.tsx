@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import type { AdminAccessFormProps } from "@/types/admin";
+import type { AdminAccessFormProps } from "@/types/adminTypes";
 import { getAdminAccess } from "@/services/admin";
 import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
 import Loader from "@/components/Loader/Loader";

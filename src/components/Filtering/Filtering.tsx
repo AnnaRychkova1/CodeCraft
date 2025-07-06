@@ -8,7 +8,7 @@ import type {
   TaskType,
   FilteringProps,
   FilterOption,
-} from "@/types/types";
+} from "@/types/tasksTypes";
 import css from "./filtering.module.css";
 
 const toggleValue = <T extends string>(

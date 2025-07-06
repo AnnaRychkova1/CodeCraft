@@ -1,4 +1,4 @@
-import { FeedbackData } from "@/types/feedback";
+import type { FeedbackData } from "@/types/commonTypes";
 import { handleResponse } from "@/utils/handleResponse";
 
 export async function sendFeedback(data: FeedbackData) {

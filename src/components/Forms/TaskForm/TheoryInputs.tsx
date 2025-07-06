@@ -1,5 +1,5 @@
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import { TheoryInputsProps } from "@/types/types";
+import type { TheoryInputsProps } from "@/types/tasksTypes";
 import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
 import css from "./taskForm.module.css";
 

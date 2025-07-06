@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext, useState, ReactNode } from "react";
-import type { ConfirmConfig, ConfirmContextType } from "@/types/types";
+import type { ConfirmConfig, ConfirmContextType } from "@/types/commonTypes";
 import css from "./confirmModal.module.css";
 
 const ConfirmContext = createContext<ConfirmContextType | null>(null);

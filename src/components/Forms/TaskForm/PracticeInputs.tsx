@@ -1,5 +1,5 @@
 import { FiPlus } from "react-icons/fi";
-import type { PracticeInputsProps } from "@/types/types";
+import type { PracticeInputsProps } from "@/types/tasksTypes";
 import TestEdit from "./TestEdit";
 import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
 import css from "./taskForm.module.css";

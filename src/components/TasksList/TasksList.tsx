@@ -4,7 +4,12 @@ import { MdLooksOne, MdLooksTwo, MdLooks3 } from "react-icons/md";
 import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
-import type { Level, Language, TaskType, TasksListProps } from "@/types/types";
+import type {
+  Level,
+  Language,
+  TaskType,
+  TasksListProps,
+} from "@/types/tasksTypes";
 import css from "./tasksList.module.css";
 
 export default function TasksList({

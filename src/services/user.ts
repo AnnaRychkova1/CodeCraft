@@ -1,4 +1,4 @@
-import { RegisterUserDto, UserRegisterResponse } from "@/types/user";
+import type { RegisterUserDto, UserRegisterResponse } from "@/types/userTypes";
 import { handleResponse } from "@/utils/handleResponse";
 
 export async function registerUser(

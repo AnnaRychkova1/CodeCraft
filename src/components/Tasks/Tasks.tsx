@@ -4,7 +4,7 @@ import { MdFilterList } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
-import type { Level, Language, TaskType, Task } from "@/types/types";
+import type { Level, Language, TaskType, Task } from "@/types/tasksTypes";
 import { resetFilters } from "@/utils/resetFilters";
 import { fetchTasks } from "@/services/tasks";
 import TasksList from "@/components/TasksList/TasksList";

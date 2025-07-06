@@ -1,4 +1,4 @@
-import { Task } from "./types";
+import { Task } from "./tasksTypes";
 
 export interface Admin {
   password: string;

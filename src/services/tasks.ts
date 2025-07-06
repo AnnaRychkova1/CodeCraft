@@ -1,4 +1,5 @@
-import { ApiResponseMessage, Task, TaskFormData } from "@/types/types";
+import type { ApiResponseMessage } from "@/types/commonTypes";
+import type { Task, TaskFormData } from "@/types/tasksTypes";
 import { handleResponse } from "@/utils/handleResponse";
 
 export async function fetchTasks(): Promise<Task[]> {

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import type { LoginUserDto } from "@/types/user";
+import type { LoginUserDto } from "@/types/userTypes";
 import Loader from "@/components/Loader/Loader";
 import css from "./authForms.module.css";
 

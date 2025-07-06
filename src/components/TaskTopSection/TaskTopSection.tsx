@@ -3,7 +3,7 @@ import { MdLooksOne, MdLooksTwo, MdLooks3 } from "react-icons/md";
 import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
-import type { PropsTask } from "@/types/types";
+import type { PropsTask } from "@/types/tasksTypes";
 import { formatTextWithLineBreaks } from "@/helpers/formatTextWithLineBreaks";
 import css from "./taskTopSection.module.css";
 

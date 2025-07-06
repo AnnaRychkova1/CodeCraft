@@ -1,4 +1,4 @@
-import { Dispatch, JSX, SetStateAction, TextareaHTMLAttributes } from "react";
+import { Dispatch, JSX, SetStateAction } from "react";
 
 export interface Task {
   id: string;
@@ -25,6 +25,7 @@ export interface TasksListProps {
   setLanguage: (val: Language[]) => void;
   setType: (val: TaskType[]) => void;
 }
+
 export interface Question {
   id?: string;
   question: string;
@@ -125,18 +126,6 @@ export interface TheoryInputsProps {
   setQuestions: (questions: Question[]) => void;
 }
 
-export type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
-
-export interface ConfirmConfig {
-  message: string;
-  onConfirm: () => void;
-  onCancel?: () => void;
-}
-
-export interface ConfirmContextType {
-  confirm: (config: ConfirmConfig) => void;
-}
-
 export interface TaskFormData {
   title: string;
   description: string;
@@ -145,9 +134,4 @@ export interface TaskFormData {
   type: "theory" | "practice";
   theory_question?: Question[];
   code_task?: CodeTask[];
-}
-
-export interface ApiResponseMessage {
-  message: string;
-  id?: string;
 }

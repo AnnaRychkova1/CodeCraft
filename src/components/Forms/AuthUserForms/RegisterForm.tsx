@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import type { RegisterUserDto } from "@/types/user";
+import type { RegisterUserDto } from "@/types/userTypes";
 import { registerUser } from "@/services/user";
 import Loader from "@/components/Loader/Loader";
 import css from "./authForms.module.css";

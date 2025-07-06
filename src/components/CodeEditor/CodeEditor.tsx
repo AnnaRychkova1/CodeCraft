@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
-import type { CodeEditorProps } from "@/types/types";
+import type { CodeEditorProps } from "@/types/tasksTypes";
 import CodeForm from "../Forms/CodeForm/CodeForm";
 import css from "./codeEditor.module.css";
 

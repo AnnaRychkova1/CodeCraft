@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
-import type { CodeFormProps } from "@/types/types";
+import type { CodeFormProps } from "@/types/tasksTypes";
 import { runJavaScriptCode } from "@/utils/runJavaScriptCode";
 import { runPythonCode } from "@/utils/runPythonCode";
 import { runJavaCode } from "@/utils/runJavaCode";

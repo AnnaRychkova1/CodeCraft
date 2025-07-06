@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import Confetti from "react-confetti";
-import type { TheoryTestProps } from "@/types/types";
+import type { TheoryTestProps } from "@/types/tasksTypes";
 import css from "./theoryTest.module.css";
 
 const isMultipleAnswer = (correctAnswer: string[]): boolean =>

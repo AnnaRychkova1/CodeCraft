@@ -2,7 +2,7 @@ import TheoryInputs from "./TheoryInputs";
 import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import type { CodeTask, Question, TaskFormProps } from "@/types/types";
+import type { CodeTask, Question, TaskFormProps } from "@/types/tasksTypes";
 import { createTask, updateTask } from "@/services/tasks";
 import Loader from "@/components/Loader/Loader";
 import PracticeInputs from "./PracticeInputs";

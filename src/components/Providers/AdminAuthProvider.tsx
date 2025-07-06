@@ -7,7 +7,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import type { AdminAuthContextType } from "@/types/admin";
+import type { AdminAuthContextType } from "@/types/adminTypes";
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(
   undefined

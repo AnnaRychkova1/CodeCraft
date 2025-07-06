@@ -1,4 +1,4 @@
-import { Admin } from "@/types/admin";
+import type { Admin } from "@/types/adminTypes";
 import { handleResponse } from "@/utils/handleResponse";
 
 export async function getAdminAccess(admin: Admin): Promise<string> {
