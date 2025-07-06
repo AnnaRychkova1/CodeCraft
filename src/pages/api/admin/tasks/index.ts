@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
-import { CodeTaskTest, Question } from "@/types/types";
+import { CodeTaskTest, Question } from "@/types/tasksTypes";
 import { adminAuthMiddleware } from "@/lib/adminAuthMiddleware";
 
 const supabase = createClient(
