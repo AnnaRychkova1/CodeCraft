@@ -10,7 +10,7 @@ import { fetchTasks } from "@/services/tasks";
 import TasksList from "@/components/TasksList/TasksList";
 import Filtering from "@/components/Filtering/Filtering";
 import Loader from "@/components/Loader/Loader";
-import css from "./tasks.module.css";
+import css from "./Tasks.module.css";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);

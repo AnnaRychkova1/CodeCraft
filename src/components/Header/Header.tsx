@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useConfirm } from "../Modals/ConfirmModal/ConfirmModal";
-import css from "./header.module.css";
+import css from "./Header.module.css";
 
 export default function Header() {
   const { status } = useSession();

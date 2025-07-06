@@ -7,7 +7,7 @@ import {
   FaJava,
 } from "react-icons/fa";
 import { SiGithub, SiJavascript, SiPython } from "react-icons/si";
-import css from "./hero.module.css";
+import css from "./Hero.module.css";
 
 export default function Hero() {
   return (

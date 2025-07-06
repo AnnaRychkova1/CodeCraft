@@ -10,7 +10,7 @@ import type {
   TaskType,
   TasksListProps,
 } from "@/types/tasksTypes";
-import css from "./tasksList.module.css";
+import css from "./TasksList.module.css";
 
 export default function TasksList({
   tasks,

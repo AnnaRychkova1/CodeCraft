@@ -5,7 +5,7 @@ import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
 import type { PropsTask } from "@/types/tasksTypes";
 import { formatTextWithLineBreaks } from "@/helpers/formatTextWithLineBreaks";
-import css from "./taskTopSection.module.css";
+import css from "./TaskTopSection.module.css";
 
 export default function TaskTopSection({ task }: PropsTask) {
   return (
