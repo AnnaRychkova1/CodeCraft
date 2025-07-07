@@ -104,7 +104,7 @@ export default function CodeForm({
 
   return (
     <>
-      {isAuthenticated && (
+      {isAuthenticated && solution && (
         <div className={`${css.solvedContainer} ${touched ? css.hidden : ""}`}>
           <p className={css.helperText}>
             <span className={css.helperName}>Hi, {userName}!</span> This is your
