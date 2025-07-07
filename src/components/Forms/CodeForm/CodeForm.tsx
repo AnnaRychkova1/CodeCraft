@@ -10,17 +10,27 @@ import { runPythonCode } from "@/utils/runPythonCode";
 import { runJavaCode } from "@/utils/runJavaCode";
 import Loader from "@/components/Loader/Loader";
 import css from "./CodeForm.module.css";
+import { submitUserTaskResult } from "@/services/tasks";
+import { useSession } from "next-auth/react";
 
 export default function CodeForm({
   task,
   language,
   setOutput,
   setShowConfetti,
+  taskId,
+  solution,
 }: CodeFormProps) {
+  const { data: session, status } = useSession();
+  const userName = session?.user?.name;
+  const isAuthenticated = status === "authenticated";
+  const initialCode =
+    isAuthenticated && solution
+      ? solution.replace(/\\n/g, "\n")
+      : (task.starter_code || "").replace(/\\n/g, "\n");
+  const [code, setCode] = useState(initialCode);
+  const [touched, setTouched] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [code, setCode] = useState(
-    (task.starter_code || "").replace(/\\n/g, "\n")
-  );
 
   const languageExtension = (() => {
     switch (language) {
@@ -34,6 +44,12 @@ export default function CodeForm({
         return [];
     }
   })();
+
+  const handleCodeChange = (value: string) => {
+    if (!touched) setTouched(true);
+    setCode(value);
+  };
+
   const runCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -61,8 +77,22 @@ export default function CodeForm({
 
       if (allPassed) {
         setShowConfetti(true);
-      } else {
-        toast.error("Some tests failed. Check the output above.");
+        if (isAuthenticated) {
+          try {
+            const response = await submitUserTaskResult(taskId, {
+              solution: code,
+              submitted: true,
+            });
+
+            if (response?.message) {
+              toast.success(response.message);
+            }
+          } catch (err: unknown) {
+            const errorMessage =
+              err instanceof Error ? err.message : String(err);
+            toast.error(errorMessage || "Failed to submit solution.");
+          }
+        }
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
@@ -73,21 +103,31 @@ export default function CodeForm({
   };
 
   return (
-    <form className={css.form} onSubmit={runCode}>
-      <CodeMirror
-        value={code}
-        onChange={(value) => setCode(value)}
-        height="400px"
-        extensions={[languageExtension]}
-        className={css.codeArea}
-      />
-      {loading ? (
-        <Loader />
-      ) : (
-        <button type="submit" disabled={loading} className={css.runBtn}>
-          Run Code
-        </button>
+    <>
+      {isAuthenticated && (
+        <div className={`${css.solvedContainer} ${touched ? css.hidden : ""}`}>
+          <p className={css.helperText}>
+            <span className={css.helperName}>Hi, {userName}!</span> This is your
+            previously submitted solution. You can modify it or run it as-is.
+          </p>
+        </div>
       )}
-    </form>
+      <form className={css.form} onSubmit={runCode}>
+        <CodeMirror
+          value={code}
+          onChange={handleCodeChange}
+          height="400px"
+          extensions={[languageExtension]}
+          className={css.codeArea}
+        />
+        {loading ? (
+          <Loader />
+        ) : (
+          <button type="submit" disabled={loading} className={css.runBtn}>
+            Run Code
+          </button>
+        )}
+      </form>
+    </>
   );
 }

@@ -23,6 +23,10 @@
   /* Types */
   --color-theory: #13b8dd;
   --color-practice: #ff5722;
+
+  /* Status */
+  --color-solved: var(--accent-dark);
+  --color-unsolved: rgba(17, 121, 18, 0.4);
 }
 
 html,

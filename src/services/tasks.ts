@@ -1,23 +1,43 @@
 import type { ApiResponseMessage } from "@/types/commonTypes";
-import type { Task, TaskFormData } from "@/types/tasksTypes";
+import type {
+  TaskFormData,
+  TasksResponse,
+  TaskWithUserTask,
+} from "@/types/tasksTypes";
 import { handleResponse } from "@/utils/handleResponse";
 
-export async function fetchTasks(): Promise<Task[]> {
+export async function fetchTasks(): Promise<TasksResponse> {
   const res = await fetch("/api/public/tasks");
-  const data = await handleResponse<Task[]>(res);
 
-  if (!Array.isArray(data)) {
-    throw new Error("Invalid tasks data format");
-  }
-  return data;
+  return handleResponse<TasksResponse>(res);
 }
 
-export async function fetchTaskById(taskId: string): Promise<Task> {
+export async function fetchTaskById(taskId: string): Promise<TaskWithUserTask> {
   const res = await fetch(`/api/public/task/${taskId}`, {
     cache: "no-store",
   });
 
-  return handleResponse<Task>(res);
+  return handleResponse<TaskWithUserTask>(res);
+}
+
+// loggedin users only
+export async function submitUserTaskResult(
+  taskId: string,
+  payload: {
+    result?: number;
+    solution?: string;
+    submitted: boolean;
+  }
+): Promise<ApiResponseMessage> {
+  const res = await fetch(`/api/user/task/${taskId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  return handleResponse<ApiResponseMessage>(res);
 }
 
 // only admin

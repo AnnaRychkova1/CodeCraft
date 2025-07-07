@@ -10,7 +10,6 @@
   width: 100%;
   padding: 16px;
   border-radius: 6px;
-  border: 4px solid rgba(17, 121, 18, 0.2);
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0px 4px 8px rgba(150, 246, 185, 0.505);
   display: flex;
@@ -19,13 +18,29 @@
   gap: 24px;
 }
 
+.solved {
+  border: 4px solid rgba(17, 121, 18, 0.2);
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.unsolved {
+  border: 4px solid var(--accent-light);
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .taskItem:hover {
   transform: scale(1.01);
-  border-style: double;
-  border-width: 4px;
-  border-color: var(--accent-dark);
+
   box-shadow: -8px -8px 12px rgba(198, 248, 201, 0.95),
     8px 8px 12px rgba(185, 246, 195, 0.95);
+}
+
+.solved:hover {
+  border: 4px double rgba(17, 121, 18, 0.4);
+}
+
+.unsolved:hover {
+  border: 4px double var(--accent-dark);
 }
 
 .textBox {

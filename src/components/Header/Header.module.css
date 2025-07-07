@@ -35,7 +35,7 @@
 
 .authTopContainer {
   display: flex;
-  gap: 12px;
+  gap: 24px;
 }
 
 .authContainer {
@@ -63,7 +63,7 @@
 
   .authContainer {
     display: flex;
-    gap: 12px;
+    gap: 24px;
   }
 
   .authTopContainer {
@@ -82,6 +82,6 @@
     align-items: center;
   }
   .authContainer {
-    gap: 24px;
+    gap: 48px;
   }
 }

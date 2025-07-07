@@ -29,7 +29,12 @@ export default function TasksList({
     <ul className={css.tasksContainer}>
       {tasks.length > 0 &&
         tasks.map((task) => (
-          <li key={task.id} className={css.taskItem}>
+          <li
+            key={task.id}
+            className={`${css.taskItem} ${
+              task.solved ? css.solved : css.unsolved
+            }`}
+          >
             <Link
               href={`/task/${task.id}`}
               className={css.textBox}

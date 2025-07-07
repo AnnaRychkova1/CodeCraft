@@ -6,7 +6,12 @@ import type { CodeEditorProps } from "@/types/tasksTypes";
 import CodeForm from "../Forms/CodeForm/CodeForm";
 import css from "./CodeEditor.module.css";
 
-export default function CodeEditor({ task, language }: CodeEditorProps) {
+export default function CodeEditor({
+  task,
+  language,
+  taskId,
+  solution,
+}: CodeEditorProps) {
   const [output, setOutput] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiVisible, setConfettiVisible] = useState(false);
@@ -46,6 +51,8 @@ export default function CodeEditor({ task, language }: CodeEditorProps) {
           language={language}
           setOutput={setOutput}
           setShowConfetti={setShowConfetti}
+          taskId={taskId}
+          solution={solution}
         />
         {output.length > 0 && (
           <div className={css.outputBox} ref={outputRef}>

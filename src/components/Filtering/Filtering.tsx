@@ -1,6 +1,7 @@
 import { MdLooksOne, MdLooksTwo, MdLooks3 } from "react-icons/md";
 import { SiJavascript, SiPython } from "react-icons/si";
-import { FaJava, FaBookOpen } from "react-icons/fa";
+import { FaJava, FaBookOpen, FaCheckCircle, FaRegCircle } from "react-icons/fa";
+
 import { GiHammerBreak } from "react-icons/gi";
 import type {
   Level,
@@ -8,8 +9,10 @@ import type {
   TaskType,
   FilteringProps,
   FilterOption,
+  Completion,
 } from "@/types/tasksTypes";
 import css from "./Filtering.module.css";
+import { useSession } from "next-auth/react";
 
 const toggleValue = <T extends string>(
   value: T,
@@ -72,6 +75,19 @@ const types: FilterOption<TaskType>[] = [
   },
 ] as const;
 
+const completions: FilterOption<Completion>[] = [
+  {
+    value: "solved",
+    label: "Solved",
+    icon: <FaCheckCircle className={css.completionSolved} />,
+  },
+  {
+    value: "unsolved",
+    label: "Unsolved",
+    icon: <FaRegCircle className={css.completionUnsolved} />,
+  },
+];
+
 export default function Filtering({
   level,
   setLevel,
@@ -79,7 +95,11 @@ export default function Filtering({
   setLanguage,
   type,
   setType,
+  completion,
+  setCompletion,
 }: FilteringProps) {
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
   return (
     <div className={css.container}>
       {/* Level Filter */}
@@ -164,6 +184,37 @@ export default function Filtering({
           ))}
         </div>
       </div>
+
+      {/* Submitted Filter */}
+      {isAuthenticated && (
+        <div className={css.filterContainer}>
+          <h4>Completion</h4>
+          <div className={css.optionGroup}>
+            {completions.map(({ value, label, icon }) => (
+              <div key={value} className={css.optionBox}>
+                <button
+                  type="button"
+                  aria-label={`${label} completion`}
+                  className={`${css.optionBtn} ${
+                    completion.includes(value) ? css.active : ""
+                  }`}
+                  onClick={() =>
+                    toggleValue<Completion>(value, completion, setCompletion)
+                  }
+                >
+                  {completion.includes(value) && (
+                    <span className={css.checkmark}>✔</span>
+                  )}
+                </button>
+                <span className={css.filterDescr}>
+                  {icon}
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

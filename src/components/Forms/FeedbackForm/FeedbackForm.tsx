@@ -112,7 +112,7 @@ export default function FeedbackForm() {
       await sendFeedback(formData);
       setStatus("success");
       setFormData({ email: "", feedback: "" });
-      toast.success("Feedback sent successfully!");
+      toast.success("Thanks a lot! Every bit of feedback helps us improve!");
       setErrors({});
     } catch (err: unknown) {
       toast.error(

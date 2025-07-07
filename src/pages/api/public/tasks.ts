@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
-import authOptions from "../../auth/[...nextauth]";
+import authOptions from "../auth/[...nextauth]";
 import { createClient } from "@supabase/supabase-js";
 import type { Session } from "next-auth";
 
@@ -13,12 +13,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { id } = req.query;
-
-  if (typeof id !== "string") {
-    return res.status(400).json({ error: "Invalid or missing id" });
-  }
-
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -26,31 +20,30 @@ export default async function handler(
 
   try {
     const session = (await getServerSession(req, res, authOptions)) as Session;
+
     const userEmail = session?.user?.email ?? null;
 
-    const { data: task, error: taskError } = await supabase
-      .from("task")
-      .select(
-        `
-        *,
-        theory_question(*),
-        code_task!fk_task(
-          *,
-          test_case(*)
-        )
-      `
-      )
-      .eq("id", id)
-      .single();
+    const { data: tasks, error: taskError } = await supabase.from("task")
+      .select(`
+        id,
+        title,
+        description,
+        level,
+        language,
+        type
+      `);
 
-    if (taskError) throw taskError;
-    if (!task) return res.status(404).json({ error: "Task not found" });
+    if (taskError) {
+      console.error("Failed to fetch tasks:", taskError);
+      throw taskError;
+    }
 
-    let userTask: {
+    let userTasks: {
+      task_id: string;
       submitted: boolean;
       result: number | null;
       solution: string | null;
-    } | null = null;
+    }[] = [];
 
     if (userEmail) {
       const { data: userData, error: userError } = await supabase
@@ -68,23 +61,20 @@ export default async function handler(
 
       const { data: userTaskData, error: userTaskError } = await supabase
         .from("user_tasks")
-        .select("submitted, result, solution")
-        .eq("user_id", userId)
-        .eq("task_id", id)
-        .single();
+        .select("task_id, submitted, result, solution")
+        .eq("user_id", userId);
 
-      if (userTaskError && userTaskError.code !== "PGRST116") {
-        // PGRST116: no rows returned
-        console.error("Error fetching user_task:", userTaskError);
+      if (userTaskError) {
+        console.error("Failed to fetch user tasks:", userTaskError);
         throw userTaskError;
       }
 
-      userTask = userTaskData ?? null;
+      userTasks = userTaskData ?? [];
     }
 
-    return res.status(200).json({ task, userTask });
+    return res.status(200).json({ tasks, userTasks });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error("API error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }

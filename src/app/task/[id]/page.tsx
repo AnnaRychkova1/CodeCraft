@@ -2,7 +2,8 @@
 
 import { use, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import type { CodeTask, Task } from "@/types/tasksTypes";
+import { useSession } from "next-auth/react";
+import { UserTask, type CodeTask, type Task } from "@/types/tasksTypes";
 import { fetchTaskById } from "@/services/tasks";
 import Loader from "@/components/Loader/Loader";
 import TheoryTest from "@/components/TheoryTest/TheoryTest";
@@ -17,22 +18,29 @@ export default function TaskPage({ params }: Props) {
   const { id } = use(params);
 
   const [task, setTask] = useState<Task | null>(null);
+  const [userTask, setUserTask] = useState<UserTask | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
 
   useEffect(() => {
     async function loadTask() {
       setLoading(true);
       setLoadError(false);
       try {
-        const fetchedTask = await fetchTaskById(id);
+        const { task, userTask } = await fetchTaskById(id);
+
+        const fetchedTask = task;
+
         if (!fetchedTask) {
           setLoadError(true);
           toast.error("Task not found");
           return;
         }
         setTask(fetchedTask);
-        toast.success("Task loaded successfully", { id: "load-success" });
+        setUserTask(userTask ?? null);
       } catch (error: unknown) {
         setLoadError(true);
         toast.error(
@@ -45,7 +53,7 @@ export default function TaskPage({ params }: Props) {
     }
 
     loadTask();
-  }, [id]);
+  }, [id, isAuthenticated]);
 
   if (loading) {
     return <Loader />;
@@ -68,13 +76,23 @@ export default function TaskPage({ params }: Props) {
       <TaskTopSection task={task} />
 
       {task.type === "theory" && task.theory_question && (
-        <TheoryTest theoryQuestions={task.theory_question} />
+        <TheoryTest
+          theoryQuestions={task.theory_question}
+          taskId={task.id}
+          result={userTask?.result}
+        />
       )}
 
       {task.type === "practice" &&
         Array.isArray(task.code_task) &&
         task.code_task.map((codeTask: CodeTask, index: number) => (
-          <CodeEditor key={index} task={codeTask} language={task.language} />
+          <CodeEditor
+            key={index}
+            task={codeTask}
+            language={task.language}
+            taskId={task.id}
+            solution={userTask?.solution}
+          />
         ))}
     </>
   );

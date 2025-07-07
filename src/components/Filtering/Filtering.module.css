@@ -100,3 +100,11 @@
 .typePractice {
   color: var(--color-practice);
 }
+
+.completionSolved {
+  color: var(--color-solved);
+}
+
+.completionUnsolved {
+  color: var(--color-unsolved);
+}

@@ -3,13 +3,20 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import Confetti from "react-confetti";
+import { useSession } from "next-auth/react";
 import type { TheoryTestProps } from "@/types/tasksTypes";
+import { submitUserTaskResult } from "@/services/tasks";
+import Loader from "@/components/Loader/Loader";
 import css from "./TheoryTest.module.css";
 
 const isMultipleAnswer = (correctAnswer: string[]): boolean =>
   correctAnswer.length > 1;
 
-export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
+export default function TheoryTest({
+  theoryQuestions,
+  taskId,
+  result,
+}: TheoryTestProps) {
   const [selectedAnswers, setSelectedAnswers] = useState<string[][]>(
     Array(theoryQuestions.length).fill([])
   );
@@ -17,6 +24,12 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
   const [scorePercent, setScorePercent] = useState<number | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiVisible, setConfettiVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  const { data: session, status } = useSession();
+  const userName = session?.user?.name;
+  const isAuthenticated = status === "authenticated";
 
   useEffect(() => {
     if (showConfetti) {
@@ -31,7 +44,11 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
   }, [showConfetti]);
 
   const handleSelect = (index: number, answer: string, isMulti: boolean) => {
-    if (submitted) return;
+    if (submitted || loading) return;
+
+    if (!hasStarted) {
+      setHasStarted(true);
+    }
 
     setSelectedAnswers((prev) => {
       const updated = [...prev];
@@ -47,7 +64,7 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let correctCount = 0;
 
     theoryQuestions.forEach((q, i) => {
@@ -67,12 +84,31 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
 
     if (percent === 100) {
       setShowConfetti(true);
-    } else {
-      toast.error("Some answers are incorrect. Please review your answers.");
+    }
+
+    if (isAuthenticated) {
+      setLoading(true);
+      try {
+        const response = await submitUserTaskResult(taskId, {
+          result: percent,
+          submitted: true,
+        });
+
+        if (response?.message) {
+          toast.success(response.message);
+        }
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+
+        toast.error(errorMessage || "Failed to save result to server.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   const handleRetry = () => {
+    if (loading) return;
     setSelectedAnswers(Array(theoryQuestions.length).fill([]));
     setSubmitted(false);
     setScorePercent(null);
@@ -103,6 +139,18 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
     <section className={css.theorySection}>
       <div className={css.theoryContainer}>
         <h3>Theory Test</h3>
+        {isAuthenticated && result && (
+          <div
+            className={`${css.solvedContainer} ${hasStarted ? css.hidden : ""}`}
+          >
+            <p className={css.helperText}>
+              <span className={css.helperName}>Hi, {userName}!</span>{" "}
+              {result === 100
+                ? "Congrats! You previously submitted a perfect solution. Feel free to review or improve it further!"
+                : `You previously submitted a solution with a score of ${result}%. You can update it and try to improve.`}
+            </p>
+          </div>
+        )}
         <ol className={css.questionList}>
           {theoryQuestions.map((q, i) => {
             const selected = selectedAnswers[i] || [];
@@ -151,16 +199,25 @@ export default function TheoryTest({ theoryQuestions }: TheoryTestProps) {
             onClick={handleSubmit}
             disabled={selectedAnswers.every((ans) => ans.length === 0)}
           >
-            Submit Answers
+            {loading ? "Submitting..." : "Submit Answers"}
           </button>
         )}
 
         {submitted && (
           <>
+            {loading && (
+              <div className={css.loaderWrapper}>
+                <Loader />
+              </div>
+            )}
             <p className={css.score}>
               You scored: {scorePercent?.toFixed(0)}% correct answers
             </p>
-            <button className={css.retryBtn} onClick={handleRetry}>
+            <button
+              className={css.retryBtn}
+              onClick={handleRetry}
+              disabled={loading}
+            >
               Try Again
             </button>
           </>

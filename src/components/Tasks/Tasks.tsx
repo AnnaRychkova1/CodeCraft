@@ -3,8 +3,14 @@
 import { MdFilterList } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-
-import type { Level, Language, TaskType, Task } from "@/types/tasksTypes";
+import type {
+  Level,
+  Language,
+  TaskType,
+  TaskWithCompletion,
+  UserTask,
+  Completion,
+} from "@/types/tasksTypes";
 import { resetFilters } from "@/utils/resetFilters";
 import { fetchTasks } from "@/services/tasks";
 import TasksList from "@/components/TasksList/TasksList";
@@ -13,24 +19,32 @@ import Loader from "@/components/Loader/Loader";
 import css from "./Tasks.module.css";
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TaskWithCompletion[]>([]);
   const [level, setLevel] = useState<Level[]>([]);
   const [language, setLanguage] = useState<Language[]>([]);
   const [type, setType] = useState<TaskType[]>([]);
+  const [completion, setCompletion] = useState<Completion[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const typedTasks = Array.isArray(tasks) ? (tasks as Task[]) : [];
+  const [, setUserTasks] = useState<UserTask[]>([]);
 
   useEffect(() => {
     async function loadTasks() {
       setLoading(true);
       setLoadError(false);
       try {
-        const data = await fetchTasks();
-        setTasks(data);
+        const { tasks, userTasks } = await fetchTasks();
+
+        const solvedIds = new Set(userTasks?.map((ut) => ut.task_id));
+        const tasksWithCompletion = tasks.map((task) => ({
+          ...task,
+          solved: solvedIds.has(task.id),
+        }));
+
+        setTasks(tasksWithCompletion);
+        setUserTasks(userTasks ?? []);
       } catch (err) {
         setLoadError(true);
         toast.error(
@@ -46,16 +60,25 @@ export default function Tasks() {
     loadTasks();
   }, []);
 
-  const filteredTasks = typedTasks.filter((task) => {
-    return (
-      (level.length === 0 || level.includes(task.level)) &&
-      (language.length === 0 || language.includes(task.language)) &&
-      (type.length === 0 || type.includes(task.type))
-    );
+  const filteredTasks = tasks.filter((task) => {
+    const matchesLevel = level.length === 0 || level.includes(task.level);
+    const matchesLanguage =
+      language.length === 0 || language.includes(task.language);
+    const matchesType = type.length === 0 || type.includes(task.type);
+    const taskCompletion: Completion = task.solved ? "solved" : "unsolved";
+    const matchesCompletion =
+      completion.length === 0 || completion.includes(taskCompletion);
+    return matchesLevel && matchesLanguage && matchesType && matchesCompletion;
   });
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: PointerEvent) {
+      const isScrollbarClick =
+        event.clientX >= document.documentElement.clientWidth ||
+        event.clientY >= document.documentElement.clientHeight;
+
+      if (isScrollbarClick) return;
+
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
@@ -65,11 +88,11 @@ export default function Tasks() {
     }
 
     if (showFilters) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("pointerdown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("pointerdown", handleClickOutside);
     };
   }, [showFilters]);
 
@@ -116,19 +139,23 @@ export default function Tasks() {
                   setLanguage={setLanguage}
                   type={type}
                   setType={setType}
-                  onResetFilters={() =>
-                    resetFilters(setLevel, setLanguage, setType)
-                  }
+                  completion={completion}
+                  setCompletion={setCompletion}
                 />
               </div>
             )}
           </div>
           <button
             type="button"
-            onClick={() => resetFilters(setLevel, setLanguage, setType)}
+            onClick={() =>
+              resetFilters(setLevel, setLanguage, setType, setCompletion)
+            }
             className={css.clearBtn}
             disabled={
-              level.length === 0 && language.length === 0 && type.length === 0
+              level.length === 0 &&
+              language.length === 0 &&
+              type.length === 0 &&
+              completion.length === 0
             }
           >
             Clear filters
@@ -144,9 +171,8 @@ export default function Tasks() {
               setLanguage={setLanguage}
               type={type}
               setType={setType}
-              onResetFilters={() =>
-                resetFilters(setLevel, setLanguage, setType)
-              }
+              completion={completion}
+              setCompletion={setCompletion}
             />
           </aside>
 

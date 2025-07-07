@@ -11,6 +11,29 @@ export interface Task {
   code_task?: CodeTask[];
 }
 
+export interface TasksResponse {
+  tasks: Task[];
+  userTasks?: UserTask[];
+}
+
+export interface UserTask {
+  task_id: string;
+  submitted: boolean;
+  result?: number;
+  solution?: string;
+}
+
+export interface TaskWithUserTask {
+  task: Task;
+  userTask?: UserTask;
+}
+
+export type SubmitUserTaskBody = {
+  result?: number;
+  solution?: string;
+  submitted: boolean;
+};
+
 export interface PropsTask {
   task: Task;
 }
@@ -18,9 +41,11 @@ export interface PropsTask {
 export type Level = "beginner" | "intermediate" | "advanced";
 export type Language = "javascript" | "python" | "java";
 export type TaskType = "theory" | "practice";
+export type Completion = "solved" | "unsolved";
 
+export type TaskWithCompletion = Task & { solved?: boolean };
 export interface TasksListProps {
-  tasks: Task[];
+  tasks: TaskWithCompletion[];
   setLevel: (val: Level[]) => void;
   setLanguage: (val: Language[]) => void;
   setType: (val: TaskType[]) => void;
@@ -35,6 +60,8 @@ export interface Question {
 
 export interface TheoryTestProps {
   theoryQuestions: Question[];
+  taskId: string;
+  result?: number;
 }
 
 export interface CodeTaskTest<
@@ -60,7 +87,8 @@ export interface FilteringProps {
   setLanguage: Dispatch<SetStateAction<Language[]>>;
   type: TaskType[];
   setType: Dispatch<SetStateAction<TaskType[]>>;
-  onResetFilters: () => void;
+  completion: Completion[];
+  setCompletion: Dispatch<SetStateAction<Completion[]>>;
 }
 
 export interface FilterOption<T extends string> {
@@ -72,6 +100,8 @@ export interface FilterOption<T extends string> {
 export interface CodeEditorProps {
   task: CodeTask;
   language: Language;
+  taskId: string;
+  solution?: string;
 }
 
 export interface CodeFormProps {
@@ -79,6 +109,8 @@ export interface CodeFormProps {
   language: CodeEditorProps["language"];
   setOutput: React.Dispatch<React.SetStateAction<string[]>>;
   setShowConfetti: React.Dispatch<React.SetStateAction<boolean>>;
+  taskId: string;
+  solution?: string;
 }
 
 export interface TestEditProps {

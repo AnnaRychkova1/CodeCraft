@@ -65,8 +65,8 @@ export default function AdminDashboard({
     setLoading(true);
     setLoadError(false);
     try {
-      const updated = await fetchTasks();
-      setTasks(updated);
+      const { tasks } = await fetchTasks();
+      setTasks(tasks);
     } catch (err: unknown) {
       toast.error(`${err instanceof Error ? err.message : String(err)}`);
       setLoadError(true);
@@ -81,7 +81,8 @@ export default function AdminDashboard({
       return;
     }
     try {
-      const fullTask = await fetchTaskById(id);
+      const { task } = await fetchTaskById(id);
+      const fullTask = task;
 
       setEditId(fullTask.id);
       setFormData({
