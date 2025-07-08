@@ -9,15 +9,21 @@ import type { AdminTasksListProps } from "@/types/adminTypes";
 import { deleteTask } from "@/services/tasks";
 import { useConfirm } from "@/components/Modals/ConfirmModal/ConfirmModal";
 import css from "./AdminTasksList.module.css";
+import { useAdminAuth } from "../Providers/AdminAuthProvider";
 
 export default function AdminTasksList({
   tasks,
   handleEdit,
   loadTasks,
-  sessionExpired,
 }: AdminTasksListProps) {
   const confirm = useConfirm();
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+  const {
+    // loginAdmin,
+    sessionExpired,
+    // adminToken,
+    setIsAdminVerified,
+  } = useAdminAuth();
 
   const handleDelete = async (id: string) => {
     if (sessionExpired) {
@@ -38,6 +44,13 @@ export default function AdminTasksList({
               err instanceof Error ? err.message : String(err)
             }`
           );
+
+          const message =
+            err instanceof Error ? err.message : "Failed to delete task: .";
+          console.log(message);
+          if (message === "Invalid or expired token") {
+            setIsAdminVerified(false);
+          }
         } finally {
           setDeletingTaskId(null);
         }

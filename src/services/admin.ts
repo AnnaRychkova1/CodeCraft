@@ -1,7 +1,7 @@
 import type { Admin } from "@/types/adminTypes";
 import { handleResponse } from "@/utils/handleResponse";
 
-export async function getAdminAccess(admin: Admin): Promise<string> {
+export async function getAdminAccess(admin: Admin) {
   const res = await fetch("/api/admin/access/access", {
     method: "POST",
     headers: {
@@ -11,8 +11,8 @@ export async function getAdminAccess(admin: Admin): Promise<string> {
     body: JSON.stringify(admin),
   });
 
-  const data = await handleResponse<{ adminToken: string }>(res);
-  return data.adminToken;
+  await handleResponse(res);
+  // return data.adminToken;
 }
 
 export async function verifyAdminToken(): Promise<boolean> {

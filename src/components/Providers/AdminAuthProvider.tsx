@@ -1,5 +1,6 @@
 "use client";
 
+// import type { AdminAuthContextType } from "@/types/adminTypes";
 import {
   createContext,
   useContext,
@@ -7,7 +8,17 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import type { AdminAuthContextType } from "@/types/adminTypes";
+import { verifyAdminToken } from "@/services/admin";
+
+type AdminAuthContextType = {
+  isAdminVerified: boolean;
+  sessionExpired: boolean;
+  loginAdmin: () => void;
+  logoutAdmin: () => void;
+  setSessionExpired: (val: boolean) => void;
+  setIsAdminVerified: (val: boolean) => void;
+  adminToken: string | null;
+};
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(
   undefined
@@ -25,28 +36,64 @@ export const AdminAuthProvider = ({
   const [adminToken, setAdminToken] = useState<string | null>(
     initialToken || null
   );
+  const [isAdminVerified, setIsAdminVerified] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
 
-  useEffect(() => {
-    if (!initialToken) {
-      const storedToken = localStorage.getItem("adminToken");
-      if (storedToken) {
-        setAdminToken(storedToken);
-      }
-    }
-  }, [initialToken]);
-
-  const loginAdmin = (adminToken: string) => {
+  const loginAdmin = () => {
     setAdminToken(adminToken);
-    localStorage.setItem("adminToken", adminToken);
+    setIsAdminVerified(true);
+    setSessionExpired(false);
   };
 
   const logoutAdmin = () => {
+    setIsAdminVerified(false);
     setAdminToken(null);
-    localStorage.removeItem("adminToken");
   };
 
+  useEffect(() => {
+    const checkToken = async () => {
+      if (!adminToken) {
+        setIsAdminVerified(false);
+        setSessionExpired(true);
+        return;
+      }
+
+      try {
+        const valid = await verifyAdminToken();
+
+        if (valid) {
+          setIsAdminVerified(true);
+          setSessionExpired(false);
+        } else {
+          setIsAdminVerified(false);
+          setSessionExpired(true);
+        }
+      } catch (err) {
+        console.error("Token verification error:", err);
+        setIsAdminVerified(false);
+        setSessionExpired(true);
+      } finally {
+        // setChecked(true);
+      }
+    };
+
+    checkToken();
+  }, [adminToken]);
+
   return (
-    <AdminAuthContext.Provider value={{ adminToken, loginAdmin, logoutAdmin }}>
+    <AdminAuthContext.Provider
+      value={{
+        isAdminVerified,
+        sessionExpired,
+        loginAdmin,
+        logoutAdmin,
+        setSessionExpired,
+        adminToken,
+        setIsAdminVerified,
+        // checked,
+        // setChecked,
+      }}
+    >
       {children}
     </AdminAuthContext.Provider>
   );
