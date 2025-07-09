@@ -22,7 +22,7 @@ export default async function handler(
 
   try {
     const { data: existingUser, error: fetchError } = await supabase
-      .from("users")
+      .from("user")
       .select("id")
       .eq("email", email)
       .single();
@@ -38,7 +38,7 @@ export default async function handler(
     const hashedPassword = await hash(password, 10);
 
     const { data: user, error: insertError } = await supabase
-      .from("users")
+      .from("user")
       .insert([
         {
           name,

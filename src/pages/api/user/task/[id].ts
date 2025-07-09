@@ -42,7 +42,7 @@ export default async function handler(
     }
 
     const { data: userData, error: userError } = await supabase
-      .from("users")
+      .from("user")
       .select("id")
       .eq("email", userEmail)
       .single();
@@ -54,7 +54,7 @@ export default async function handler(
     const userId = userData.id;
 
     const { data: existingTask } = await supabase
-      .from("user_tasks")
+      .from("user_task")
       .select("id")
       .eq("user_id", userId)
       .eq("task_id", taskId)
@@ -76,7 +76,7 @@ export default async function handler(
 
     if (existingTask) {
       result = await supabase
-        .from("user_tasks")
+        .from("user_task")
         .update(updateData)
         .eq("id", existingTask.id)
         .select()
@@ -92,7 +92,7 @@ export default async function handler(
       return res.status(200).json({ message, data: result.data });
     } else {
       result = await supabase
-        .from("user_tasks")
+        .from("user_task")
         .insert({
           user_id: userId,
           task_id: taskId,

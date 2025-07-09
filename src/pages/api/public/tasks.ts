@@ -47,7 +47,7 @@ export default async function handler(
 
     if (userEmail) {
       const { data: userData, error: userError } = await supabase
-        .from("users")
+        .from("user")
         .select("id")
         .eq("email", userEmail)
         .single();
@@ -60,7 +60,7 @@ export default async function handler(
       const userId = userData.id;
 
       const { data: userTaskData, error: userTaskError } = await supabase
-        .from("user_tasks")
+        .from("user_task")
         .select("task_id, submitted, result, solution")
         .eq("user_id", userId);
 

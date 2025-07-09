@@ -20,7 +20,7 @@ export default NextAuth({
         if (!credentials?.email || !credentials?.password) return null;
 
         const { data: user, error } = await supabase
-          .from("users")
+          .from("user")
           .select("*")
           .eq("email", credentials.email)
           .single();
