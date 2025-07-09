@@ -12,11 +12,10 @@ export async function getAdminAccess(admin: Admin) {
   });
 
   await handleResponse(res);
-  // return data.adminToken;
 }
 
 export async function verifyAdminToken(): Promise<boolean> {
-  const res = await fetch("/api/admin/access/verifyToken", {
+  const res = await fetch("/api/admin/access/verify", {
     method: "POST",
     credentials: "include",
   });

@@ -36,7 +36,7 @@ const createEmptyCodeTask = (): CodeTask => ({
 
 export default function AdminDashboard() {
   const confirm = useConfirm();
-  const { logoutAdmin, sessionExpired, isAdminVerified } = useAdminAuth();
+  const { logoutAdmin, isAdminVerified } = useAdminAuth();
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
@@ -52,14 +52,11 @@ export default function AdminDashboard() {
     code_task: [createEmptyCodeTask()],
   });
 
-  console.log(sessionExpired);
-  console.log(isAdminVerified);
-
   useEffect(() => {
-    if (!sessionExpired && isAdminVerified) {
+    if (isAdminVerified) {
       loadTasks();
     }
-  }, [sessionExpired, isAdminVerified]);
+  }, [isAdminVerified]);
 
   const loadTasks = async () => {
     setLoading(true);
@@ -76,10 +73,6 @@ export default function AdminDashboard() {
   };
 
   const handleEdit = async (id: string) => {
-    if (sessionExpired) {
-      toast.error("Session expired. Please login again.");
-      return;
-    }
     try {
       const { task } = await fetchTaskById(id);
       const fullTask = task;

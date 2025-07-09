@@ -15,12 +15,7 @@ export default function AdminAccessForm() {
   const [blockTimeLeft, setBlockTimeLeft] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loginAdminAttempts, setloginAdminAttempts] = useState(0);
-  const {
-    loginAdmin,
-    sessionExpired,
-    adminToken,
-    // checked,
-  } = useAdminAuth();
+  const { loginAdmin, sessionExpired, adminToken } = useAdminAuth();
 
   const minutes = Math.floor((blockTimeLeft || 0) / 60000);
   const seconds = Math.floor(((blockTimeLeft || 0) % 60000) / 1000)
@@ -152,11 +147,9 @@ export default function AdminAccessForm() {
   return (
     <section className="sectionAuth">
       <h2 className="title">Admin Access</h2>
-      {sessionExpired &&
-        // && checked
-        adminToken && (
-          <p className="accessWarning">Session expired. Please login again.</p>
-        )}
+      {sessionExpired && adminToken && (
+        <p className="accessWarning">Session expired. Please login again.</p>
+      )}
       {isBlocked && (
         <p className="accessWarning">
           Too many failed attempts. Please try again in {minutes}:{seconds}{" "}

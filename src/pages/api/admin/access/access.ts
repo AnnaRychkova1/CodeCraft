@@ -39,7 +39,7 @@ export default async function handler(
       { role: "admin", id: admin.id },
       process.env.JWT_SECRET!,
       {
-        expiresIn: "15s",
+        expiresIn: "2h",
       }
     );
 

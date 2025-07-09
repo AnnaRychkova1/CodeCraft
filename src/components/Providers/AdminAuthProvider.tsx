@@ -1,6 +1,5 @@
 "use client";
 
-// import type { AdminAuthContextType } from "@/types/adminTypes";
 import {
   createContext,
   useContext,
@@ -8,16 +7,16 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 import { verifyAdminToken } from "@/services/admin";
 
 type AdminAuthContextType = {
   isAdminVerified: boolean;
+  adminToken: string | null;
   sessionExpired: boolean;
   loginAdmin: () => void;
   logoutAdmin: () => void;
-  setSessionExpired: (val: boolean) => void;
   setIsAdminVerified: (val: boolean) => void;
-  adminToken: string | null;
 };
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(
@@ -38,6 +37,7 @@ export const AdminAuthProvider = ({
   );
   const [isAdminVerified, setIsAdminVerified] = useState(false);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const pathname = usePathname() as string;
 
   const loginAdmin = () => {
     setAdminToken(adminToken);
@@ -51,6 +51,7 @@ export const AdminAuthProvider = ({
   };
 
   useEffect(() => {
+    if (!pathname.startsWith("/admin")) return;
     const checkToken = async () => {
       if (!adminToken) {
         setIsAdminVerified(false);
@@ -68,12 +69,9 @@ export const AdminAuthProvider = ({
           setIsAdminVerified(false);
           setSessionExpired(true);
         }
-      } catch (err) {
-        console.error("Token verification error:", err);
+      } catch {
         setIsAdminVerified(false);
         setSessionExpired(true);
-      } finally {
-        // setChecked(true);
       }
     };
 
@@ -87,11 +85,8 @@ export const AdminAuthProvider = ({
         sessionExpired,
         loginAdmin,
         logoutAdmin,
-        setSessionExpired,
         adminToken,
         setIsAdminVerified,
-        // checked,
-        // setChecked,
       }}
     >
       {children}
