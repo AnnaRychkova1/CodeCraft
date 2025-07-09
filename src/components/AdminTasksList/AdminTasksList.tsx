@@ -9,21 +9,18 @@ import type { AdminTasksListProps } from "@/types/adminTypes";
 import { deleteTask } from "@/services/tasks";
 import { useConfirm } from "@/components/Modals/ConfirmModal/ConfirmModal";
 import css from "./AdminTasksList.module.css";
+import { useAdminAuth } from "../Providers/AdminAuthProvider";
 
 export default function AdminTasksList({
   tasks,
   handleEdit,
   loadTasks,
-  sessionExpired,
 }: AdminTasksListProps) {
   const confirm = useConfirm();
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+  const { setIsAdminVerified } = useAdminAuth();
 
   const handleDelete = async (id: string) => {
-    if (sessionExpired) {
-      toast.error("Session expired. Please login again.");
-      return;
-    }
     confirm({
       message: "Are you sure you want to delete this task?",
       onConfirm: async () => {
@@ -33,11 +30,12 @@ export default function AdminTasksList({
           toast.success("Task deleted successfully");
           await loadTasks();
         } catch (err) {
-          toast.error(
-            `Failed to delete task: ${
-              err instanceof Error ? err.message : String(err)
-            }`
-          );
+          toast.error(`${err instanceof Error ? err.message : String(err)}`);
+          const message =
+            err instanceof Error ? err.message : "Failed to delete task.";
+          if (message === "Token expired. Please log in again.") {
+            setIsAdminVerified(false);
+          }
         } finally {
           setDeletingTaskId(null);
         }

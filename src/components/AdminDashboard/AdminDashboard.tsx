@@ -3,7 +3,6 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { CodeTask, Question, Task } from "@/types/tasksTypes";
-import type { AdminDashboardProps } from "@/types/adminTypes";
 import { fetchTaskById, fetchTasks } from "@/services/tasks";
 import { removeAdminAccess } from "@/services/admin";
 import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
@@ -35,11 +34,9 @@ const createEmptyCodeTask = (): CodeTask => ({
   ...structuredClone(emptyCodeTaskTemplate),
 });
 
-export default function AdminDashboard({
-  sessionExpired,
-}: AdminDashboardProps) {
+export default function AdminDashboard() {
   const confirm = useConfirm();
-  const { logoutAdmin, adminToken } = useAdminAuth();
+  const { logoutAdmin, isAdminVerified } = useAdminAuth();
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
@@ -56,10 +53,10 @@ export default function AdminDashboard({
   });
 
   useEffect(() => {
-    if (adminToken && !sessionExpired) {
+    if (isAdminVerified) {
       loadTasks();
     }
-  }, [adminToken, sessionExpired]);
+  }, [isAdminVerified]);
 
   const loadTasks = async () => {
     setLoading(true);
@@ -76,10 +73,6 @@ export default function AdminDashboard({
   };
 
   const handleEdit = async (id: string) => {
-    if (sessionExpired) {
-      toast.error("Session expired. Please login again.");
-      return;
-    }
     try {
       const { task } = await fetchTaskById(id);
       const fullTask = task;
@@ -125,13 +118,11 @@ export default function AdminDashboard({
     confirm({
       message: "Are you sure you want to log out?",
       onConfirm: async () => {
-        localStorage.removeItem("adminToken");
         try {
           await removeAdminAccess();
           logoutAdmin();
           setEditId(null);
           toast.success("Logged out successfully");
-          localStorage.removeItem("adminToken");
           router.push("/");
         } catch (err) {
           toast.error(err instanceof Error ? err.message : "Failed to logout");
@@ -174,7 +165,6 @@ export default function AdminDashboard({
               tasks={tasks}
               handleEdit={handleEdit}
               loadTasks={loadTasks}
-              sessionExpired={sessionExpired}
             />
           ) : (
             <div className={css.noResult}>No tasks yet.</div>
