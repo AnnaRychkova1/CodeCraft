@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import type { AdminAccessFormProps } from "@/types/adminTypes";
+
 import { getAdminAccess } from "@/services/admin";
 import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
 import Loader from "@/components/Loader/Loader";
 import css from "./AdminAccess.module.css";
 
-export default function AdminAccessForm({
-  sessionExpired,
-  setSessionExpired,
-}: AdminAccessFormProps) {
+export default function AdminAccessForm() {
   const [password, setPassword] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
@@ -18,8 +15,7 @@ export default function AdminAccessForm({
   const [blockTimeLeft, setBlockTimeLeft] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loginAdminAttempts, setloginAdminAttempts] = useState(0);
-
-  const { loginAdmin } = useAdminAuth();
+  const { loginAdmin, sessionExpired, adminToken } = useAdminAuth();
 
   const minutes = Math.floor((blockTimeLeft || 0) / 60000);
   const seconds = Math.floor(((blockTimeLeft || 0) % 60000) / 1000)
@@ -103,30 +99,33 @@ export default function AdminAccessForm({
     }
 
     try {
-      const adminToken = await getAdminAccess({ password });
-      localStorage.setItem("adminToken", adminToken);
-      loginAdmin(adminToken);
+      await getAdminAccess({ password });
+      loginAdmin();
       localStorage.setItem("loginAdminAttempts", "0");
       setloginAdminAttempts(0);
       setPassword("");
-      setSessionExpired(false);
+
       toast.success("Admin access granted");
     } catch (err: unknown) {
-      const updatedAttempts = loginAdminAttempts + 1;
-      setloginAdminAttempts(updatedAttempts);
-      localStorage.setItem("loginAdminAttempts", updatedAttempts.toString());
-
-      if (updatedAttempts >= 3) {
-        const blockAdminUntil = new Date(Date.now() + 3 * 60 * 60 * 1000); // 3 hours
-        localStorage.setItem("blockAdminUntil", blockAdminUntil.toISOString());
-        setIsBlocked(true);
-        setBlockTimeLeft(3 * 60 * 60 * 1000);
-      }
-
       const message =
         err instanceof Error
           ? err.message
           : "An unknown error occurred. Please try again.";
+
+      let updatedAttempts = loginAdminAttempts;
+
+      if (message === "Wrong password") {
+        updatedAttempts = loginAdminAttempts + 1;
+        setloginAdminAttempts(updatedAttempts);
+        localStorage.setItem("loginAdminAttempts", updatedAttempts.toString());
+      }
+
+      if (updatedAttempts >= 3) {
+        const blockAdminUntil = new Date(Date.now() + 3 * 60 * 60 * 1000);
+        localStorage.setItem("blockAdminUntil", blockAdminUntil.toISOString());
+        setIsBlocked(true);
+        setBlockTimeLeft(3 * 60 * 60 * 1000);
+      }
 
       toast.error(
         message ||
@@ -141,10 +140,14 @@ export default function AdminAccessForm({
     }
   };
 
+  if (loggingIn) {
+    return <Loader />;
+  }
+
   return (
     <section className="sectionAuth">
       <h2 className="title">Admin Access</h2>
-      {sessionExpired && (
+      {sessionExpired && adminToken && (
         <p className="accessWarning">Session expired. Please login again.</p>
       )}
       {isBlocked && (

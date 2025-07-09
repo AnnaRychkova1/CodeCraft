@@ -7,7 +7,17 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import type { AdminAuthContextType } from "@/types/adminTypes";
+import { usePathname } from "next/navigation";
+import { verifyAdminToken } from "@/services/admin";
+
+type AdminAuthContextType = {
+  isAdminVerified: boolean;
+  adminToken: string | null;
+  sessionExpired: boolean;
+  loginAdmin: () => void;
+  logoutAdmin: () => void;
+  setIsAdminVerified: (val: boolean) => void;
+};
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(
   undefined
@@ -25,28 +35,60 @@ export const AdminAuthProvider = ({
   const [adminToken, setAdminToken] = useState<string | null>(
     initialToken || null
   );
+  const [isAdminVerified, setIsAdminVerified] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const pathname = usePathname() as string;
 
-  useEffect(() => {
-    if (!initialToken) {
-      const storedToken = localStorage.getItem("adminToken");
-      if (storedToken) {
-        setAdminToken(storedToken);
-      }
-    }
-  }, [initialToken]);
-
-  const loginAdmin = (adminToken: string) => {
+  const loginAdmin = () => {
     setAdminToken(adminToken);
-    localStorage.setItem("adminToken", adminToken);
+    setIsAdminVerified(true);
+    setSessionExpired(false);
   };
 
   const logoutAdmin = () => {
+    setIsAdminVerified(false);
     setAdminToken(null);
-    localStorage.removeItem("adminToken");
   };
 
+  useEffect(() => {
+    if (!pathname.startsWith("/admin")) return;
+    const checkToken = async () => {
+      if (!adminToken) {
+        setIsAdminVerified(false);
+        setSessionExpired(true);
+        return;
+      }
+
+      try {
+        const valid = await verifyAdminToken();
+
+        if (valid) {
+          setIsAdminVerified(true);
+          setSessionExpired(false);
+        } else {
+          setIsAdminVerified(false);
+          setSessionExpired(true);
+        }
+      } catch {
+        setIsAdminVerified(false);
+        setSessionExpired(true);
+      }
+    };
+
+    checkToken();
+  }, [adminToken]);
+
   return (
-    <AdminAuthContext.Provider value={{ adminToken, loginAdmin, logoutAdmin }}>
+    <AdminAuthContext.Provider
+      value={{
+        isAdminVerified,
+        sessionExpired,
+        loginAdmin,
+        logoutAdmin,
+        adminToken,
+        setIsAdminVerified,
+      }}
+    >
       {children}
     </AdminAuthContext.Provider>
   );

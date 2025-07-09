@@ -22,7 +22,9 @@ export function adminAuthMiddleware(handler: NextApiHandler): NextApiHandler {
       }
     } catch (error) {
       console.log(error);
-      return res.status(401).json({ error: "Invalid or expired token" });
+      return res
+        .status(401)
+        .json({ error: "Token expired. Please log in again." });
     }
 
     await handler(req, res);

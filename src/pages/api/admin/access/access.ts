@@ -53,7 +53,7 @@ export default async function handler(
 
     res.setHeader("Set-Cookie", cookie);
 
-    return res.status(200).json({ adminToken });
+    return res.status(200).json({ succcess: true });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ error: "Internal Server Error" });

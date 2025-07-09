@@ -8,6 +8,7 @@ import Loader from "@/components/Loader/Loader";
 import PracticeInputs from "./PracticeInputs";
 import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
 import css from "./TaskForm.module.css";
+import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
 
 export default function TaskForm({
   formData,
@@ -20,6 +21,7 @@ export default function TaskForm({
   cancelEdit,
 }: TaskFormProps) {
   const [loading, setLoading] = useState(false);
+  const { setIsAdminVerified } = useAdminAuth();
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -299,6 +301,11 @@ export default function TaskForm({
           ? err.message
           : "An unexpected error occurred during sending the task."
       );
+      const message =
+        err instanceof Error ? err.message : "Failed to editing task .";
+      if (message === "Token expired. Please log in again.") {
+        setIsAdminVerified(false);
+      }
     } finally {
       setLoading(false);
     }
