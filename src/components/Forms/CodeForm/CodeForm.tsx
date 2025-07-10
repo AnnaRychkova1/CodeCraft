@@ -1,19 +1,25 @@
 import CodeMirror from "@uiw/react-codemirror";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
-import { indentUnit } from "@codemirror/language";
+import { autocompletion } from "@codemirror/autocomplete";
 
 import type { CodeFormProps } from "@/types/tasksTypes";
-import { runPythonCode } from "@/services/runPythonCode";
+import { submitUserTaskResult } from "@/services/tasks";
+import { runPythonCode } from "@/utils/runPythonCode";
 import { runJavaScriptCode } from "@/utils/runJavaScriptCode";
 import { runJavaCode } from "@/utils/runJavaCode";
+import {
+  getIndentExtensions,
+  normalizeCode,
+  pythonCompletion,
+} from "@/helpers/codeHelpers";
+
 import Loader from "@/components/Loader/Loader";
 import css from "./CodeForm.module.css";
-import { submitUserTaskResult } from "@/services/tasks";
-import { useSession } from "next-auth/react";
 
 export default function CodeForm({
   task,
@@ -26,11 +32,10 @@ export default function CodeForm({
   const { data: session, status } = useSession();
   const userName = session?.user?.name;
   const isAuthenticated = status === "authenticated";
-
-  const initialCode =
-    isAuthenticated && solution
-      ? solution.replace(/\\n/g, "\n")
-      : (task.starter_code || "").replace(/\\n/g, "\n");
+  const initialCode = normalizeCode(
+    isAuthenticated && solution ? solution : task.starter_code || ""
+  );
+  const indentExtensions = getIndentExtensions(language);
   const [code, setCode] = useState(initialCode);
   const [touched, setTouched] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,12 +52,6 @@ export default function CodeForm({
         return [];
     }
   })();
-
-  const indentExtensions = [
-    indentUnit.of(
-      language === "python" ? "    " : language === "java" ? "    " : "  "
-    ),
-  ];
 
   const handleCodeChange = (value: string) => {
     if (!touched) setTouched(true);
@@ -143,7 +142,13 @@ export default function CodeForm({
           value={code}
           onChange={handleCodeChange}
           height="400px"
-          extensions={[languageExtension, ...indentExtensions]}
+          extensions={[
+            languageExtension,
+            ...indentExtensions,
+            language === "python"
+              ? autocompletion({ override: [pythonCompletion] })
+              : [],
+          ].filter(Boolean)}
           className={css.codeArea}
         />
         {loading ? (
