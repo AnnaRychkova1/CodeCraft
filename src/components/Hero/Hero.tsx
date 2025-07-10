@@ -7,9 +7,13 @@ import {
   FaJava,
 } from "react-icons/fa";
 import { SiGithub, SiJavascript, SiPython } from "react-icons/si";
+import { useSession } from "next-auth/react";
+import Loader from "../Loader/Loader";
 import css from "./Hero.module.css";
 
 export default function Hero() {
+  const { data: session, status } = useSession();
+  const loading = status;
   return (
     <section className={css.heroSection}>
       <FaLaptopCode className={`${css.icon} ${css.float} ${css.i1}`} />
@@ -21,6 +25,17 @@ export default function Hero() {
       <SiPython className={`${css.icon} ${css.floatReverse} ${css.i7}`} />
       <FaJava className={`${css.icon} ${css.bounce} ${css.i8}`} />
       <div className={css.textContainer}>
+        {session?.user && (
+          <div className={css.greetingContainer}>
+            {loading === "loading" ? (
+              <Loader />
+            ) : (
+              <p className={css.greeting}>
+                Hello {session?.user?.name || "Guest"}!
+              </p>
+            )}
+          </div>
+        )}
         <h1>
           Challenge your brain.
           <br />

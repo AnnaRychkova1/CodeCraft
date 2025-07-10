@@ -17,7 +17,9 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Missing email or password");
+        }
 
         const { data: user, error } = await supabase
           .from("user")
@@ -25,10 +27,15 @@ export default NextAuth({
           .eq("email", credentials.email)
           .single();
 
-        if (error || !user) return null;
+        if (error || !user) {
+          throw new Error("User not found");
+        }
 
         const isValid = await compare(credentials.password, user.password);
-        if (!isValid) return null;
+
+        if (!isValid) {
+          throw new Error("Wrong password");
+        }
 
         return {
           id: user.id,
@@ -44,10 +51,21 @@ export default NextAuth({
   },
 
   callbacks: {
+    // async jwt({ token, user }) {
+    //   if (user) {
+    //     token.id = user.id;
+    //   }
+    //   return token;
+    // },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
       }
+
+      if (!token?.id) {
+        throw new Error("Unauthorized");
+      }
+
       return token;
     },
     async session({ session, token }) {

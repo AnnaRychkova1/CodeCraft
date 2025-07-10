@@ -48,7 +48,7 @@ export default function Tasks() {
       } catch (err) {
         setLoadError(true);
         toast.error(
-          `Error verifying session. Please login again. ${
+          `Failed to load tasks. Please try again later. ${
             err instanceof Error ? err.message : String(err)
           }`
         );

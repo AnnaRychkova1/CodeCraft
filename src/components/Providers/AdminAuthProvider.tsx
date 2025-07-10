@@ -1,13 +1,8 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import type { AdminAuthProviderProps } from "@/types/adminTypes";
 import { verifyAdminToken } from "@/services/admin";
 
 type AdminAuthContextType = {
@@ -22,11 +17,6 @@ type AdminAuthContextType = {
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(
   undefined
 );
-
-type AdminAuthProviderProps = {
-  children: ReactNode;
-  adminToken?: string | null;
-};
 
 export const AdminAuthProvider = ({
   children,

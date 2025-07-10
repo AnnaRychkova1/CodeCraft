@@ -18,6 +18,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+}
+
+.greetingContainer {
+  height: 96px;
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.greeting {
+  font-size: 48px;
+  color: var(--background);
+  font-weight: 500;
+  font-style: italic;
+  text-align: center;
 }
 
 .heroSection h1 {
@@ -206,6 +223,14 @@
     font-size: 54px;
   }
 
+  .greetingContainer {
+    height: 108px;
+  }
+
+  .greeting {
+    font-size: 54px;
+  }
+
   .animation {
     font-size: 54px;
   }
@@ -258,10 +283,19 @@
     height: 90vh;
   }
 
+  .greetingContainer {
+    padding-top: 0;
+    padding-bottom: 24px;
+  }
+
   .heroSection h1 {
     font-size: 64px;
     margin-top: 0;
     margin-bottom: 48px;
+  }
+
+  .greeting {
+    font-size: 64px;
   }
 
   .animation {
