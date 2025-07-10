@@ -69,7 +69,7 @@ export interface CodeTaskTest<
   Output = unknown
 > {
   id?: string;
-  input: Input;
+  input: Input | Input[];
   expected: Output;
 }
 

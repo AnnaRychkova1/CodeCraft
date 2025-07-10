@@ -1,4 +1,4 @@
-import { CodeTaskTest } from "../types/tasksTypes";
+import type { CodeTaskTest } from "../types/tasksTypes";
 
 export function runJavaScriptCode(
   code: string,
@@ -43,6 +43,8 @@ export function runJavaScriptCode(
     return results;
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    return [`not passed: error while evaluating code → ${errorMessage}`];
+    return [
+      `not passed: error while evaluating JavaScript code → ${errorMessage}`,
+    ];
   }
 }
