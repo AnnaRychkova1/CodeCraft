@@ -14,3 +14,14 @@ export interface LoginUserDto {
 export interface UserRegisterResponse {
   message: string;
 }
+
+export interface UserProgressResponse {
+  allTasks: number;
+  doneTasks: number;
+  theory: number;
+  practice: number;
+}
+export interface UserProgressModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}

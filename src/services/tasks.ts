@@ -4,6 +4,7 @@ import type {
   TasksResponse,
   TaskWithUserTask,
 } from "@/types/tasksTypes";
+import type { UserProgressResponse } from "@/types/userTypes";
 import { handleResponse } from "@/utils/handleResponse";
 
 export async function fetchTasks(): Promise<TasksResponse> {
@@ -38,6 +39,14 @@ export async function submitUserTaskResult(
   });
 
   return handleResponse<ApiResponseMessage>(res);
+}
+
+export async function fetchUserProgress(): Promise<UserProgressResponse> {
+  const res = await fetch("/api/user/progress", {
+    cache: "no-store",
+  });
+
+  return handleResponse<UserProgressResponse>(res);
 }
 
 // only admin

@@ -13,7 +13,7 @@
   /* Levels */
   --level-beginner: #4caf50;
   --level-intermediate: #ffc107;
-  --level-advanced: #f44336;
+  --level-advanced: #ff5722;
 
   /* Languages */
   --color-javascript: #f7df1e;
@@ -21,8 +21,8 @@
   --color-java: #e34f26;
 
   /* Types */
-  --color-theory: #13b8dd;
-  --color-practice: #ff5722;
+  --color-theory: #00c49f;
+  --color-practice: #ff8042;
 
   /* Status */
   --color-solved: var(--accent-dark);

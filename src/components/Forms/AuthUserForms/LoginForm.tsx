@@ -105,22 +105,26 @@ export default function LoginForm() {
         setLoginUserAttempts(0);
         router.push("/");
       } else {
-        const updatedAttempts = loginUserAttempts + 1;
-        setLoginUserAttempts(updatedAttempts);
-        localStorage.setItem("loginUserAttempts", updatedAttempts.toString());
+        const message = res?.error || "Login failed";
+
+        let updatedAttempts = loginUserAttempts;
+
+        if (message === "Wrong password") {
+          updatedAttempts = loginUserAttempts + 1;
+          setLoginUserAttempts(updatedAttempts);
+          localStorage.setItem("loginUserAttempts", updatedAttempts.toString());
+        }
 
         if (updatedAttempts >= 3) {
-          const blockUserUntil = new Date(Date.now() + 3 * 60 * 60 * 1000); // 3 hours
-          localStorage.setItem("blockUserUntil", blockUserUntil.toISOString());
+          const blockUntil = new Date(Date.now() + 3 * 60 * 60 * 1000);
+          localStorage.setItem("blockUserUntil", blockUntil.toISOString());
           setIsBlocked(true);
           setBlockTimeLeft(3 * 60 * 60 * 1000);
           toast.error(
             "Too many failed attempts. Login is blocked for 3 hours."
           );
         } else {
-          toast.error(
-            `Login failed. You have ${3 - updatedAttempts} attempt(s) left.`
-          );
+          toast.error(message || "Something went wrong. Please try again.");
         }
       }
     } catch (err: unknown) {
