@@ -35,12 +35,7 @@ async function seed() {
           task_id: javaPracticeTaskId,
           prompt:
             "Implement the method `public int sum(int a, int b)` that returns the sum of two numbers.",
-          starter_code: `public class SumTask {
-    public int sum(int a, int b) {
-    // your code here
-        return 0;
-    }
-}`,
+          starter_code: `public class SumTask {\\n[2]public int sum(int a, int b) {\\n[4]// your code here\\n[4]return 0;\\n[2]}\\n}`,
         },
       ]);
     if (javaCodeTaskError) throw javaCodeTaskError;
@@ -76,7 +71,7 @@ async function seed() {
           task_id: pythonPracticeTaskId,
           prompt:
             "Implement a function `def sum(a, b):` that returns the sum of two numbers.",
-          starter_code: `def sum(a, b):\\n# your code here\\npass`,
+          starter_code: `def sum(a, b):\\n[4]# your code here\\n[4]pass`,
         },
       ]);
     if (pythonCodeTaskError) throw pythonCodeTaskError;
