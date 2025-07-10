@@ -4,7 +4,7 @@ import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen } from "react-icons/fa";
 import { GiHammerBreak } from "react-icons/gi";
 import type { PropsTask } from "@/types/tasksTypes";
-import { formatTextWithLineBreaks } from "@/helpers/formatTextWithLineBreaks";
+import { formatTextWithLineBreaks } from "@/helpers/formatTextHelpers";
 import css from "./TaskTopSection.module.css";
 
 export default function TaskTopSection({ task }: PropsTask) {
