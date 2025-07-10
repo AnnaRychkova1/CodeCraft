@@ -4,9 +4,11 @@ import { toast } from "react-hot-toast";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
+import { indentUnit } from "@codemirror/language";
+
 import type { CodeFormProps } from "@/types/tasksTypes";
+import { runPythonCode } from "@/services/runPythonCode";
 import { runJavaScriptCode } from "@/utils/runJavaScriptCode";
-import { runPythonCode } from "@/utils/runPythonCode";
 import { runJavaCode } from "@/utils/runJavaCode";
 import Loader from "@/components/Loader/Loader";
 import css from "./CodeForm.module.css";
@@ -24,6 +26,7 @@ export default function CodeForm({
   const { data: session, status } = useSession();
   const userName = session?.user?.name;
   const isAuthenticated = status === "authenticated";
+
   const initialCode =
     isAuthenticated && solution
       ? solution.replace(/\\n/g, "\n")
@@ -45,6 +48,12 @@ export default function CodeForm({
     }
   })();
 
+  const indentExtensions = [
+    indentUnit.of(
+      language === "python" ? "    " : language === "java" ? "    " : "  "
+    ),
+  ];
+
   const handleCodeChange = (value: string) => {
     if (!touched) setTouched(true);
     setCode(value);
@@ -56,19 +65,36 @@ export default function CodeForm({
 
     try {
       const codeToRun = code;
+
       const tests = Array.isArray(task.test_case) ? task.test_case : [];
 
       let results: string[] = [];
       if (language === "javascript") {
         results = runJavaScriptCode(codeToRun, tests);
       } else if (language === "java") {
-        results = runJavaCode(codeToRun, tests);
+        results = await runJavaCode(codeToRun, tests);
       } else if (language === "python") {
         results = await runPythonCode(codeToRun, tests);
       } else {
         results = [
           `❌ Execution for language "${language}" is not supported yet.`,
         ];
+      }
+
+      if (results.length === 1 && results[0] === "Too many requests") {
+        toast.error("Too many attempts. Please wait before trying again.");
+        setOutput([]);
+        return;
+      }
+
+      if (
+        results.length === 1 &&
+        !results[0].startsWith("passed") &&
+        !results[0].startsWith("not passed:")
+      ) {
+        toast.error(`Error: ${results[0]}`);
+        setOutput([]);
+        return;
       }
 
       setOutput(results);
@@ -117,7 +143,7 @@ export default function CodeForm({
           value={code}
           onChange={handleCodeChange}
           height="400px"
-          extensions={[languageExtension]}
+          extensions={[languageExtension, ...indentExtensions]}
           className={css.codeArea}
         />
         {loading ? (
