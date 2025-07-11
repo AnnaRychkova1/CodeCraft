@@ -1,5 +1,6 @@
 import {
   extractFunctionName,
+  formatPythonArgs,
   simplifyPythonError,
   stripNonExecutableComments,
 } from "@/helpers/pythonHelpers";
@@ -14,7 +15,7 @@ export async function runPythonCode(
     const results: string[] = [];
 
     for (const { input, expected } of tests) {
-      const testInput = Array.isArray(input) ? input.join(", ") : input;
+      const testInput = formatPythonArgs(input);
 
       const program = `${code}\nprint(${extractFunctionName(
         cleanedCode
@@ -43,10 +44,27 @@ export async function runPythonCode(
         throw new Error("Invalid response from execution API");
       }
 
-      const output = json.run.output.trim();
-      const simplifiedOutput = simplifyPythonError(output);
+      const rawOutput = json.run.output.trim();
+      const simplifiedOutput = simplifyPythonError(rawOutput);
 
-      const passed = simplifiedOutput === String(expected);
+      let parsedOutput: unknown;
+
+      try {
+        const normalizedOutput =
+          simplifiedOutput === "True"
+            ? true
+            : simplifiedOutput === "False"
+            ? false
+            : simplifiedOutput;
+        parsedOutput =
+          typeof normalizedOutput === "string"
+            ? JSON.parse(normalizedOutput)
+            : normalizedOutput;
+      } catch {
+        parsedOutput = simplifiedOutput;
+      }
+
+      const passed = Object.is(parsedOutput, expected);
       results.push(
         passed
           ? "passed"

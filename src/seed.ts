@@ -79,7 +79,7 @@ async function seed() {
         task_id: practiceTaskId,
         prompt:
           "Implement a function `sum(a, b)` that returns the sum of two numbers.",
-        starter_code: `function sum(a, b) {\n  // your code here\n}`,
+        starter_code: `function sum(a, b) {\\n[2]// your code here\\n}`,
       },
     ]);
 

@@ -11,6 +11,151 @@ const supabase = createClient(
 
 async function seed() {
   try {
+    // Додаткові задачі Java
+    const javaFactorialTaskId = uuidv4();
+    const javaFactorialCodeId = uuidv4();
+
+    await supabase.from("task").insert([
+      {
+        id: javaFactorialTaskId,
+        title: "Factorial in Java",
+        description:
+          "Write a method that returns the factorial of a given number using recursion.",
+        level: "intermediate",
+        language: "java",
+        type: "practice",
+      },
+    ]);
+
+    await supabase.from("code_task").insert([
+      {
+        id: javaFactorialCodeId,
+        task_id: javaFactorialTaskId,
+        prompt:
+          "Implement a method `public int factorial(int n)` that returns the factorial of the number n.",
+        starter_code:
+          "public class FactorialTask {\\n[2]public int factorial(int n) {\\n[4]// your code here\\n[4]return 1;\\n[2]}\\n}",
+      },
+    ]);
+
+    await supabase.from("test_case").insert([
+      { code_task_id: javaFactorialCodeId, input: [0], expected: 1 },
+      { code_task_id: javaFactorialCodeId, input: [3], expected: 6 },
+      { code_task_id: javaFactorialCodeId, input: [5], expected: 120 },
+    ]);
+
+    const javaPalindromeTaskId = uuidv4();
+    const javaPalindromeCodeId = uuidv4();
+
+    await supabase.from("task").insert([
+      {
+        id: javaPalindromeTaskId,
+        title: "Palindrome Checker in Java",
+        description:
+          "Check if a given string is a palindrome (reads the same forwards and backwards).",
+        level: "advanced",
+        language: "java",
+        type: "practice",
+      },
+    ]);
+
+    await supabase.from("code_task").insert([
+      {
+        id: javaPalindromeCodeId,
+        task_id: javaPalindromeTaskId,
+        prompt:
+          "Implement a method `public boolean isPalindrome(String s)` that returns true if the string is a palindrome.",
+        starter_code:
+          "public class PalindromeChecker {\\n[2]public boolean isPalindrome(String s) {\\n[4]// your code here\\n[4]return false;\\n[2]}\\n}",
+      },
+    ]);
+
+    await supabase.from("test_case").insert([
+      {
+        code_task_id: javaPalindromeCodeId,
+        input: ["racecar"],
+        expected: true,
+      },
+      { code_task_id: javaPalindromeCodeId, input: ["hello"], expected: false },
+      { code_task_id: javaPalindromeCodeId, input: ["madam"], expected: true },
+    ]);
+
+    // Додаткові задачі Python
+    const pythonListSumTaskId = uuidv4();
+    const pythonListSumCodeId = uuidv4();
+
+    await supabase.from("task").insert([
+      {
+        id: pythonListSumTaskId,
+        title: "Sum of List Elements in Python",
+        description:
+          "Write a function that returns the sum of all elements in a list.",
+        level: "intermediate",
+        language: "python",
+        type: "practice",
+      },
+    ]);
+
+    await supabase.from("code_task").insert([
+      {
+        id: pythonListSumCodeId,
+        task_id: pythonListSumTaskId,
+        prompt:
+          "Implement a function `def list_sum(lst):` that returns the sum of all integers in the list.",
+        starter_code: "def list_sum(lst):\\n[4]# your code here\\n[4]return 0",
+      },
+    ]);
+
+    await supabase.from("test_case").insert([
+      { code_task_id: pythonListSumCodeId, input: [[1, 2, 3]], expected: 6 },
+      { code_task_id: pythonListSumCodeId, input: [[5, -2, 7]], expected: 10 },
+      { code_task_id: pythonListSumCodeId, input: [[]], expected: 0 },
+    ]);
+
+    const pythonAnagramTaskId = uuidv4();
+    const pythonAnagramCodeId = uuidv4();
+
+    await supabase.from("task").insert([
+      {
+        id: pythonAnagramTaskId,
+        title: "Anagram Checker in Python",
+        description:
+          "Write a function to check if two strings are anagrams of each other.",
+        level: "advanced",
+        language: "python",
+        type: "practice",
+      },
+    ]);
+
+    await supabase.from("code_task").insert([
+      {
+        id: pythonAnagramCodeId,
+        task_id: pythonAnagramTaskId,
+        prompt:
+          "Implement a function `def is_anagram(s1, s2):` that returns True if the strings are anagrams.",
+        starter_code:
+          "def is_anagram(s1, s2):\\n[4]# your code here\\n[4]return False",
+      },
+    ]);
+
+    await supabase.from("test_case").insert([
+      {
+        code_task_id: pythonAnagramCodeId,
+        input: ["listen", "silent"],
+        expected: true,
+      },
+      {
+        code_task_id: pythonAnagramCodeId,
+        input: ["hello", "world"],
+        expected: false,
+      },
+      {
+        code_task_id: pythonAnagramCodeId,
+        input: ["evil", "vile"],
+        expected: true,
+      },
+    ]);
+
     const javaPracticeTaskId = uuidv4();
     const javaCodeTaskId = uuidv4();
 
@@ -35,12 +180,7 @@ async function seed() {
           task_id: javaPracticeTaskId,
           prompt:
             "Implement the method `public int sum(int a, int b)` that returns the sum of two numbers.",
-          starter_code: `public class SumTask {
-    public int sum(int a, int b) {
-    // your code here
-        return 0;
-    }
-}`,
+          starter_code: `public class SumTask {\\n[2]public int sum(int a, int b) {\\n[4]// your code here\\n[4]return 0;\\n[2]}\\n}`,
         },
       ]);
     if (javaCodeTaskError) throw javaCodeTaskError;
@@ -76,7 +216,7 @@ async function seed() {
           task_id: pythonPracticeTaskId,
           prompt:
             "Implement a function `def sum(a, b):` that returns the sum of two numbers.",
-          starter_code: `def sum(a, b):\\n# your code here\\npass`,
+          starter_code: `def sum(a, b):\\n[4]# your code here\\n[4]pass`,
         },
       ]);
     if (pythonCodeTaskError) throw pythonCodeTaskError;

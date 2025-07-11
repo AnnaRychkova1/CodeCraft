@@ -23,7 +23,7 @@ export default function PracticeInputs({
         placeholder="Prompt"
         rows={1}
       />
-
+      {/*instruction*/}
       <AutoGrowTextarea
         value={code_task.starter_code}
         name="starter_code"
@@ -32,6 +32,29 @@ export default function PracticeInputs({
         rows={2}
         required
       />
+      <div className={css.instruction}>
+        <b>How to write starter code indentation:</b>
+        <p>
+          Use <code className={css.code}>\n</code> for new lines. To add spaces
+          after a line break, write <code className={css.code}>\n[2]</code>,{" "}
+          <code className={css.code}>\n[4]</code>, etc., where the number means
+          spaces. Indentation for Java and JavaScript is a multiple of <b>2</b>{" "}
+          spaces.
+        </p>
+        <p>
+          Indentation for Python is a multiple of <b>4</b> spaces.
+        </p>{" "}
+        <p>Example for Java &#40;or JavaScript&#41;:</p>
+        <code className={css.code}>
+          {
+            "public class SumTask {\\\\n[2]public int sum(int a, int b) {\\\\n[4]// your code here\\\\n[4]return 0;\\\\n[2]}\\\\n}"
+          }
+        </code>
+        <p>Example for Python:</p>
+        <code className={css.code}>
+          {"def sum(a, b):\\\\n[4]# your code here\\\\n[4]pass"}
+        </code>
+      </div>
 
       <div className={css.testsContainer}>
         <p className={css.testTitle}>Tests</p>
