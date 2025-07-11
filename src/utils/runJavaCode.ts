@@ -1,30 +1,97 @@
-import { CodeTaskTest } from "@/types/tasksTypes";
-
-// export function runJavaCode(code: string, tests: CodeTaskTest[]): string[] {
-//   console.log(code);
-//   console.log(tests);
-//   return tests.map(() => "not passed: Java execution is not implemented yet.");
-// }
+import {
+  extractClassName,
+  extractMethodName,
+  formatJavaArgs,
+  injectMainMethod,
+  simplifyJavaError,
+} from "@/helpers/javaHelpers";
+import type { CodeTaskTest } from "@/types/tasksTypes";
 
 export async function runJavaCode(
   code: string,
   tests: CodeTaskTest[]
 ): Promise<string[]> {
   try {
-    const response = await fetch("/api/execute/java", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, tests }),
-    });
+    const className = extractClassName(code);
+    const methodName = extractMethodName(code);
 
-    if (!response.ok) {
-      throw new Error(`Server error: ${response.statusText}`);
+    if (!className || !methodName) {
+      throw new Error("Class name or method name could not be extracted");
     }
 
-    const { results } = await response.json();
+    const results: string[] = [];
+
+    for (const { input, expected } of tests) {
+      const testInput = formatJavaArgs(input);
+      const contentWithMain = injectMainMethod(
+        code,
+        testInput,
+        className,
+        methodName
+      );
+
+      const response = await fetch("https://emkc.org/api/v2/piston/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          language: "java",
+          version: "15.0.2",
+          files: [
+            {
+              name: `${className}.java`,
+              content: contentWithMain,
+            },
+          ],
+        }),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        if (json.message && json.message.includes("Requests limited")) {
+          return ["Too many requests"];
+        }
+        throw new Error(json.message || "Unknown execution error");
+      }
+
+      if (!json.run || typeof json.run.output !== "string") {
+        throw new Error("Invalid response from execution API");
+      }
+
+      const rawOutput = json.run.output.trim();
+      const simplifiedOutput = simplifyJavaError(rawOutput);
+
+      let parsedOutput: unknown;
+
+      try {
+        const normalizedOutput =
+          simplifiedOutput === "True"
+            ? true
+            : simplifiedOutput === "False"
+            ? false
+            : simplifiedOutput;
+        parsedOutput =
+          typeof normalizedOutput === "string"
+            ? JSON.parse(normalizedOutput)
+            : normalizedOutput;
+      } catch {
+        parsedOutput = simplifiedOutput;
+      }
+
+      const passed = Object.is(parsedOutput, expected);
+
+      results.push(
+        passed
+          ? "passed"
+          : `not passed: expected ${JSON.stringify(
+              expected
+            )}, got ${JSON.stringify(simplifiedOutput)}`
+      );
+    }
+
     return results;
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    return [`not passed: error while executing Java code → ${errorMessage}`];
+    return [errorMessage];
   }
 }
