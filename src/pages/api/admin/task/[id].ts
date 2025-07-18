@@ -1,11 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
+import { parse } from "cookie";
 import { CodeTaskTest, Question } from "@/types/tasksTypes";
 import { adminAuthMiddleware } from "@/lib/middlware/adminAuthMiddleware";
 import { getSupabaseAdminClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
 const adminHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const supabase = getSupabaseAdminClient(req);
+  const cookies = req.headers.cookie ? parse(req.headers.cookie) : {};
+  const token = cookies.adminToken;
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized: No token" });
+  }
+  const supabase = getSupabaseAdminClient(token);
 
   const { id } = req.query;
 

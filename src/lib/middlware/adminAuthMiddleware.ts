@@ -1,6 +1,6 @@
 import type { NextApiHandler } from "next";
 
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdminClient } from "../supabaseAccess/getSupabaseClient";
 
 export function adminAuthMiddleware(handler: NextApiHandler): NextApiHandler {
   return async (req, res) => {
@@ -9,17 +9,7 @@ export function adminAuthMiddleware(handler: NextApiHandler): NextApiHandler {
     if (!token)
       return res.status(401).json({ error: "Unauthorized: No token provided" });
 
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      }
-    );
+    const supabase = getSupabaseAdminClient(token);
 
     const { data, error } = await supabase.auth.getUser(token);
     const user = data.user;

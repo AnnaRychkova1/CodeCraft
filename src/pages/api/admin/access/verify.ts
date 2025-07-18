@@ -17,7 +17,7 @@ export default async function handler(
     return res.status(401).json({ valid: false, message: "Missing token" });
   }
 
-  const supabase = getSupabaseAdminClient(req);
+  const supabase = getSupabaseAdminClient(adminToken);
 
   try {
     const {
