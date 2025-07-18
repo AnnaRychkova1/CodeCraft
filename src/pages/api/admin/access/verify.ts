@@ -1,8 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import jwt from "jsonwebtoken";
 import { parse } from "cookie";
+import { getSupabaseAdminClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "POST") {
     return res.status(405).end("Method Not Allowed");
   }
@@ -14,25 +17,27 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(401).json({ valid: false, message: "Missing token" });
   }
 
+  const supabase = getSupabaseAdminClient(req);
+
   try {
-    const decoded = jwt.verify(adminToken, process.env.JWT_SECRET!);
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(adminToken);
 
-    if (typeof decoded === "object" && decoded.role === "admin") {
-      return res.status(200).json({ valid: true });
+    if (error || !user) {
+      return res.status(401).json({ valid: false, message: "Invalid token" });
     }
 
-    return res.status(403).json({ valid: false, message: "Invalid role" });
+    if (user.user_metadata?.role !== "admin") {
+      return res.status(403).json({ valid: false, message: "Invalid role" });
+    }
+
+    return res.status(200).json({ valid: true });
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      console.log("Token expired at:", error.expiredAt);
-      return res
-        .status(401)
-        .json({ valid: false, reason: "expired", message: "Token expired" });
-    }
-
-    console.log("Invalid token error:", error);
+    console.error("Error validating token:", error);
     return res
-      .status(401)
-      .json({ valid: false, reason: "invalid", message: "Invalid token" });
+      .status(500)
+      .json({ valid: false, message: "Internal Server Error" });
   }
 }

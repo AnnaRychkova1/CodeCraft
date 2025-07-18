@@ -23,6 +23,7 @@ export default function Footer() {
             width={144}
             height={40}
             className={css.desctopLogo}
+            loading="lazy"
           />
           <h2 className={css.slogan}>
             <Image
@@ -32,6 +33,7 @@ export default function Footer() {
               width={144}
               height={40}
               className={css.smallLogo}
+              loading="lazy"
             />
             Transforming
             <br /> your

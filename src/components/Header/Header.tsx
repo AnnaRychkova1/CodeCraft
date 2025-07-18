@@ -42,6 +42,7 @@ export default function Header() {
             className={css.logo}
             width={144}
             height={40}
+            loading="lazy"
           />
           {!hideAuthButtons && (
             <div className={css.authTopContainer}>
@@ -57,6 +58,7 @@ export default function Header() {
                       alt="Coder CodeCraft"
                       width={40}
                       height={40}
+                      loading="lazy"
                     />
                   </button>
                   <button onClick={handleLogout} className="logoutBtn">
@@ -91,6 +93,7 @@ export default function Header() {
                     className={css.avatar}
                     width={40}
                     height={40}
+                    loading="lazy"
                   />
                 </button>
                 <button onClick={handleLogout} className="logoutBtn">

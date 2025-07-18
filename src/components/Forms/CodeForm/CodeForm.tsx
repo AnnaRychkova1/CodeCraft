@@ -35,7 +35,7 @@ export default function CodeForm({
   const initialCode = normalizeCode(
     isAuthenticated && solution ? solution : task.starter_code || ""
   );
-  const indentExtensions = language === "python" ? getIndentExtensions() : [];
+  const indentExtensions = getIndentExtensions();
   const [code, setCode] = useState(initialCode);
   const [touched, setTouched] = useState(false);
   const [loading, setLoading] = useState(false);

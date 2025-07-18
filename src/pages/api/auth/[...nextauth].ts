@@ -1,14 +1,9 @@
-import { createClient } from "@supabase/supabase-js";
-import { compare } from "bcryptjs";
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { compare } from "bcryptjs";
+import { getSupabaseClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -21,26 +16,43 @@ export default NextAuth({
           throw new Error("Missing email or password");
         }
 
-        const { data: user, error } = await supabase
+        const supabase = getSupabaseClient();
+
+        const { data: userToCheckPassword, error: userError } = await supabase
           .from("user")
           .select("*")
           .eq("email", credentials.email)
           .single();
 
-        if (error || !user) {
+        if (userError || !userToCheckPassword) {
           throw new Error("User not found");
         }
 
-        const isValid = await compare(credentials.password, user.password);
-
+        const isValid = await compare(
+          credentials.password,
+          userToCheckPassword.password
+        );
         if (!isValid) {
           throw new Error("Wrong password");
         }
 
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: credentials.email,
+          password: credentials.password,
+        });
+
+        if (error || !data.user || !data.session) {
+          throw new Error("Invalid email or password");
+        }
+
+        const user = data.user;
+        const session = data.session;
+
         return {
           id: user.id,
           email: user.email,
-          name: user.name,
+          name: user.user_metadata?.name || "",
+          access_token: session.access_token,
         };
       },
     }),
@@ -51,27 +63,23 @@ export default NextAuth({
   },
 
   callbacks: {
-    // async jwt({ token, user }) {
-    //   if (user) {
-    //     token.id = user.id;
-    //   }
-    //   return token;
-    // },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.access_token = user.access_token ?? "";
+        token.email = user.email;
+        token.name = user.name;
       }
-
-      if (!token?.id) {
-        throw new Error("Unauthorized");
-      }
-
       return token;
     },
+
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id!;
-      }
+      session.user = {
+        id: token.id as string,
+        email: token.email as string,
+        name: token.name as string,
+        access_token: token.access_token as string,
+      };
       return session;
     },
   },
@@ -81,4 +89,6 @@ export default NextAuth({
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+export default NextAuth(authOptions);

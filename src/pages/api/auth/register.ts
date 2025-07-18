@@ -1,10 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createClient } from "@supabase/supabase-js";
 import { hash } from "bcryptjs";
+import { getSupabaseClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = getSupabaseClient();
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,45 +19,44 @@ export default async function handler(
   }
 
   try {
-    const { data: existingUser, error: fetchError } = await supabase
-      .from("user")
-      .select("id")
-      .eq("email", email)
-      .single();
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name },
+      },
+    });
+    console.log(authData);
+    console.log(authError);
 
-    if (existingUser) {
-      return res.status(409).json({ message: "Email already registered" });
+    if (authError || !authData?.user) {
+      return res
+        .status(400)
+        .json({ message: authError?.message || "Failed to create auth user" });
     }
 
-    if (fetchError && fetchError.code !== "PGRST116") {
-      return res.status(500).json({ message: "Database error" });
-    }
+    const authUser = authData.user;
 
     const hashedPassword = await hash(password, 10);
 
-    const { data: user, error: insertError } = await supabase
-      .from("user")
-      .insert([
-        {
-          name,
-          email,
-          password: hashedPassword,
-        },
-      ])
-      .select()
-      .single();
+    const { error: insertError } = await supabase.from("user").insert([
+      {
+        id: authUser.id,
+        email,
+        name,
+        password: hashedPassword,
+      },
+    ]);
 
     if (insertError) {
-      return res.status(500).json({ message: "Failed to create user" });
+      return res.status(500).json({ message: "Failed to insert user into DB" });
     }
 
-    if (!user) {
-      return res.status(500).json({ message: "User creation failed" });
-    }
-
-    return res.status(201).json({ message: "User registered successfully" });
-  } catch (error) {
-    console.error(error);
+    return res
+      .status(201)
+      .json({ message: "User registered. Please confirm your email." });
+  } catch (err) {
+    console.error("Registration error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 }

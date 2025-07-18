@@ -1,13 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
-import authOptions from "../auth/[...nextauth]";
-import { createClient } from "@supabase/supabase-js";
-import type { Session } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import type { Session } from "next-auth";
+import {
+  getSupabaseClient,
+  getSupabaseUserClient,
+} from "@/lib/supabaseAccess/getSupabaseClient";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,8 +19,15 @@ export default async function handler(
 
   try {
     const session = (await getServerSession(req, res, authOptions)) as Session;
-
-    const userEmail = session?.user?.email ?? null;
+    let supabase;
+    let userEmail;
+    if (session?.user?.access_token) {
+      const token = session.user.access_token;
+      supabase = getSupabaseUserClient(token);
+      userEmail = session?.user?.email;
+    } else {
+      supabase = getSupabaseClient();
+    }
 
     const { data: tasks, error: taskError } = await supabase.from("task")
       .select(`
@@ -34,7 +40,6 @@ export default async function handler(
       `);
 
     if (taskError) {
-      console.error("Failed to fetch tasks:", taskError);
       throw taskError;
     }
 
@@ -53,7 +58,6 @@ export default async function handler(
         .single();
 
       if (userError || !userData) {
-        console.error("User not found by email:", userError);
         throw userError || new Error("User not found");
       }
 
@@ -65,7 +69,6 @@ export default async function handler(
         .eq("user_id", userId);
 
       if (userTaskError) {
-        console.error("Failed to fetch user tasks:", userTaskError);
         throw userTaskError;
       }
 

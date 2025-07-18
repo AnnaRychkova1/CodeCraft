@@ -36,23 +36,15 @@ export default function PracticeInputs({
         <b>How to write starter code indentation:</b>
         <p>
           Use <code className={css.code}>\n</code> for new lines. To add spaces
-          after a line break, write <code className={css.code}>\n[2]</code>,{" "}
-          <code className={css.code}>\n[4]</code>, etc., where the number means
-          spaces. Indentation for Java and JavaScript is a multiple of <b>2</b>{" "}
-          spaces.
+          after a line break, write <code className={css.code}>\n[4]</code>,{" "}
+          <code className={css.code}>\n[8]</code>, etc., where the number means
+          spaces. Indentation for any language is a multiple of <b>4</b> spaces.
         </p>
-        <p>
-          Indentation for Python is a multiple of <b>4</b> spaces.
-        </p>{" "}
-        <p>Example for Java &#40;or JavaScript&#41;:</p>
+        <p>Example:</p>
         <code className={css.code}>
           {
-            "public class SumTask {\\\\n[2]public int sum(int a, int b) {\\\\n[4]// your code here\\\\n[4]return 0;\\\\n[2]}\\\\n}"
+            "public class SumTask {\\\\n[4]public int sum(int a, int b) {\\\\n[8]// your code here\\\\n[8]return 0;\\\\n[4]}\\\\n}"
           }
-        </code>
-        <p>Example for Python:</p>
-        <code className={css.code}>
-          {"def sum(a, b):\\\\n[4]# your code here\\\\n[4]pass"}
         </code>
       </div>
 

@@ -11,7 +11,6 @@ const supabase = createClient(
 
 async function seed() {
   try {
-    // Додаткові задачі Java
     const javaFactorialTaskId = uuidv4();
     const javaFactorialCodeId = uuidv4();
 
@@ -34,7 +33,7 @@ async function seed() {
         prompt:
           "Implement a method `public int factorial(int n)` that returns the factorial of the number n.",
         starter_code:
-          "public class FactorialTask {\\n[2]public int factorial(int n) {\\n[4]// your code here\\n[4]return 1;\\n[2]}\\n}",
+          "public class FactorialTask {\\[4]public int factorial(int n) {\\n[8]// your code here\\n[8]return 1;\\n[4]}\\n}",
       },
     ]);
 
@@ -66,7 +65,7 @@ async function seed() {
         prompt:
           "Implement a method `public boolean isPalindrome(String s)` that returns true if the string is a palindrome.",
         starter_code:
-          "public class PalindromeChecker {\\n[2]public boolean isPalindrome(String s) {\\n[4]// your code here\\n[4]return false;\\n[2]}\\n}",
+          "public class PalindromeChecker {\\n[4]public boolean isPalindrome(String s) {\\n[8]// your code here\\n[8]return false;\\n[4]}\\n}",
       },
     ]);
 
@@ -80,7 +79,6 @@ async function seed() {
       { code_task_id: javaPalindromeCodeId, input: ["madam"], expected: true },
     ]);
 
-    // Додаткові задачі Python
     const pythonListSumTaskId = uuidv4();
     const pythonListSumCodeId = uuidv4();
 
@@ -180,7 +178,7 @@ async function seed() {
           task_id: javaPracticeTaskId,
           prompt:
             "Implement the method `public int sum(int a, int b)` that returns the sum of two numbers.",
-          starter_code: `public class SumTask {\\n[2]public int sum(int a, int b) {\\n[4]// your code here\\n[4]return 0;\\n[2]}\\n}`,
+          starter_code: `public class SumTask {\\n[4]public int sum(int a, int b) {\\n[8]// your code here\\n[8]return 0;\\n[4]}\\n}`,
         },
       ]);
     if (javaCodeTaskError) throw javaCodeTaskError;

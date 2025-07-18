@@ -1,14 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createClient } from "@supabase/supabase-js";
 import { CodeTaskTest, Question } from "@/types/tasksTypes";
-import { adminAuthMiddleware } from "@/lib/adminAuthMiddleware";
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { adminAuthMiddleware } from "@/lib/middlware/adminAuthMiddleware";
+import { getSupabaseAdminClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const supabase = getSupabaseAdminClient(req);
   const {
     title,
     description,

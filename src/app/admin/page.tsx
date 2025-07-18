@@ -1,8 +1,16 @@
 "use client";
 
 import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
-import AdminAccess from "@/components/Forms/AdminAccess/AdminAccess";
-import AdminDashboard from "@/components/AdminDashboard/AdminDashboard";
+
+import dynamic from "next/dynamic";
+
+const AdminDashboard = dynamic(
+  () => import("@/components/AdminDashboard/AdminDashboard")
+);
+
+const AdminAccess = dynamic(
+  () => import("@/components/Forms/AdminAccess/AdminAccess")
+);
 
 export default function AdminPage() {
   const { isAdminVerified } = useAdminAuth();

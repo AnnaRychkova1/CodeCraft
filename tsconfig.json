@@ -27,6 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
+    "types/next-auth.d.ts",
     "src/components/Providers",
     "src/components/Modals/ConfirmModal",
     "src/components/Modals/ConfirmModal"

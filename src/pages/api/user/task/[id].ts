@@ -1,20 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createClient } from "@supabase/supabase-js";
+
 import { getServerSession } from "next-auth/next";
 import type { Session } from "next-auth";
-import authOptions from "../../auth/[...nextauth]";
+import { authOptions } from "../../auth/[...nextauth]";
 import type { SubmitUserTaskBody } from "@/types/tasksTypes";
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getSupabaseUserClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const session = (await getServerSession(req, res, authOptions)) as Session;
+
+  if (!session?.user?.access_token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const token = session.user.access_token;
+  const supabase = getSupabaseUserClient(token);
 
   if (!session?.user?.email) {
     return res.status(401).json({ error: "Unauthorized" });

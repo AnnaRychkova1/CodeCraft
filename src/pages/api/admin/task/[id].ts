@@ -1,14 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createClient } from "@supabase/supabase-js";
-import { CodeTaskTest, Question } from "@/types/tasksTypes";
-import { adminAuthMiddleware } from "@/lib/adminAuthMiddleware";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { CodeTaskTest, Question } from "@/types/tasksTypes";
+import { adminAuthMiddleware } from "@/lib/middlware/adminAuthMiddleware";
+import { getSupabaseAdminClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
 const adminHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const supabase = getSupabaseAdminClient(req);
+
   const { id } = req.query;
 
   if (typeof id !== "string") {
@@ -141,10 +139,23 @@ const adminHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     if (req.method === "DELETE") {
-      const { error } = await supabase.from("task").delete().eq("id", id);
-      if (error) throw error;
+      const { data, error } = await supabase
+        .from("task")
+        .delete()
+        .eq("id", id)
+        .select();
 
-      return res.status(200).json({ message: "Task deleted" });
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      if (!data || data.length === 0) {
+        return res
+          .status(404)
+          .json({ error: "Task not found or not deleted (RLS?)" });
+      }
+
+      return res.status(200).json({ message: "Task deleted", data });
     }
 
     res.setHeader("Allow", ["PUT", "DELETE"]);
