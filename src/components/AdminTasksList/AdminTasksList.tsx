@@ -7,9 +7,9 @@ import { GiHammerBreak } from "react-icons/gi";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import type { AdminTasksListProps } from "@/types/adminTypes";
 import { deleteTask } from "@/services/tasks";
+import { useAdminAuth } from "../Providers/AdminAuthProvider";
 import { useConfirm } from "@/components/Modals/ConfirmModal/ConfirmModal";
 import css from "./AdminTasksList.module.css";
-import { useAdminAuth } from "../Providers/AdminAuthProvider";
 
 export default function AdminTasksList({
   tasks,

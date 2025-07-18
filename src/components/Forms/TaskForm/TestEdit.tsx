@@ -1,8 +1,12 @@
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
 import type { TestEditProps } from "@/types/tasksTypes";
-import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
 import css from "./TaskForm.module.css";
+
+const AutoGrowTextarea = dynamic(
+  () => import("../AutoGrowTextarea/AutoGrowTextarea")
+);
 
 export default function TestEdit({
   test_case,

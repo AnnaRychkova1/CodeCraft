@@ -58,6 +58,17 @@ export default async function handler(
     });
   } catch (error) {
     console.error("Progress API Error:", error);
-    return res.status(500).json({ error: "Failed to fetch progress" });
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error["code"] === "PGRST301"
+    ) {
+      return res
+        .status(401)
+        .json({ error: "Your session has expired. Please log in again." });
+    } else {
+      return res.status(500).json({ error: "Failed to fetch progress" });
+    }
   }
 }

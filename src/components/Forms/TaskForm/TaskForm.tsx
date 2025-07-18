@@ -1,14 +1,18 @@
-import TheoryInputs from "./TheoryInputs";
+import dynamic from "next/dynamic";
 import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import type { CodeTask, Question, TaskFormProps } from "@/types/tasksTypes";
 import { createTask, updateTask } from "@/services/tasks";
+import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
 import Loader from "@/components/Loader/Loader";
 import PracticeInputs from "./PracticeInputs";
-import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
+import TheoryInputs from "./TheoryInputs";
 import css from "./TaskForm.module.css";
-import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
+
+const AutoGrowTextarea = dynamic(
+  () => import("../AutoGrowTextarea/AutoGrowTextarea")
+);
 
 export default function TaskForm({
   formData,

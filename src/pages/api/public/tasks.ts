@@ -78,6 +78,18 @@ export default async function handler(
     return res.status(200).json({ tasks, userTasks });
   } catch (error) {
     console.error("API error:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error["code"] === "PGRST301"
+    ) {
+      return res
+        .status(401)
+        .json({ error: "Your session has expired. Please log in again." });
+    } else {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
   }
 }

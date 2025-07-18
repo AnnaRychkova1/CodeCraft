@@ -1,14 +1,9 @@
-import { indentUnit } from "@codemirror/language";
 import { CompletionContext } from "@codemirror/autocomplete";
 
 export function normalizeCode(code: string): string {
   return code
     .replace(/\\n\[(\d+)\]/g, (_, spaces) => "\n" + " ".repeat(Number(spaces))) // \n[4], \n[8], etc.
     .replace(/\\n/g, "\n");
-}
-
-export function getIndentExtensions() {
-  return [indentUnit.of("    ")];
 }
 
 const pythonKeywords = [

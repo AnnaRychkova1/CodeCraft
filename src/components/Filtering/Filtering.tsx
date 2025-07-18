@@ -1,7 +1,9 @@
+"use client";
+
+import { useSession } from "next-auth/react";
 import { MdLooksOne, MdLooksTwo, MdLooks3 } from "react-icons/md";
 import { SiJavascript, SiPython } from "react-icons/si";
 import { FaJava, FaBookOpen, FaCheckCircle, FaRegCircle } from "react-icons/fa";
-
 import { GiHammerBreak } from "react-icons/gi";
 import type {
   Level,
@@ -12,7 +14,6 @@ import type {
   Completion,
 } from "@/types/tasksTypes";
 import css from "./Filtering.module.css";
-import { useSession } from "next-auth/react";
 
 const toggleValue = <T extends string>(
   value: T,

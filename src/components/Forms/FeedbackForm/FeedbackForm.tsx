@@ -1,10 +1,14 @@
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { usePathname } from "next/navigation";
 import { sendFeedback } from "@/services/feedback";
 import Loader from "@/components/Loader/Loader";
-import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
 import css from "./FeedbackForm.module.css";
+
+const AutoGrowTextarea = dynamic(
+  () => import("../AutoGrowTextarea/AutoGrowTextarea"),
+);
 
 export default function FeedbackForm() {
   const pathname = usePathname();

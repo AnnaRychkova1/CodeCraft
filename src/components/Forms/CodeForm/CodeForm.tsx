@@ -1,10 +1,12 @@
-import CodeMirror from "@uiw/react-codemirror";
+import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
+import { indentUnit } from "@codemirror/language";
 import { autocompletion } from "@codemirror/autocomplete";
 
 import type { CodeFormProps } from "@/types/tasksTypes";
@@ -12,14 +14,15 @@ import { submitUserTaskResult } from "@/services/tasks";
 import { runPythonCode } from "@/utils/runPythonCode";
 import { runJavaScriptCode } from "@/utils/runJavaScriptCode";
 import { runJavaCode } from "@/utils/runJavaCode";
-import {
-  getIndentExtensions,
-  normalizeCode,
-  pythonCompletion,
-} from "@/helpers/codeHelpers";
+import { normalizeCode, pythonCompletion } from "@/helpers/codeHelpers";
 
 import Loader from "@/components/Loader/Loader";
 import css from "./CodeForm.module.css";
+
+const CodeMirror = dynamic(() => import("@uiw/react-codemirror"), {
+  ssr: false,
+  loading: () => <Loader />,
+});
 
 export default function CodeForm({
   task,
@@ -35,7 +38,7 @@ export default function CodeForm({
   const initialCode = normalizeCode(
     isAuthenticated && solution ? solution : task.starter_code || ""
   );
-  const indentExtensions = getIndentExtensions();
+  const indentExtensions = [indentUnit.of("    ")];
   const [code, setCode] = useState(initialCode);
   const [touched, setTouched] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -116,6 +119,11 @@ export default function CodeForm({
             const errorMessage =
               err instanceof Error ? err.message : String(err);
             toast.error(errorMessage || "Failed to submit solution.");
+            if (
+              errorMessage === "Your session has expired. Please log in again."
+            ) {
+              signOut();
+            }
           }
         }
       }

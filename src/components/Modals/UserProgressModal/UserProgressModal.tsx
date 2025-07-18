@@ -1,21 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import dynamic from "next/dynamic";
+import { signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import {
   Dialog,
   DialogPanel,
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import { fetchUserProgress } from "@/services/tasks";
 import type { UserProgressModalProps } from "@/types/userTypes";
+import { fetchUserProgress } from "@/services/tasks";
+import animationData from "@/assets/animations/coder.json";
 import Loader from "@/components/Loader/Loader";
 import css from "./UserProgressModal.module.css";
 
-// const COLORS = ["#00C49F", "#FF8042"];
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+
 const COLORS = ["#117912", "#66e665"];
 
 export default function UserProgressModal({
@@ -46,6 +50,12 @@ export default function UserProgressModal({
         setPractical(practice);
       } catch (err) {
         toast.error(`${err instanceof Error ? err.message : String(err)}`);
+
+        const message =
+          err instanceof Error ? err.message : "Failed to fetch your progress.";
+        if (message === "Your session has expired. Please log in again.") {
+          signOut();
+        }
       } finally {
         setLoadingProgress(false);
       }
@@ -63,15 +73,6 @@ export default function UserProgressModal({
     <Transition show={isOpen}>
       <Dialog as="div" className={css.modalRoot} onClose={onClose}>
         <div className={css.modalWrapper}>
-          {/* <TransitionChild
-            as="div"
-            enter={css.backdropEnter}
-            enterFrom={css.backdropEnterFrom}
-            enterTo={css.backdropEnterTo}
-            leave={css.backdropLeave}
-            leaveFrom={css.backdropLeaveFrom}
-            leaveTo={css.backdropLeaveTo}
-          > */}
           <div className={css.modalBackdrop}>
             <TransitionChild
               as={DialogPanel}
@@ -82,48 +83,66 @@ export default function UserProgressModal({
               leaveFrom={css.modalLeaveFrom}
               leaveTo={css.modalLeaveTo}
             >
-              <div className={css.modalContent}>
-                <h2 className="title">{`Great job, ${session?.user?.name}!`}</h2>
-                {loadingProgress ? (
-                  <Loader />
-                ) : (
-                  <>
-                    <p
-                      className={css.progressMessage}
-                    >{`You've completed ${progressPercent}% of the course`}</p>
+              {userTaskCount === 0 ? (
+                <div className={css.modalContent}>
+                  <div>
+                    <h2 className="title">{`Welcome, ${session?.user?.name}!`}</h2>
+                    <p className={css.welcomMessage}>
+                      Great to have you here! Complete your first task to start
+                      tracking progress.
+                    </p>
+                  </div>
+                  <Lottie animationData={animationData} loop={true} />
+                  <button
+                    onClick={onClose}
+                    className={`loginBtn ${css.closeBtn}`}
+                  >
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <div className={css.modalContent}>
+                  <h2 className="title">{`Great job, ${session?.user?.name}!`}</h2>
+                  {loadingProgress ? (
+                    <Loader />
+                  ) : (
+                    <>
+                      <p
+                        className={css.progressMessage}
+                      >{`You've completed ${progressPercent}% of the course`}</p>
 
-                    <PieChart width={300} height={300}>
-                      <Pie
-                        data={chartData}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        label
-                        dataKey="value"
-                      >
-                        {chartData.map((_, index) => (
-                          <Cell
-                            key={index}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </>
-                )}
+                      <PieChart width={300} height={300}>
+                        <Pie
+                          data={chartData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          label
+                          dataKey="value"
+                        >
+                          {chartData.map((_, index) => (
+                            <Cell
+                              key={index}
+                              fill={COLORS[index % COLORS.length]}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </>
+                  )}
 
-                <button
-                  onClick={onClose}
-                  className={`loginBtn ${css.closeBtn}`}
-                >
-                  Close
-                </button>
-              </div>
+                  <button
+                    onClick={onClose}
+                    className={`loginBtn ${css.closeBtn}`}
+                  >
+                    Close
+                  </button>
+                </div>
+              )}
             </TransitionChild>
           </div>
-          {/* </TransitionChild> */}
         </div>
       </Dialog>
     </Transition>

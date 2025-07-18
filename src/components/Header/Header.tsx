@@ -1,11 +1,15 @@
 "use client";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useConfirm } from "../Modals/ConfirmModal/ConfirmModal";
 import css from "./Header.module.css";
-import UserProgressModal from "../Modals/UserProgressModal/UserProgressModal";
+
+const UserProgressModal = dynamic(
+  () => import("../Modals/UserProgressModal/UserProgressModal")
+);
 
 export default function Header() {
   const { status } = useSession();

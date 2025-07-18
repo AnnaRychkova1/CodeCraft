@@ -1,13 +1,15 @@
 "use client";
-
+import dynamic from "next/dynamic";
+import { signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import Confetti from "react-confetti";
 import { useSession } from "next-auth/react";
 import type { TheoryTestProps } from "@/types/tasksTypes";
 import { submitUserTaskResult } from "@/services/tasks";
 import Loader from "@/components/Loader/Loader";
 import css from "./TheoryTest.module.css";
+
+const Confetti = dynamic(() => import("react-confetti"), { ssr: false });
 
 const isMultipleAnswer = (correctAnswer: string[]): boolean =>
   correctAnswer.length > 1;
@@ -101,6 +103,9 @@ export default function TheoryTest({
         const errorMessage = err instanceof Error ? err.message : String(err);
 
         toast.error(errorMessage || "Failed to save result to server.");
+        if (errorMessage === "Your session has expired. Please log in again.") {
+          signOut();
+        }
       } finally {
         setLoading(false);
       }

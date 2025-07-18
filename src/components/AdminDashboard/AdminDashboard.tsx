@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-hot-toast";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { CodeTask, Question, Task } from "@/types/tasksTypes";
@@ -8,9 +9,15 @@ import { removeAdminAccess } from "@/services/admin";
 import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
 import { useConfirm } from "@/components/Modals/ConfirmModal/ConfirmModal";
 import TaskForm from "@/components/Forms/TaskForm/TaskForm";
-import AdminTasksList from "@/components/AdminTasksList/AdminTasksList";
 import Loader from "@/components/Loader/Loader";
 import css from "./AdminDashboard.module.css";
+
+const AdminTasksList = dynamic(
+  () => import("@/components/AdminTasksList/AdminTasksList"),
+  {
+    loading: () => <Loader />,
+  }
+);
 
 const emptyQuestionTemplate = {
   question: "",

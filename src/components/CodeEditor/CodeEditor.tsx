@@ -1,10 +1,11 @@
 "use client";
-
+import dynamic from "next/dynamic";
 import { useState, useEffect, useRef } from "react";
-import Confetti from "react-confetti";
 import type { CodeEditorProps } from "@/types/tasksTypes";
 import CodeForm from "../Forms/CodeForm/CodeForm";
 import css from "./CodeEditor.module.css";
+
+const Confetti = dynamic(() => import("react-confetti"), { ssr: false });
 
 export default function CodeEditor({
   task,
@@ -45,6 +46,17 @@ export default function CodeEditor({
 
   return (
     <section className={css.editorSection}>
+      {language === "python" && (
+        <p className={css.versionMessage}>
+          Python version used for testing: <strong>3.10.0</strong>
+        </p>
+      )}
+      {language === "java" && (
+        <p className={css.versionMessage}>
+          Java version used for testing: <strong>15.0.2</strong>
+        </p>
+      )}
+
       <div className={css.editorContainer}>
         <CodeForm
           task={task}

@@ -1,7 +1,10 @@
+import dynamic from "next/dynamic";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import type { TheoryInputsProps } from "@/types/tasksTypes";
-import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
 import css from "./TaskForm.module.css";
+const AutoGrowTextarea = dynamic(
+  () => import("../AutoGrowTextarea/AutoGrowTextarea")
+);
 
 export default function TheoryInputs({
   questions,

@@ -1,14 +1,23 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { use, useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { useSession } from "next-auth/react";
-import { UserTask, type CodeTask, type Task } from "@/types/tasksTypes";
+import type { UserTask, CodeTask, Task } from "@/types/tasksTypes";
 import { fetchTaskById } from "@/services/tasks";
-import Loader from "@/components/Loader/Loader";
-import TheoryTest from "@/components/TheoryTest/TheoryTest";
-import CodeEditor from "@/components/CodeEditor/CodeEditor";
 import TaskTopSection from "@/components/TaskTopSection/TaskTopSection";
+import Loader from "@/components/Loader/Loader";
+
+const TheoryTest = dynamic(() => import("@/components/TheoryTest/TheoryTest"), {
+  ssr: false,
+  loading: () => <Loader />,
+});
+const CodeEditor = dynamic(() => import("@/components/CodeEditor/CodeEditor"), {
+  ssr: false,
+  loading: () => <Loader />,
+});
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -41,12 +50,18 @@ export default function TaskPage({ params }: Props) {
         }
         setTask(fetchedTask);
         setUserTask(userTask ?? null);
-      } catch (error: unknown) {
+      } catch (err: unknown) {
         setLoadError(true);
         toast.error(
-          error instanceof Error ? error.message : "Failed to load task",
+          err instanceof Error ? err.message : "Failed to load task",
           { id: "load-error" }
         );
+
+        const message =
+          err instanceof Error ? err.message : "Failed to load task .";
+        if (message === "Your session has expired. Please log in again.") {
+          signOut();
+        }
       } finally {
         setLoading(false);
       }

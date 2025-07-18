@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { SiGithub, SiJavascript, SiPython } from "react-icons/si";
 import {
   FaLaptopCode,
   FaTerminal,
@@ -6,8 +8,6 @@ import {
   FaPuzzlePiece,
   FaJava,
 } from "react-icons/fa";
-import { SiGithub, SiJavascript, SiPython } from "react-icons/si";
-import { useSession } from "next-auth/react";
 import Loader from "../Loader/Loader";
 import css from "./Hero.module.css";
 

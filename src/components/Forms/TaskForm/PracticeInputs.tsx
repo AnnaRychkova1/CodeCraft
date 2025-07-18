@@ -1,8 +1,12 @@
+import dynamic from "next/dynamic";
 import { FiPlus } from "react-icons/fi";
 import type { PracticeInputsProps } from "@/types/tasksTypes";
 import TestEdit from "./TestEdit";
-import AutoGrowTextarea from "../AutoGrowTextarea/AutoGrowTextarea";
 import css from "./TaskForm.module.css";
+
+const AutoGrowTextarea = dynamic(
+  () => import("../AutoGrowTextarea/AutoGrowTextarea")
+);
 
 export default function PracticeInputs({
   code_task,

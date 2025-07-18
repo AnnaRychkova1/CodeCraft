@@ -1,8 +1,10 @@
 "use client";
 
 import { MdFilterList } from "react-icons/md";
+import { signOut } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+import dynamic from "next/dynamic";
 import type {
   Level,
   Language,
@@ -11,12 +13,16 @@ import type {
   UserTask,
   Completion,
 } from "@/types/tasksTypes";
-import { resetFilters } from "@/utils/resetFilters";
 import { fetchTasks } from "@/services/tasks";
+import { resetFilters } from "@/helpers/resetFiltersHelper";
 import TasksList from "@/components/TasksList/TasksList";
-import Filtering from "@/components/Filtering/Filtering";
 import Loader from "@/components/Loader/Loader";
 import css from "./Tasks.module.css";
+
+const Filtering = dynamic(() => import("@/components/Filtering/Filtering"), {
+  ssr: false,
+  loading: () => <Loader />,
+});
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<TaskWithCompletion[]>([]);
@@ -48,10 +54,15 @@ export default function Tasks() {
       } catch (err) {
         setLoadError(true);
         toast.error(
-          `Failed to load tasks. Please try again later. ${
-            err instanceof Error ? err.message : String(err)
-          }`
+          err instanceof Error && err.message
+            ? err.message
+            : "Failed to load tasks"
         );
+        const message =
+          err instanceof Error ? err.message : "Failed to load task .";
+        if (message === "Your session has expired. Please log in again.") {
+          signOut();
+        }
       } finally {
         setLoading(false);
       }
