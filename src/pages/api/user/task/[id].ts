@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import type { Session } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]";
-import type { SubmitUserTaskBody } from "@/types/tasksTypes";
+import type { SubmitUserTaskBody } from "@/types/userTypes";
 import { getSupabaseUserClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
 export default async function handler(
@@ -114,7 +114,6 @@ export default async function handler(
       return res.status(200).json({ message, data: result.data });
     }
   } catch (error) {
-    console.error("UserTask API Error:", error);
     if (
       typeof error === "object" &&
       error !== null &&
@@ -125,6 +124,7 @@ export default async function handler(
         .status(401)
         .json({ error: "Your session has expired. Please log in again." });
     } else {
+      console.error("UserTask API Error:", error);
       return res.status(500).json({ error: "Failed to save user task result" });
     }
   }

@@ -33,7 +33,7 @@ async function seed() {
         prompt:
           "Implement a method `public int factorial(int n)` that returns the factorial of the number n.",
         starter_code:
-          "public class FactorialTask {\\[4]public int factorial(int n) {\\n[8]// your code here\\n[8]return 1;\\n[4]}\\n}",
+          "public class FactorialTask {\\n[4]public int factorial(int n) {\\n[8]// your code here\\n[8]return 1;\\n[4]}\\n}",
       },
     ]);
 

@@ -144,6 +144,12 @@ const adminHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     if (req.method === "DELETE") {
+      const { id } = req.query;
+
+      if (typeof id !== "string") {
+        return res.status(400).json({ error: "Invalid or missing task ID" });
+      }
+
       const { data, error } = await supabase
         .from("task")
         .delete()
@@ -160,7 +166,9 @@ const adminHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           .json({ error: "Task not found or not deleted (RLS?)" });
       }
 
-      return res.status(200).json({ message: "Task deleted", data });
+      return res
+        .status(200)
+        .json({ message: "Task deleted", data: data[0].id });
     }
 
     res.setHeader("Allow", ["PUT", "DELETE"]);

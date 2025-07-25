@@ -1,7 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
-import { getSupabaseClient } from "@/lib/supabaseAccess/getSupabaseClient";
+import { validateUserCredentials } from "@/helpers/authHelpers";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,44 +15,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Missing email or password");
         }
 
-        const supabase = getSupabaseClient();
-
-        const { data: userToCheckPassword, error: userError } = await supabase
-          .from("user")
-          .select("*")
-          .eq("email", credentials.email)
-          .single();
-
-        if (userError || !userToCheckPassword) {
-          throw new Error("User not found");
-        }
-
-        const isValid = await compare(
-          credentials.password,
-          userToCheckPassword.password
+        return await validateUserCredentials(
+          credentials.email,
+          credentials.password
         );
-        if (!isValid) {
-          throw new Error("Wrong password");
-        }
-
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: credentials.email,
-          password: credentials.password,
-        });
-
-        if (error || !data.user || !data.session) {
-          throw new Error("Invalid email or password");
-        }
-
-        const user = data.user;
-        const session = data.session;
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.user_metadata?.name || "",
-          access_token: session.access_token,
-        };
       },
     }),
   ],

@@ -4,12 +4,16 @@ export function runJavaScriptCode(
   code: string,
   tests: CodeTaskTest[]
 ): string[] {
-  function extractFunctionName(code: string): string {
+  function extractFunctionName(code: string): string | null {
     const match = code.match(/function\s+([a-zA-Z0-9_]+)/);
-    return match?.[1] || "unknownFunction";
+    return match?.[1] ?? null;
   }
 
   try {
+    const functionName = extractFunctionName(code);
+    if (!functionName) {
+      return ["Your code did not return a function."];
+    }
     const fullCode = `
       ${code}
       return ${extractFunctionName(code)};

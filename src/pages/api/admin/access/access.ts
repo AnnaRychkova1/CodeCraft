@@ -4,13 +4,13 @@ import { compare } from "bcryptjs";
 import { serialize } from "cookie";
 import { getSupabaseClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
-const supabase = getSupabaseClient();
 const email = process.env.ADMIN_EMAIL!;
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const supabase = getSupabaseClient();
   if (req.method !== "POST") {
     return res.status(405).end("Method Not Allowed");
   }

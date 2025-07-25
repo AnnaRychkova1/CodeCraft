@@ -16,10 +16,12 @@ export async function runPythonCode(
 
     for (const { input, expected } of tests) {
       const testInput = formatPythonArgs(input);
+      const functionName = extractFunctionName(cleanedCode);
+      if (!functionName) {
+        throw new Error("Function name could not be extracted");
+      }
 
-      const program = `${code}\nprint(${extractFunctionName(
-        cleanedCode
-      )}(${testInput}))`;
+      const program = `${code}\nprint(${functionName}(${testInput}))`;
 
       const response = await fetch("https://emkc.org/api/v2/piston/execute", {
         method: "POST",

@@ -23,16 +23,10 @@ export interface UserTask {
   solution?: string;
 }
 
-export interface TaskWithUserTask {
+export interface TaskResponse {
   task: Task;
   userTask?: UserTask;
 }
-
-export type SubmitUserTaskBody = {
-  result?: number;
-  solution?: string;
-  submitted: boolean;
-};
 
 export interface PropsTask {
   task: Task;
