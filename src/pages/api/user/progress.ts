@@ -30,6 +30,7 @@ export default async function handler(
       .single();
 
     if (userError || !userData) throw new Error("User not found");
+
     const userId = userData.id;
 
     const { data: allTasksData, error: taskError } = await supabase
@@ -57,7 +58,6 @@ export default async function handler(
       practice,
     });
   } catch (error) {
-    console.error("Progress API Error:", error);
     if (
       typeof error === "object" &&
       error !== null &&
@@ -68,6 +68,7 @@ export default async function handler(
         .status(401)
         .json({ error: "Your session has expired. Please log in again." });
     } else {
+      console.error("Progress API Error:", error);
       return res.status(500).json({ error: "Failed to fetch progress" });
     }
   }

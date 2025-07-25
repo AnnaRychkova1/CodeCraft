@@ -1,3 +1,5 @@
+import React from "react";
+
 export function formatTextWithLineBreaks(text: string) {
   const fixedText = text.replace(/\\n/g, "\n");
 

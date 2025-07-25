@@ -15,9 +15,7 @@ export function stripNonExecutableComments(code: string): string {
     .filter((line) => {
       const trimmedStart = line.trimStart();
       const trimmedFull = line.trim();
-      return (
-        !trimmedStart.startsWith("#") && !(trimmedFull === "" && line !== "")
-      );
+      return !trimmedStart.startsWith("#") && trimmedFull !== "";
     })
     .join("\n");
 }

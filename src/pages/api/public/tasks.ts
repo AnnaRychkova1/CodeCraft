@@ -77,8 +77,6 @@ export default async function handler(
 
     return res.status(200).json({ tasks, userTasks });
   } catch (error) {
-    console.error("API error:", error);
-
     if (
       typeof error === "object" &&
       error !== null &&
@@ -89,6 +87,7 @@ export default async function handler(
         .status(401)
         .json({ error: "Your session has expired. Please log in again." });
     } else {
+      console.error("API error:", error);
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }

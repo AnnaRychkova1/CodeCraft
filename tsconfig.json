@@ -2,16 +2,18 @@
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "jsx": "preserve",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "moduleResolution": "node",
+    "types": ["jest", "node"],
+    "typeRoots": ["./types", "./node_modules/@types"],
     "incremental": true,
     "plugins": [
       {
@@ -30,7 +32,8 @@
     "types/next-auth.d.ts",
     "src/components/Providers",
     "src/components/Modals/ConfirmModal",
-    "src/components/Modals/ConfirmModal"
+    "src/components/Modals/ConfirmModal",
+    "jest.config.ts"
   ],
   "exclude": ["node_modules"]
 }

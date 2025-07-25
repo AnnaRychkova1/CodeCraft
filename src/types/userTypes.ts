@@ -15,6 +15,12 @@ export interface UserRegisterResponse {
   message: string;
 }
 
+export type SubmitUserTaskBody = {
+  result?: number;
+  solution?: string;
+  submitted: boolean;
+};
+
 export interface UserProgressResponse {
   allTasks: number;
   doneTasks: number;

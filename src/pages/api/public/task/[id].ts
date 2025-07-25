@@ -79,7 +79,6 @@ export default async function handler(
         .single();
 
       if (userTaskError && userTaskError.code !== "PGRST116") {
-        // PGRST116: no rows returned
         throw userTaskError;
       }
 
@@ -88,7 +87,6 @@ export default async function handler(
 
     return res.status(200).json({ task, userTask });
   } catch (error) {
-    console.error("API Error:", error);
     if (
       typeof error === "object" &&
       error !== null &&
@@ -99,6 +97,7 @@ export default async function handler(
         .status(401)
         .json({ error: "Your session has expired. Please log in again." });
     } else {
+      console.error("API Error:", error);
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }

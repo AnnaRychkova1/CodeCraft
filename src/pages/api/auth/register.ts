@@ -2,12 +2,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { hash } from "bcryptjs";
 import { getSupabaseClient } from "@/lib/supabaseAccess/getSupabaseClient";
 
-const supabase = getSupabaseClient();
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const supabase = getSupabaseClient();
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -26,8 +25,6 @@ export default async function handler(
         data: { name },
       },
     });
-    console.log(authData);
-    console.log(authError);
 
     if (authError || !authData?.user) {
       return res
@@ -52,9 +49,7 @@ export default async function handler(
       return res.status(500).json({ message: "Failed to insert user into DB" });
     }
 
-    return res
-      .status(201)
-      .json({ message: "User registered. Please confirm your email." });
+    return res.status(201).json({ message: "User registered successfully." });
   } catch (err) {
     console.error("Registration error:", err);
     return res.status(500).json({ message: "Internal server error" });

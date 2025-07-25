@@ -2,9 +2,12 @@ import type { ApiResponseMessage } from "@/types/commonTypes";
 import type {
   TaskFormData,
   TasksResponse,
-  TaskWithUserTask,
+  TaskResponse,
 } from "@/types/tasksTypes";
-import type { UserProgressResponse } from "@/types/userTypes";
+import type {
+  SubmitUserTaskBody,
+  UserProgressResponse,
+} from "@/types/userTypes";
 import { handleResponse } from "@/utils/handleResponse";
 
 export async function fetchTasks(): Promise<TasksResponse> {
@@ -13,22 +16,18 @@ export async function fetchTasks(): Promise<TasksResponse> {
   return handleResponse<TasksResponse>(res);
 }
 
-export async function fetchTaskById(taskId: string): Promise<TaskWithUserTask> {
+export async function fetchTaskById(taskId: string): Promise<TaskResponse> {
   const res = await fetch(`/api/public/task/${taskId}`, {
     cache: "no-store",
   });
 
-  return handleResponse<TaskWithUserTask>(res);
+  return handleResponse<TaskResponse>(res);
 }
 
 // loggedin users only
 export async function submitUserTaskResult(
   taskId: string,
-  payload: {
-    result?: number;
-    solution?: string;
-    submitted: boolean;
-  }
+  payload: SubmitUserTaskBody
 ): Promise<ApiResponseMessage> {
   const res = await fetch(`/api/user/task/${taskId}`, {
     method: "POST",
