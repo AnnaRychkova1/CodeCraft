@@ -1,102 +1,104 @@
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
-import { v4 as uuidv4 } from "uuid";
+import type {
+  InitialTask,
+  CodeTask,
+  CodeTaskTest,
+  Question,
+} from "@/types/tasksTypes";
+// import { initialTasks } from "./data/initialBeginnerTheoryTasks";
+// import { initialTasks } from "./data/initialIntermediateTheoryTasks";
+// import { initialTasks } from "./data/initialAdvancedTheoryTasks";
+import { initialTasks } from "./data/initialPracticeTasks";
 
 dotenv.config();
 
-dotenv.config({ path: ".env" });
-
-// Setup Supabase client using service role key
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-async function seed() {
-  try {
-    // Clean up existing data (order matters due to foreign key constraints)
-    await supabase.from("test_case").delete().neq("id", "");
-    await supabase.from("theory_question").delete().neq("id", "");
-    await supabase.from("code_task").delete().neq("id", "");
-    await supabase.from("task").delete().neq("id", "");
-
-    // === Theory Task ===
-    const theoryTaskId = uuidv4();
-    const { error: theoryTaskError } = await supabase.from("task").insert([
-      {
-        id: theoryTaskId,
-        title: "Basics of Python Variables",
-        description: "Learn how to declare and use variables in Python.",
-        level: "beginner",
-        language: "python",
-        type: "theory",
-      },
-    ]);
-
-    if (theoryTaskError) throw theoryTaskError;
-
-    const { error: theoryQuestionsError } = await supabase
-      .from("theory_question")
+async function seedFinalTasks(initialTasks: InitialTask[]) {
+  for (const task of initialTasks) {
+    const { data: insertedTask, error: taskError } = await supabase
+      .from("task")
       .insert([
         {
-          task_id: theoryTaskId,
-          question:
-            "Which of the following is a valid variable name in Python?",
-          options: ["1variable", "_variable", "variable-name", "variable name"],
-          correct_answer: ["_variable"],
+          title: task.title,
+          description: task.description,
+          level: task.level,
+          language: task.language,
+          type: task.type,
         },
-        {
-          task_id: theoryTaskId,
-          question: "What will `x = 5 + 3` result in?",
-          options: ["8", "53", "Error", "None"],
-          correct_answer: ["8"],
-        },
-      ]);
+      ])
+      .select("id")
+      .single();
 
-    if (theoryQuestionsError) throw theoryQuestionsError;
+    if (taskError || !insertedTask) {
+      console.error("❌ Task insert error:", taskError);
+      continue;
+    }
 
-    // === Practice Task ===
-    const practiceTaskId = uuidv4();
-    const codeTaskId = uuidv4();
+    const taskId = insertedTask.id;
 
-    const { error: practiceTaskError } = await supabase.from("task").insert([
-      {
-        id: practiceTaskId,
-        title: "Sum of Two Numbers",
-        description:
-          "Write a function that takes two numbers and returns their sum.",
-        level: "beginner",
-        language: "javascript",
-        type: "practice",
-      },
-    ]);
+    if (task.code_task?.length) {
+      for (const codeTask of task.code_task as CodeTask[]) {
+        const { data: insertedCodeTask, error: codeTaskError } = await supabase
+          .from("code_task")
+          .insert([
+            {
+              task_id: taskId,
+              prompt: codeTask.prompt,
+              starter_code: codeTask.starter_code ?? null,
+            },
+          ])
+          .select("id")
+          .single();
 
-    if (practiceTaskError) throw practiceTaskError;
+        if (codeTaskError || !insertedCodeTask) {
+          console.error("❌ CodeTask insert error:", codeTaskError);
+          continue;
+        }
 
-    const { error: codeTaskError } = await supabase.from("code_task").insert([
-      {
-        id: codeTaskId,
-        task_id: practiceTaskId,
-        prompt:
-          "Implement a function `sum(a, b)` that returns the sum of two numbers.",
-        starter_code: `function sum(a, b) {\\n[4]// your code here\\n}`,
-      },
-    ]);
+        const codeTaskId = insertedCodeTask.id;
 
-    if (codeTaskError) throw codeTaskError;
+        if (codeTask.test_case?.length) {
+          const testCases = codeTask.test_case.map((tc: CodeTaskTest) => ({
+            code_task_id: codeTaskId,
+            input: tc.input,
+            expected: tc.expected,
+          }));
 
-    const { error: testsError } = await supabase.from("test_case").insert([
-      { code_task_id: codeTaskId, input: [1, 2], expected: 3 },
-      { code_task_id: codeTaskId, input: [-3, 5], expected: 2 },
-      { code_task_id: codeTaskId, input: [100, 250], expected: 350 },
-    ]);
+          const { error: testCaseError } = await supabase
+            .from("test_case")
+            .insert(testCases);
 
-    if (testsError) throw testsError;
+          if (testCaseError) {
+            console.error("❌ TestCase insert error:", testCaseError);
+          }
+        }
+      }
+    }
 
-    console.log("✅ Seed completed successfully.");
-  } catch (error) {
-    console.error("❌ Seed failed:", error);
+    if (task.theory_question?.length) {
+      const questions = task.theory_question.map((q: Question) => ({
+        task_id: taskId,
+        question: q.question,
+        options: q.options,
+        correct_answer: q.correct_answer,
+      }));
+
+      const { error: questionError } = await supabase
+        .from("theory_question")
+        .insert(questions);
+
+      if (questionError) {
+        console.error("❌ TheoryQuestion insert error:", questionError);
+      }
+    }
   }
+
+  console.log("✅ All tasks (practice + theory) seeded successfully.");
 }
 
-seed();
+seedFinalTasks(initialTasks);

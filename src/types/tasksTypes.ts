@@ -11,6 +11,39 @@ export interface Task {
   code_task?: CodeTask[];
 }
 
+export interface InitialTask {
+  title: string;
+  description: string;
+  level: Level;
+  language: Language;
+  type: TaskType;
+  theory_question?: Question[];
+  code_task?: CodeTask[];
+}
+
+export interface Question {
+  id?: string;
+  question: string;
+  options: string[];
+  correct_answer: string[];
+}
+
+export interface CodeTask {
+  id?: string;
+  prompt: string;
+  starter_code?: string;
+  test_case?: CodeTaskTest[];
+}
+
+export interface CodeTaskTest<
+  Input extends unknown[] = unknown[],
+  Output = unknown
+> {
+  id?: string;
+  input: Input | Input[];
+  expected: Output;
+}
+
 export interface TasksResponse {
   tasks: Task[];
   userTasks?: UserTask[];
@@ -45,33 +78,10 @@ export interface TasksListProps {
   setType: (val: TaskType[]) => void;
 }
 
-export interface Question {
-  id?: string;
-  question: string;
-  options: string[];
-  correct_answer: string[];
-}
-
 export interface TheoryTestProps {
   theoryQuestions: Question[];
   taskId: string;
   result?: number;
-}
-
-export interface CodeTaskTest<
-  Input extends unknown[] = unknown[],
-  Output = unknown
-> {
-  id?: string;
-  input: Input | Input[];
-  expected: Output;
-}
-
-export interface CodeTask {
-  id?: string;
-  prompt: string;
-  starter_code?: string;
-  test_case?: CodeTaskTest[];
 }
 
 export interface FilteringProps {
