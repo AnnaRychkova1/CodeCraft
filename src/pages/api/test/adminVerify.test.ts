@@ -96,7 +96,7 @@ describe("Verify admin token API handler", () => {
     mockParse.mockReturnValue({ adminToken: "token" });
 
     getUserMock.mockResolvedValue({
-      data: { user: { user_metadata: { role: "user" } } },
+      data: { user: { app_metadata: { role: "user" } } },
       error: null,
     });
 
@@ -119,7 +119,7 @@ describe("Verify admin token API handler", () => {
     mockParse.mockReturnValue({ adminToken: "token" });
 
     getUserMock.mockResolvedValue({
-      data: { user: { user_metadata: { role: "admin" } } },
+      data: { user: { app_metadata: { role: "admin" } } },
       error: null,
     });
 

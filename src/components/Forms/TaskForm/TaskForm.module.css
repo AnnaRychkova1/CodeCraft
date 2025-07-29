@@ -28,6 +28,9 @@
   border-radius: 8px;
   border: 4px double rgba(17, 121, 18, 0.2);
   padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .selectContainer {
@@ -38,13 +41,32 @@
   gap: 12px;
 }
 
+.selectWrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
 .select {
-  padding: 6px;
-  padding-left: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 6px 18px 6px 12px;
   border-radius: 6px;
   border: 1px solid rgba(17, 121, 18, 0.2);
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   font-family: var(--font-geist-mono);
+  width: 100%;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #555;
+  font-size: 12px;
 }
 
 .select:hover,
@@ -62,7 +84,6 @@
 }
 
 .typeTitle {
-  margin-top: 12px;
   margin-left: 6px;
 }
 
@@ -266,4 +287,11 @@
   margin-left: 24px;
   transform: scale(1.2);
   opacity: 1;
+}
+
+@media only screen and (min-width: 1440px) {
+  .taskForm {
+    width: 840px;
+    margin: 0 auto;
+  }
 }

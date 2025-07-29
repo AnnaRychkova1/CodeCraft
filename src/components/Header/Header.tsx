@@ -1,9 +1,12 @@
 "use client";
+import { toast } from "react-hot-toast";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { removeAdminAccess } from "@/services/admin";
+import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
 import { useConfirm } from "../Modals/ConfirmModal/ConfirmModal";
 import css from "./Header.module.css";
 
@@ -15,6 +18,8 @@ export default function Header() {
   const { status } = useSession();
   const isAuthenticated = status === "authenticated";
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const { logoutAdmin, isAdminVerified } = useAdminAuth();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -35,6 +40,27 @@ export default function Header() {
     });
   };
 
+  const handleLogoutAdmin = () => {
+    confirm({
+      message: "Are you sure you want to log out?",
+      onConfirm: async () => {
+        try {
+          await removeAdminAccess();
+          logoutAdmin();
+          // setEditId(null);
+          toast.success("Logged out successfully");
+          router.push("/");
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : "Failed to logout");
+        }
+      },
+    });
+  };
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <>
       <header className={css.header}>
@@ -48,6 +74,13 @@ export default function Header() {
             height={40}
             loading="lazy"
           />
+          {isClient && isAdminVerified && (
+            <div className={css.adminTopContainer}>
+              <button onClick={handleLogoutAdmin} className="logoutBtn">
+                Logout
+              </button>
+            </div>
+          )}
           {!hideAuthButtons && (
             <div className={css.authTopContainer}>
               {isAuthenticated ? (
@@ -78,10 +111,20 @@ export default function Header() {
           )}
         </div>
         <div className={css.sloganContainer}>
-          <span className={css.slogan}>
-            Built by devs, for devs. Learn, practice, and grow with CodeCraft.
-          </span>
+          <div className={css.sloganBox}>
+            <span className={css.slogan}>
+              Built by devs, for devs. Learn, practice, and grow with CodeCraft.
+            </span>
+          </div>
         </div>
+
+        {isClient && isAdminVerified && (
+          <div className={css.adminContainer}>
+            <button onClick={handleLogoutAdmin} className="logoutBtn">
+              Logout
+            </button>
+          </div>
+        )}
         {!hideAuthButtons && (
           <div className={css.authContainer}>
             {isAuthenticated ? (

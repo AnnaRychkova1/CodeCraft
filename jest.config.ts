@@ -10,7 +10,7 @@ const config: import("jest").Config = {
     "^next-auth/react$": "<rootDir>/__mocks__/nextAuthReactMock.ts",
   },
   transformIgnorePatterns: [
-    "/node_modules/(?!(@panva|jose|@auth/core|@next-auth|openid-client|preact-render-to-string|preact)/)",
+    "/node_modules/(?!(@panva|jose|@auth/core|@next-auth|openid-client|preact-render-to-string|preact|@supabase|isows)/)",
   ],
 
   transform: {

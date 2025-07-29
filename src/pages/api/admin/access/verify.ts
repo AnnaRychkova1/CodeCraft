@@ -29,7 +29,7 @@ export default async function handler(
       return res.status(401).json({ valid: false, message: "Invalid token" });
     }
 
-    if (user.user_metadata?.role !== "admin") {
+    if (user.app_metadata?.role !== "admin") {
       return res.status(403).json({ valid: false, message: "Invalid role" });
     }
 
