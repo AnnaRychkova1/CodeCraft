@@ -75,7 +75,7 @@ export const initialTasks: InitialTask[] = [
     code_task: [
       {
         prompt:
-          'Implement a method `public boolean isPalindrome(String s)` that checks if a string is a palindrome.\nA palindrome is a string that reads the same forwards and backwards.\n\nExamples:\nInput: "racecar", Output: true\nInput: "hello", Output: false\nInput: "", Output: true',
+          'Implement a method `public boolean isPalindrome (String s)` that checks if a string is a palindrome.\nA palindrome is a string that reads the same forwards and backwards.\n\nExamples:\nInput: "racecar", Output: true\nInput: "hello", Output: false\nInput: "", Output: true',
         starter_code:
           "public class PalindromeChecker {\\n[4]public boolean isPalindrome(String s) {\\n[8]// your code here\\n[8]return false;\\n[4]}\\n}",
         test_case: [

@@ -4,8 +4,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 24px;
-  padding-top: 16px;
+  padding: 16px 24px;
   margin: 0;
   width: 100vw;
 }
@@ -21,7 +20,13 @@
   font-size: 1.25rem;
   font-weight: 500;
   text-align: center;
-  width: auto;
+  width: 100%;
+}
+
+.sloganBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logoContainer {
@@ -35,9 +40,18 @@
 .authTopContainer {
   display: flex;
   gap: 24px;
+  align-items: center;
+}
+
+.adminTopContainer {
+  display: block;
 }
 
 .authContainer {
+  display: none;
+}
+
+.adminContainer {
   display: none;
 }
 
@@ -57,7 +71,6 @@
 @media only screen and (min-width: 768px) {
   .header {
     flex-direction: row;
-    align-items: flex-start;
   }
 
   .logo {
@@ -75,17 +88,27 @@
 
   .authContainer {
     display: flex;
+    align-items: center;
     gap: 24px;
   }
 
+  .adminContainer {
+    display: block;
+  }
+
   .authTopContainer {
+    display: none;
+  }
+
+  .adminTopContainer {
     display: none;
   }
 }
 
 @media only screen and (min-width: 1024px) {
   .header {
-    padding: 24px 48px;
+    padding: 16px 48px;
+    align-items: center;
   }
 }
 

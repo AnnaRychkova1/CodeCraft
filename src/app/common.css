@@ -56,13 +56,14 @@
 
 .loginBtn,
 .logoutBtn {
-  padding: 6px 8px;
+  padding: 4px 6px;
   border-radius: 4px;
   background-color: rgba(103, 233, 104, 0.6);
   border: none;
-  font-size: 18px;
+  font-size: 16px;
   width: 126px;
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  height: 36px;
 }
 
 .loginBtn:hover,
@@ -76,8 +77,10 @@
 @media only screen and (min-width: 768px) {
   .loginBtn,
   .logoutBtn {
+    font-size: 18px;
     padding: 8px 12px;
     width: 156px;
+    height: 44px;
   }
 }
 

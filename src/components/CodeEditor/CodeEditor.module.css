@@ -1,5 +1,6 @@
 .editorSection {
   margin-top: 24px;
+  margin-bottom: 24px;
 }
 
 .versionMessage {
@@ -67,6 +68,7 @@
   .editorSection {
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 48px;
   }
 
   .versionMessage {

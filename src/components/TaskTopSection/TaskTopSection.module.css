@@ -19,7 +19,7 @@
 
 .title {
   color: var(--accent-dark);
-  font-size: 1.75rem;
+  font-size: 1.5rem;
 }
 
 .description {
@@ -95,11 +95,11 @@
 
 @media only screen and (min-width: 768px) {
   .title {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   .description {
-    font-size: 1.25rem;
+    font-size: 18px;
   }
 
   .descriptionBox {
@@ -112,7 +112,7 @@
   }
 
   .labelBox {
-    font-size: 1.25rem;
+    font-size: 18px;
   }
 }
 

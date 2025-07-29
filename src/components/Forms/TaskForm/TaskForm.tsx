@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
-import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { FaChevronDown } from "react-icons/fa";
 import type { CodeTask, Question, TaskFormProps } from "@/types/tasksTypes";
 import { createTask, updateTask } from "@/services/tasks";
 import { useAdminAuth } from "@/components/Providers/AdminAuthProvider";
@@ -86,7 +86,7 @@ export default function TaskForm({
       ...prev,
       theory_question: [
         ...(prev.theory_question || []),
-        structuredClone({ ...emptyQuestion(), id: uuidv4() }),
+        structuredClone({ ...emptyQuestion(), id: crypto.randomUUID() }),
       ],
     }));
   };
@@ -347,37 +347,46 @@ export default function TaskForm({
             required
           />
           <div className={css.selectContainer}>
-            <select
-              name="language"
-              value={formData.language}
-              onChange={handleChange}
-              className={css.select}
-            >
-              <option value="javascript">JavaScript</option>
-              <option value="python">Python</option>
-              <option value="java">Java</option>
-            </select>
+            <div className={css.selectWrapper}>
+              <select
+                name="language"
+                value={formData.language}
+                onChange={handleChange}
+                className={css.select}
+              >
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+              </select>
+              <FaChevronDown className={css.icon} />
+            </div>
 
-            <select
-              name="level"
-              value={formData.level}
-              onChange={handleChange}
-              className={css.select}
-            >
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
+            <div className={css.selectWrapper}>
+              <select
+                name="level"
+                value={formData.level}
+                onChange={handleChange}
+                className={css.select}
+              >
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+              <FaChevronDown className={css.icon} />
+            </div>
 
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className={css.select}
-            >
-              <option value="theory">Theory</option>
-              <option value="practice">Practice</option>
-            </select>
+            <div className={css.selectWrapper}>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className={css.select}
+              >
+                <option value="theory">Theory</option>
+                <option value="practice">Practice</option>
+              </select>
+              <FaChevronDown className={css.icon} />
+            </div>
           </div>
 
           {formData.type === "theory" && (
