@@ -152,7 +152,9 @@ export default function TheoryTest({
               <span className={css.helperName}>Hi, {userName}!</span>{" "}
               {result === 100
                 ? "Congrats! You previously submitted a perfect solution. Feel free to review or improve it further!"
-                : `You previously submitted a solution with a score of ${result}%. You can update it and try to improve.`}
+                : `You previously submitted a solution with a score of ${Math.round(
+                    result
+                  )}%. You can update it and try to improve.`}
             </p>
           </div>
         )}
