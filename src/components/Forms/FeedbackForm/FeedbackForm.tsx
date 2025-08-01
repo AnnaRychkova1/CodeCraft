@@ -7,7 +7,7 @@ import Loader from "@/components/Loader/Loader";
 import css from "./FeedbackForm.module.css";
 
 const AutoGrowTextarea = dynamic(
-  () => import("../AutoGrowTextarea/AutoGrowTextarea"),
+  () => import("../AutoGrowTextarea/AutoGrowTextarea")
 );
 
 export default function FeedbackForm() {
@@ -190,6 +190,7 @@ export default function FeedbackForm() {
             disabled={status === "sending"}
             className={css.sendBtn}
             form="feedbackForm"
+            aria-label="Send your feedback"
           >
             {status === "sending" ? "Sending..." : "Send"}
           </button>

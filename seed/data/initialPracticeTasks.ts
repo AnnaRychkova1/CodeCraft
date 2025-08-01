@@ -363,7 +363,7 @@ export const initialTasks: InitialTask[] = [
         prompt:
           "Implement a method `public void bubbleSort(int[] arr)` that sorts an integer array using the bubble sort algorithm.\nBubble sort repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.\n\nExamples:\nInput: [5, 1, 4, 2, 8], Output: [1, 2, 4, 5, 8]\nInput: [3, 2, 1], Output: [1, 2, 3]",
         starter_code:
-          "public class BubbleSort {\\n[4]public void bubbleSort(int[] arr) {\\n[8]// your code here\\n[4]}\\n}",
+          "public class BubbleSort {\\n[4]public int[] bubbleSort(int[] arr) {\\n[8]// your code here\\n[4]}\\n}",
         test_case: [
           { input: [[5, 1, 4, 2, 8]], expected: [1, 2, 4, 5, 8] },
           { input: [[3, 2, 1]], expected: [1, 2, 3] },
@@ -429,7 +429,7 @@ export const initialTasks: InitialTask[] = [
         prompt:
           "Implement a method `public void selectionSort(int[] arr)` that sorts an array using the selection sort algorithm.\nSelection sort repeatedly finds the minimum element from the unsorted part and puts it at the beginning.\n\nExamples:\nInput: [64, 25, 12, 22, 11], Output: [11, 12, 22, 25, 64]",
         starter_code:
-          "public class SelectionSort {\\n[4]public void selectionSort(int[] arr) {\\n[8]// your code here\\n[4]}\\n}",
+          "public class SelectionSort {\\n[4]public int[] selectionSort(int[] arr) {\\n[8]// your code here\\n[4]}\\n}",
         test_case: [
           { input: [[64, 25, 12, 22, 11]], expected: [11, 12, 22, 25, 64] },
           { input: [[5, 3, 1, 2, 4]], expected: [1, 2, 3, 4, 5] },
@@ -497,7 +497,7 @@ export const initialTasks: InitialTask[] = [
         prompt:
           "Implement a method `public void insertionSort(int[] arr)` that sorts an array using the insertion sort algorithm.\nInsertion sort builds the sorted array one element at a time by inserting each element into its correct position.\n\nExamples:\nInput: [12, 11, 13, 5, 6], Output: [5, 6, 11, 12, 13]",
         starter_code:
-          "public class InsertionSort {\\n[4]public void insertionSort(int[] arr) {\\n[8]// your code here\\n[4]}\\n}",
+          "public class InsertionSort {\\n[4]public int[] insertionSort(int[] arr) {\\n[8]// your code here\\n[4]}\\n}",
         test_case: [
           { input: [[12, 11, 13, 5, 6]], expected: [5, 6, 11, 12, 13] },
           { input: [[3, 2, 1]], expected: [1, 2, 3] },
@@ -565,7 +565,7 @@ export const initialTasks: InitialTask[] = [
         prompt:
           "Implement a method `public void mergeSort(int[] arr)` that sorts an array using the merge sort algorithm.\nMerge sort is a divide-and-conquer algorithm that splits the array, recursively sorts each half, and merges them.\n\nExample:\nInput: [38, 27, 43, 3, 9, 82, 10], Output: [3, 9, 10, 27, 38, 43, 82]",
         starter_code:
-          "public class MergeSort {\\n[4]public void mergeSort(int[] arr) {\\n[8]// your code here\\n[4]}\\n}",
+          "public class MergeSort {\\n[4]public int[] mergeSort(int[] arr) {\\n[8]// your code here\\n[4]}\\n}",
         test_case: [
           {
             input: [[38, 27, 43, 3, 9, 82, 10]],

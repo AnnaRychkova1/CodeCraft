@@ -170,12 +170,14 @@ export default function AdminAccessForm() {
           onFocus={handleFocus}
           onBlur={handleBlur}
         />
-        <span
+        <button
+          type="button"
           className="eyeIcon"
           onClick={() => setShowPassword((prev) => !prev)}
+          aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? <FiEyeOff /> : <FiEye />}
-        </span>
+        </button>
         {errorPassword && <p className={css.authError}>{errorPassword}</p>}
       </div>
       {loggingIn ? (
@@ -183,9 +185,11 @@ export default function AdminAccessForm() {
       ) : (
         <div className={css.buttonAccessContainer}>
           <button
+            type="button"
             onClick={handleAccess}
             className={`loginBtn ${css.accessBtn}`}
             disabled={loggingIn}
+            aria-label="Submit admin password"
           >
             Get Access
           </button>

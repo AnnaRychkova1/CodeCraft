@@ -7,99 +7,96 @@ import {
 } from "@/helpers/javaHelpers";
 
 describe("injectMainMethod", () => {
-  it("injects main method before last closing brace", () => {
-    const code = `
-      public class Test {
-        public void foo() {}
-      }
-    `;
-    const className = "Test";
-    const methodName = "foo";
-    const testInput = "5";
+  it("inserts main method before last brace", () => {
+    const code = `public class Test { public void foo() {} }`;
+    const result = injectMainMethod(code, "42", "Test", "foo");
 
-    const result = injectMainMethod(code, testInput, className, methodName);
-
-    expect(result).toContain(`public static void main(String[] args)`);
-    expect(result).toContain(`Test obj = new Test();`);
-    expect(result).toContain(`obj.foo(5)`);
+    expect(result).toContain("public static void main(String[] args)");
+    expect(result).toContain("Test obj = new Test();");
+    expect(result).toContain("obj.foo(42)");
     expect(result.trim().endsWith("}")).toBe(true);
   });
 
-  it("adds main method with closing brace if no closing brace found", () => {
+  it("appends main method and closing brace if missing one", () => {
     const code = "public class Test {";
-    const className = "Test";
-    const methodName = "foo";
-    const testInput = "5";
+    const result = injectMainMethod(code, "42", "Test", "foo");
 
-    const result = injectMainMethod(code, testInput, className, methodName);
-
-    expect(result).toContain(`public static void main(String[] args)`);
-    expect(result).toContain(`Test obj = new Test();`);
-    expect(result).toContain(`obj.foo(5)`);
+    expect(result).toContain("public static void main(String[] args)");
     expect(result.trim().endsWith("}")).toBe(true);
   });
 });
 
 describe("simplifyJavaError", () => {
-  it("trims whitespace from error output", () => {
-    const error =
-      '  Exception in thread "main" java.lang.NullPointerException  ';
-    expect(simplifyJavaError(error)).toBe(
-      'Exception in thread "main" java.lang.NullPointerException'
-    );
+  it("removes surrounding whitespace", () => {
+    const err = "   Exception: Something went wrong   ";
+    expect(simplifyJavaError(err)).toBe("Exception: Something went wrong");
   });
 });
 
 describe("extractClassName", () => {
-  it("extracts class name", () => {
-    const code = "public class MyClass { }";
-    expect(extractClassName(code)).toBe("MyClass");
+  it("finds public class name", () => {
+    expect(extractClassName("public class Foo {}")).toBe("Foo");
   });
 
-  it("returns null if no class found", () => {
-    const code = "class MyClass { }";
-    expect(extractClassName(code)).toBeNull();
+  it("returns null if public modifier is missing", () => {
+    expect(extractClassName("class Foo {}")).toBeNull();
   });
 });
 
 describe("extractMethodName", () => {
-  it("extracts method name", () => {
-    const code = "public int calculateSum(int a, int b) { return a + b; }";
-    expect(extractMethodName(code)).toBe("calculateSum");
+  it("extracts simple method name", () => {
+    expect(
+      extractMethodName("public int sum(int a, int b) { return a + b; }")
+    ).toBe("sum");
   });
 
-  it("returns null if no method found", () => {
-    const code = "int calculateSum(int a, int b) { return a + b; }";
-    expect(extractMethodName(code)).toBeNull();
+  it("extracts method with generics", () => {
+    expect(
+      extractMethodName("public List<String> process(List<String> input) {}")
+    ).toBe("process");
+  });
+
+  it("returns null when no public method exists", () => {
+    expect(extractMethodName("int sum(int a, int b) {}")).toBeNull();
   });
 });
 
 describe("formatJavaArgs", () => {
-  it("formats string argument", () => {
-    expect(formatJavaArgs("hello")).toBe('"hello"');
+  it("formats string", () => {
+    expect(formatJavaArgs(["hello"])).toBe('"hello"');
   });
 
-  it("formats boolean argument", () => {
-    expect(formatJavaArgs(true)).toBe("true");
+  it("formats boolean", () => {
+    expect(formatJavaArgs([true])).toBe("true");
   });
 
-  it("formats number argument", () => {
-    expect(formatJavaArgs(42)).toBe("42");
+  it("formats number", () => {
+    expect(formatJavaArgs([123])).toBe("123");
   });
 
-  it("formats array of strings", () => {
-    expect(formatJavaArgs(["a", "b"])).toBe(`"a", "b"`);
-  });
-
-  it("formats nested array as int[]", () => {
+  it("formats int[]", () => {
     expect(formatJavaArgs([[1, 2, 3]])).toBe("new int[]{1, 2, 3}");
   });
 
-  it("formats array of mixed types", () => {
-    expect(formatJavaArgs([1, "two", true])).toBe(`1, "two", true`);
+  it("formats String[]", () => {
+    expect(formatJavaArgs([["a", "b"]])).toBe('new String[]{"a", "b"}');
   });
 
-  it("formats other types as string", () => {
-    expect(formatJavaArgs({})).toBe("[object Object]");
+  it("formats boolean[]", () => {
+    expect(formatJavaArgs([[true, false]])).toBe("new boolean[]{true, false}");
+  });
+
+  it("formats mixed Object[]", () => {
+    expect(formatJavaArgs([[1, "two", true]])).toBe(
+      'new Object[]{1, "two", true}'
+    );
+  });
+
+  it("formats multiple args", () => {
+    expect(formatJavaArgs([1, "hi", true])).toBe('1, "hi", true');
+  });
+
+  it("handles non-array object", () => {
+    expect(formatJavaArgs([{}])).toBe("[object Object]");
   });
 });

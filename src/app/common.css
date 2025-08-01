@@ -48,6 +48,8 @@
   transform: translateY(-50%);
   cursor: pointer;
   color: var(--btn);
+  border: none;
+  background-color: transparent;
 }
 
 .eyeIcon:hover {

@@ -82,6 +82,7 @@ export default function TestEdit({
         type="button"
         className={css.deleteTestBtn}
         onClick={() => onRemove(index, test_case.id)}
+        aria-label={`Delete test case ${index + 1}`}
       >
         <FiTrash2 />
       </button>

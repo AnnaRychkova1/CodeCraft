@@ -200,12 +200,14 @@ export default function RegisterForm() {
           required
           disabled={isSubmitting}
         />
-        <span
+        <button
+          type="button"
           className={`eyeIcon ${css.authIcon}`}
           onClick={() => setShowPassword((prev) => !prev)}
+          aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? <FiEyeOff /> : <FiEye />}
-        </span>
+        </button>
         {errorPassword && <p className={css.authError}>{errorPassword}</p>}
       </fieldset>
 
@@ -217,6 +219,7 @@ export default function RegisterForm() {
             type="submit"
             disabled={isSubmitting}
             className={`loginBtn ${css.authBtn}`}
+            aria-label="Register your account"
           >
             Register
           </button>

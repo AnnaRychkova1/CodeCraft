@@ -27,7 +27,6 @@ export default function PracticeInputs({
         placeholder="Prompt"
         rows={1}
       />
-      {/*instruction*/}
       <AutoGrowTextarea
         value={code_task.starter_code}
         name="starter_code"
@@ -74,6 +73,7 @@ export default function PracticeInputs({
             ])
           }
           className={css.addBtn}
+          aria-label="Add a new test case"
         >
           <FiPlus /> Add Test
         </button>

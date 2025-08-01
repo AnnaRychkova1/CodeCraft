@@ -89,8 +89,20 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
           >
             <p>{config.message}</p>
             <div className={css.modalActions}>
-              <button onClick={handleConfirm}>Yes</button>
-              <button onClick={handleCancel}>Cancel</button>
+              <button
+                type="button"
+                onClick={handleConfirm}
+                aria-label="Confirm action"
+              >
+                Yes
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                aria-label="Cancel action"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>

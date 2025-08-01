@@ -202,9 +202,11 @@ export default function TheoryTest({
 
         {!submitted && (
           <button
+            type="button"
             className={css.submitBtn}
             onClick={handleSubmit}
             disabled={selectedAnswers.every((ans) => ans.length === 0)}
+            aria-label="Submit your answers"
           >
             {loading ? "Submitting..." : "Submit Answers"}
           </button>
@@ -221,9 +223,11 @@ export default function TheoryTest({
               You scored: {scorePercent?.toFixed(0)}% correct answers
             </p>
             <button
+              type="button"
               className={css.retryBtn}
               onClick={handleRetry}
               disabled={loading}
+              aria-label="Retry the test"
             >
               Try Again
             </button>

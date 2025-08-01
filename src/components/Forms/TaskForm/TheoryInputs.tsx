@@ -29,6 +29,7 @@ export default function TheoryInputs({
                 type="button"
                 onClick={() => onQuestionRemove(index, q.id)}
                 className={css.deleteQuestionBtn}
+                aria-label={`Delete question ${index + 1}`}
               >
                 <FiTrash2 />
                 <span>Delete Question</span>
@@ -58,6 +59,9 @@ export default function TheoryInputs({
                   type="button"
                   onClick={() => onOptionRemove(index, i)}
                   className={css.deleteBtn}
+                  aria-label={`Delete option ${i + 1} for question ${
+                    index + 1
+                  }`}
                 >
                   <FiTrash2 />
                 </button>
@@ -71,6 +75,7 @@ export default function TheoryInputs({
                 setQuestions(updated);
               }}
               className={css.addBtn}
+              aria-label={`Add option for question ${index + 1}`}
             >
               <FiPlus /> Add Option
             </button>
@@ -102,6 +107,9 @@ export default function TheoryInputs({
                         onChange(index, "correct_answer", updated);
                       }}
                       className={css.deleteBtn}
+                      aria-label={`Delete correct answer ${
+                        aIndex + 1
+                      } for question ${index + 1}`}
                     >
                       <FiTrash2 />
                     </button>
@@ -116,6 +124,7 @@ export default function TheoryInputs({
                 onChange(index, "correct_answer", [...q.correct_answer, ""]);
               }}
               className={css.addBtn}
+              aria-label={`Add more correct answer for question ${index + 1}`}
             >
               <FiPlus /> Add more correct answer
             </button>
@@ -127,6 +136,7 @@ export default function TheoryInputs({
           type="button"
           onClick={onAddQuestion}
           className={css.addQuestionBtn}
+          aria-label="Add new question"
         >
           <FiPlus /> Add Question
         </button>

@@ -6,58 +6,66 @@ import {
 } from "@/helpers/pythonHelpers";
 
 describe("extractFunctionName", () => {
-  it("extracts function name correctly", () => {
-    const code = "def my_function(x):\n  return x";
-    expect(extractFunctionName(code)).toBe("my_function");
+  it("extracts function name from def line", () => {
+    expect(extractFunctionName("def my_func(x):\n  return x")).toBe("my_func");
   });
 
-  it("returns 'unknown_function' if no function found", () => {
-    const code = "print('Hello')";
-    expect(extractFunctionName(code)).toBe("unknown_function");
+  it("returns 'unknown_function' when no def found", () => {
+    expect(extractFunctionName("print('hi')")).toBe("unknown_function");
   });
 });
 
 describe("simplifyPythonError", () => {
-  it("returns last line of traceback", () => {
-    const error =
-      'Traceback (most recent call last):\n  File "<stdin>", line 1\nZeroDivisionError: division by zero';
-    expect(simplifyPythonError(error)).toBe(
+  it("returns last line of multiline traceback", () => {
+    const err = `Traceback (most recent call last):\n  File "test.py", line 1\nZeroDivisionError: division by zero`;
+    expect(simplifyPythonError(err)).toBe(
       "ZeroDivisionError: division by zero"
     );
   });
 
-  it("returns full string if single-line error", () => {
-    const error = "NameError: name 'x' is not defined";
-    expect(simplifyPythonError(error)).toBe(error);
+  it("returns input unchanged if single-line", () => {
+    const err = "NameError: name 'x' is not defined";
+    expect(simplifyPythonError(err)).toBe(err);
   });
 });
 
 describe("stripNonExecutableComments", () => {
-  it("removes lines with only comments", () => {
-    const code = "# comment line\nx = 5\n# another comment";
+  it("removes full-line comments", () => {
+    const code = "# comment\nx = 5\n# another";
     expect(stripNonExecutableComments(code)).toBe("x = 5");
   });
 
-  it("preserves executable lines with inline comments", () => {
-    const code = "x = 5  # set x";
-    expect(stripNonExecutableComments(code)).toBe("x = 5  # set x");
+  it("keeps inline comments", () => {
+    expect(stripNonExecutableComments("x = 5  # value")).toBe("x = 5  # value");
   });
 
-  it("removes empty lines but keeps indented blocks", () => {
-    const code = "def func():\n\n  x = 5\n\n  return x";
-    expect(stripNonExecutableComments(code)).toBe(
-      "def func():\n  x = 5\n  return x"
-    );
+  it("removes empty lines", () => {
+    const code = "def foo():\n\n  x = 1\n\n  return x";
+    const expected = "def foo():\n  x = 1\n  return x";
+    expect(stripNonExecutableComments(code)).toBe(expected);
   });
 });
 
 describe("formatPythonArgs", () => {
-  it("formats string argument correctly", () => {
+  it("formats string", () => {
     expect(formatPythonArgs("hello")).toBe('"hello"');
   });
 
-  it("formats boolean correctly", () => {
-    expect(formatPythonArgs(true)).toBe("true");
+  it("formats number", () => {
+    expect(formatPythonArgs(42)).toBe("42");
+  });
+
+  it("formats boolean true", () => {
+    expect(formatPythonArgs(true)).toBe("True");
+  });
+
+  it("formats boolean false", () => {
+    expect(formatPythonArgs(false)).toBe("False");
+  });
+
+  it("formats null/undefined as None", () => {
+    expect(formatPythonArgs(null)).toBe("None");
+    expect(formatPythonArgs(undefined)).toBe("None");
   });
 
   it("formats array of numbers", () => {
@@ -68,11 +76,11 @@ describe("formatPythonArgs", () => {
     expect(formatPythonArgs(["a", "b"])).toBe('"a", "b"');
   });
 
-  it("formats nested single array", () => {
-    expect(formatPythonArgs([[1, 2]])).toBe("[1,2]");
+  it("formats nested array", () => {
+    expect(formatPythonArgs([[1, 2]])).toBe("[1, 2]");
   });
 
-  it("formats number directly", () => {
-    expect(formatPythonArgs(42)).toBe("42");
+  it("formats mixed nested args", () => {
+    expect(formatPythonArgs([1, "x", true])).toBe('1, "x", True');
   });
 });

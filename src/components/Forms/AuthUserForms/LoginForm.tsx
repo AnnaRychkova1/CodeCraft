@@ -233,12 +233,14 @@ export default function LoginForm() {
             required
             disabled={isSubmitting}
           />
-          <span
+          <button
+            type="button"
             className={`eyeIcon ${css.authIcon}`}
             onClick={() => setShowPassword((prev) => !prev)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <FiEyeOff /> : <FiEye />}
-          </span>
+          </button>
           {errorPassword && <p className={css.authError}>{errorPassword}</p>}
         </fieldset>
 
@@ -250,6 +252,7 @@ export default function LoginForm() {
               type="submit"
               disabled={isSubmitting || isBlocked}
               className={`loginBtn ${css.authBtn}`}
+              aria-label="Login"
             >
               Login
             </button>

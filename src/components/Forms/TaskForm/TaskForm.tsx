@@ -248,7 +248,7 @@ export default function TaskForm({
           if (
             !Array.isArray(test.input) ||
             test.input.length === 0 ||
-            test.input.every((val) => val === "" || val === null)
+            test.input.every((val) => val === null)
           ) {
             toast.error(
               `Test case ${testIndex + 1} in task ${
@@ -350,6 +350,7 @@ export default function TaskForm({
             <div className={css.selectWrapper}>
               <select
                 name="language"
+                aria-label="Programming language"
                 value={formData.language}
                 onChange={handleChange}
                 className={css.select}
@@ -364,6 +365,7 @@ export default function TaskForm({
             <div className={css.selectWrapper}>
               <select
                 name="level"
+                aria-label="Difficulty level"
                 value={formData.level}
                 onChange={handleChange}
                 className={css.select}
@@ -378,6 +380,7 @@ export default function TaskForm({
             <div className={css.selectWrapper}>
               <select
                 name="type"
+                aria-label="Task type"
                 value={formData.type}
                 onChange={handleChange}
                 className={css.select}
@@ -420,15 +423,31 @@ export default function TaskForm({
             ))}
         </div>
 
-        <button type="submit" className={css.createUpdateBtn}>
+        <button
+          type="submit"
+          className={css.createUpdateBtn}
+          aria-live="polite"
+          aria-busy={loading}
+          disabled={loading}
+        >
           {loading ? "Saving..." : editId ? "Update Task" : "Create Task"}
         </button>
         {editId ? (
-          <button onClick={cancelEdit} className={css.cancelBtn} type="button">
+          <button
+            onClick={cancelEdit}
+            className={css.cancelBtn}
+            type="button"
+            aria-label="Cancel editing task"
+          >
             Cancel Edit
           </button>
         ) : (
-          <button onClick={clearForm} className={css.cancelBtn} type="button">
+          <button
+            onClick={clearForm}
+            className={css.cancelBtn}
+            type="button"
+            aria-label="Clear the task form"
+          >
             Clear Form
           </button>
         )}

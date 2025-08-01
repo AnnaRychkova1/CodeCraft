@@ -119,8 +119,10 @@ export default function Tasks() {
           </div>
           <div className={css.dropdownWrap} ref={dropdownRef}>
             <button
+              type="button"
               className={css.toggleBtn}
               onClick={() => setShowFilters((prev) => !prev)}
+              aria-label={showFilters ? "Hide filters" : "Show filters"}
             >
               {showFilters ? (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
@@ -168,6 +170,7 @@ export default function Tasks() {
               type.length === 0 &&
               completion.length === 0
             }
+            aria-label="Clear all filters"
           >
             Clear filters
           </button>

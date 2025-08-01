@@ -47,7 +47,6 @@ export default function Header() {
         try {
           await removeAdminAccess();
           logoutAdmin();
-          // setEditId(null);
           toast.success("Logged out successfully");
           router.push("/");
         } catch (err) {
@@ -72,11 +71,17 @@ export default function Header() {
             className={css.logo}
             width={144}
             height={40}
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
           />
           {isClient && isAdminVerified && (
             <div className={css.adminTopContainer}>
-              <button onClick={handleLogoutAdmin} className="logoutBtn">
+              <button
+                type="button"
+                onClick={handleLogoutAdmin}
+                className="logoutBtn"
+                aria-label="Logout as admin"
+              >
                 Logout
               </button>
             </div>
@@ -86,8 +91,10 @@ export default function Header() {
               {isAuthenticated ? (
                 <>
                   <button
+                    type="button"
                     className={css.profileBtn}
                     onClick={() => setIsModalOpen(true)}
+                    aria-label="Open user profile modal"
                   >
                     <Image
                       aria-hidden
@@ -95,15 +102,26 @@ export default function Header() {
                       alt="Coder CodeCraft"
                       width={40}
                       height={40}
-                      loading="lazy"
+                      loading="eager"
+                      fetchPriority="high"
                     />
                   </button>
-                  <button onClick={handleLogout} className="logoutBtn">
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="logoutBtn"
+                    aria-label="Logout"
+                  >
                     Logout
                   </button>
                 </>
               ) : (
-                <button onClick={handleLogin} className="loginBtn">
+                <button
+                  type="button"
+                  onClick={handleLogin}
+                  className="loginBtn"
+                  aria-label="Login"
+                >
                   Login
                 </button>
               )}
@@ -120,7 +138,12 @@ export default function Header() {
 
         {isClient && isAdminVerified && (
           <div className={css.adminContainer}>
-            <button onClick={handleLogoutAdmin} className="logoutBtn">
+            <button
+              type="button"
+              onClick={handleLogoutAdmin}
+              className="logoutBtn"
+              aria-label="Logout as admin"
+            >
               Logout
             </button>
           </div>
@@ -130,8 +153,10 @@ export default function Header() {
             {isAuthenticated ? (
               <>
                 <button
+                  type="button"
                   className={css.profileBtn}
                   onClick={() => setIsModalOpen(true)}
+                  aria-label="Open user profile modal"
                 >
                   <Image
                     aria-hidden
@@ -140,15 +165,26 @@ export default function Header() {
                     className={css.avatar}
                     width={40}
                     height={40}
-                    loading="lazy"
+                    loading="eager"
+                    fetchPriority="high"
                   />
                 </button>
-                <button onClick={handleLogout} className="logoutBtn">
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="logoutBtn"
+                  aria-label="Logout"
+                >
                   Logout
                 </button>
               </>
             ) : (
-              <button onClick={handleLogin} className="loginBtn">
+              <button
+                type="button"
+                onClick={handleLogin}
+                className="loginBtn"
+                aria-label="Login"
+              >
                 Login
               </button>
             )}

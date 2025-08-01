@@ -162,7 +162,12 @@ export default function CodeForm({
         {loading ? (
           <Loader />
         ) : (
-          <button type="submit" disabled={loading} className={css.runBtn}>
+          <button
+            type="submit"
+            disabled={loading}
+            className={css.runBtn}
+            aria-label="Run the code and check the output"
+          >
             Run Code
           </button>
         )}

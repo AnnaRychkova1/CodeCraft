@@ -94,8 +94,10 @@ export default function UserProgressModal({
                   </div>
                   <Lottie animationData={animationData} loop={true} />
                   <button
+                    type="button"
                     onClick={onClose}
                     className={`loginBtn ${css.closeBtn}`}
+                    aria-label="Close modal"
                   >
                     Close
                   </button>
@@ -134,8 +136,10 @@ export default function UserProgressModal({
                   )}
 
                   <button
+                    type="button"
                     onClick={onClose}
                     className={`loginBtn ${css.closeBtn}`}
+                    aria-label="Close modal"
                   >
                     Close
                   </button>

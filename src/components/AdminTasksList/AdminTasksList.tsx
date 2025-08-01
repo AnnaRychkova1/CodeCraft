@@ -83,13 +83,20 @@ export default function AdminTasksList({
             </div>
           </div>
           <div className={css.buttonContainer}>
-            <button onClick={() => handleEdit(task.id)} className={css.editBtn}>
+            <button
+              onClick={() => handleEdit(task.id)}
+              className={css.editBtn}
+              aria-label="Edit task"
+              type="button"
+            >
               <FiEdit size={20} />
             </button>
             <button
               onClick={() => handleDelete(task.id)}
               className={css.deleteBtn}
               disabled={deletingTaskId === task.id}
+              aria-label="Delete task"
+              type="button"
             >
               {deletingTaskId === task.id ? (
                 "Deleting..."
