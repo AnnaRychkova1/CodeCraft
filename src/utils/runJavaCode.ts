@@ -1,4 +1,5 @@
 import {
+  deepEqual,
   extractClassName,
   extractMethodName,
   formatJavaArgs,
@@ -78,7 +79,7 @@ export async function runJavaCode(
         parsedOutput = simplifiedOutput;
       }
 
-      const passed = Object.is(parsedOutput, expected);
+      const passed = deepEqual(parsedOutput, expected);
 
       results.push(
         passed

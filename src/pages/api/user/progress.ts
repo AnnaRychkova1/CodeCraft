@@ -29,7 +29,19 @@ export default async function handler(
       .eq("email", userEmail)
       .single();
 
-    if (userError || !userData) throw new Error("User not found");
+    if (userError || !userData) {
+      if (
+        userError &&
+        typeof userError === "object" &&
+        "code" in userError &&
+        userError.code === "PGRST301"
+      ) {
+        return res
+          .status(401)
+          .json({ error: "Your session has expired. Please log in again." });
+      }
+      throw new Error("User not found");
+    }
 
     const userId = userData.id;
 

@@ -22,7 +22,6 @@ export function stripNonExecutableComments(code: string): string {
 
 function formatPythonArg(input: unknown): string {
   if (Array.isArray(input)) {
-    // Format array as Python list, recursively
     const formattedElements = input.map((el) => formatPythonArg(el));
     return `[${formattedElements.join(", ")}]`;
   }
@@ -48,9 +47,11 @@ function formatPythonArg(input: unknown): string {
 
 export function formatPythonArgs(input: unknown): string {
   if (Array.isArray(input)) {
-    // If input is an array of multiple arguments, map each one individually and join by commas
     return input.map((el) => formatPythonArg(el)).join(", ");
   }
-  // If input is single argument (not an array), format it normally
   return formatPythonArg(input);
+}
+
+export function deepEqual<T>(a: T, b: T): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
 }
