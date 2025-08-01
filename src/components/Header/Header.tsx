@@ -71,7 +71,7 @@ export default function Header() {
             className={css.logo}
             width={144}
             height={40}
-            loading="lazy"
+            priority
           />
           {isClient && isAdminVerified && (
             <div className={css.adminTopContainer}>
@@ -101,7 +101,7 @@ export default function Header() {
                       alt="Coder CodeCraft"
                       width={40}
                       height={40}
-                      loading="lazy"
+                      priority
                     />
                   </button>
                   <button
@@ -163,7 +163,7 @@ export default function Header() {
                     className={css.avatar}
                     width={40}
                     height={40}
-                    loading="lazy"
+                    priority
                   />
                 </button>
                 <button
