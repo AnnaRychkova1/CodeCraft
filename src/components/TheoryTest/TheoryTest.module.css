@@ -45,7 +45,7 @@
 
 .helperName {
   color: var(--accent-dark);
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .questionList {

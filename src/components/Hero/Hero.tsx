@@ -50,6 +50,7 @@ export default function Hero() {
           width={400}
           height={400}
           loading="lazy"
+          priority={false}
         />
       </div>
     </section>

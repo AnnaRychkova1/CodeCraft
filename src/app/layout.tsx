@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
-import dynamic from "next/dynamic";
 import { Geist, Geist_Mono } from "next/font/google";
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 import { AdminAuthProvider } from "@/components/Providers/AdminAuthProvider";
 import { AuthProvider } from "@/components/Providers/AuthProvider";
 import { ConfirmProvider } from "@/components/Modals/ConfirmModal/ConfirmModal";
 import "./globals.css";
 import "./common.css";
 
-const Header = dynamic(() => import("@/components/Header/Header"));
-const Footer = dynamic(() => import("@/components/Footer/Footer"));
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -42,12 +43,6 @@ export default async function RootLayout({
         <link
           rel="preconnect"
           href="https://code-craft-omega-eight.vercel.app"
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>

@@ -94,7 +94,7 @@
 
 .linkToTask:hover,
 .linkToTask:focus {
-  color: var(--accent-light);
+  color: var(--btn-hover);
   transform: scale(1.02);
   text-decoration: none;
   outline: none;
