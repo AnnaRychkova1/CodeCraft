@@ -85,16 +85,19 @@
 }
 
 .linkToTask {
-  font-size: 1.25rem;
-  color: var(--btn);
+  font-size: 1rem;
+  color: var(--accent-dark);
+  /* font-size: 1.25rem;
+   color: var(--btn);
+   font-weight: 600; */
   text-decoration: underline;
-  font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .linkToTask:hover,
 .linkToTask:focus {
-  color: var(--btn-hover);
+  /* color: var(--btn-hover); */
+  color: var(--btn);
   transform: scale(1.02);
   text-decoration: none;
   outline: none;

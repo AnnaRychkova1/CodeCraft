@@ -41,6 +41,7 @@ export default function TasksList({
               role="link"
               tabIndex={0}
               prefetch={false}
+              aria-label={`Open task "${task.title}"`}
             >
               <h2 className={css.title}>{task.title}</h2>
               <p className={css.description}>{task.description}</p>
