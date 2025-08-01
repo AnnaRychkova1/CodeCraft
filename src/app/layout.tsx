@@ -1,14 +1,16 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
-import Header from "@/components/Header/Header";
-import Footer from "@/components/Footer/Footer";
 import { AdminAuthProvider } from "@/components/Providers/AdminAuthProvider";
 import { AuthProvider } from "@/components/Providers/AuthProvider";
 import { ConfirmProvider } from "@/components/Modals/ConfirmModal/ConfirmModal";
 import "./globals.css";
 import "./common.css";
+
+const Header = dynamic(() => import("@/components/Header/Header"));
+const Footer = dynamic(() => import("@/components/Footer/Footer"));
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
