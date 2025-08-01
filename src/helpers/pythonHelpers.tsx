@@ -20,24 +20,37 @@ export function stripNonExecutableComments(code: string): string {
     .join("\n");
 }
 
-export function formatPythonArgs(input: unknown): string {
+function formatPythonArg(input: unknown): string {
   if (Array.isArray(input)) {
-    if (input.length === 1 && Array.isArray(input[0])) {
-      return JSON.stringify(input[0]);
-    }
-
-    return input
-      .map((el) =>
-        typeof el === "string"
-          ? JSON.stringify(el)
-          : typeof el === "boolean"
-          ? el.toString()
-          : String(el)
-      )
-      .join(", ");
+    // Format array as Python list, recursively
+    const formattedElements = input.map((el) => formatPythonArg(el));
+    return `[${formattedElements.join(", ")}]`;
   }
 
-  if (typeof input === "string") return JSON.stringify(input);
-  if (typeof input === "boolean") return input.toString();
-  return String(input);
+  if (typeof input === "string") {
+    return JSON.stringify(input);
+  }
+
+  if (typeof input === "boolean") {
+    return input ? "True" : "False";
+  }
+
+  if (typeof input === "number") {
+    return input.toString();
+  }
+
+  if (input === null || input === undefined) {
+    return "None";
+  }
+
+  return JSON.stringify(input);
+}
+
+export function formatPythonArgs(input: unknown): string {
+  if (Array.isArray(input)) {
+    // If input is an array of multiple arguments, map each one individually and join by commas
+    return input.map((el) => formatPythonArg(el)).join(", ");
+  }
+  // If input is single argument (not an array), format it normally
+  return formatPythonArg(input);
 }

@@ -66,7 +66,11 @@ export async function runPythonCode(
         parsedOutput = simplifiedOutput;
       }
 
-      const passed = Object.is(parsedOutput, expected);
+      function deepEqual<T>(a: T, b: T): boolean {
+        return JSON.stringify(a) === JSON.stringify(b);
+      }
+
+      const passed = deepEqual(parsedOutput, expected);
       results.push(
         passed
           ? "passed"
