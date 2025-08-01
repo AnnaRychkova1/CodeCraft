@@ -49,7 +49,9 @@ export default function Hero() {
           alt="Logo CodeCraft"
           width={400}
           height={400}
-          loading="lazy"
+          loading="eager"
+          fetchPriority="high"
+          priority
         />
       </div>
     </section>
