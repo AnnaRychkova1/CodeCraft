@@ -42,7 +42,7 @@
     "eslint-config-next": "^15.4.4",
     "jest-environment-jsdom": "^30.0.5",
     "lottie-react": "^2.4.1",
-    "next": "15.3.3",
+    "next": "15.3.6",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
     "react-confetti": "^6.4.0",
