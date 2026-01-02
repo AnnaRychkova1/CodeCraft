@@ -43,7 +43,9 @@ export default function Footer() {
           <FeedbackForm />
         </div>
         <div className={css.copyright}>
-          <p>&copy; 2025 CodeCraft. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} CodeCraft. All rights reserved.
+          </p>
           <a href="#">Privacy Policy / Terms of Service</a>
         </div>
       </div>
