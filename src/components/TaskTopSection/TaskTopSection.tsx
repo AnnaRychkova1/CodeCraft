@@ -52,6 +52,14 @@ export default function TaskTopSection({ task }: PropsTask) {
         </div>
         <div className={css.textBox}>
           <h2 className={css.title}>{task.title}</h2>
+          {task.type === "practice" &&
+            task.code_task?.[0]?.prompt &&
+            task.language !== "javascript" && (
+              <h3 className={css.warning}>
+                Accept my apologies — Python and Java execution is temporarily
+                unavailable.
+              </h3>
+            )}
           {task.type === "theory" && task.theory_question && (
             <p className={css.description}>
               {formatTextWithLineBreaks(task.description)}

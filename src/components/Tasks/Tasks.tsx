@@ -56,7 +56,7 @@ export default function Tasks() {
         toast.error(
           err instanceof Error && err.message
             ? err.message
-            : "Failed to load tasks"
+            : "Failed to load tasks",
         );
         const message =
           err instanceof Error ? err.message : "Failed to load task .";
@@ -112,6 +112,10 @@ export default function Tasks() {
       {showFilters && <div className={css.clickBlocker} />}
       <section className={css.section}>
         <h2 className={css.title}>Select a Task to Get Started</h2>
+        <h3 className={css.warning}>
+          Accept my apologies — Python and Java execution is temporarily
+          unavailable.
+        </h3>
         <div className={css.topbox}>
           <div className={css.titleBox}>
             <MdFilterList className={css.icon} />

@@ -11,9 +11,9 @@ import { autocompletion } from "@codemirror/autocomplete";
 
 import type { CodeFormProps } from "@/types/tasksTypes";
 import { submitUserTaskResult } from "@/services/tasks";
-import { runPythonCode } from "@/utils/runPythonCode";
 import { runJavaScriptCode } from "@/utils/runJavaScriptCode";
-import { runJavaCode } from "@/utils/runJavaCode";
+// import { runPythonCode } from "@/utils/runPythonCode";
+// import { runJavaCode } from "@/utils/runJavaCode";
 import { normalizeCode, pythonCompletion } from "@/helpers/codeHelpers";
 
 import Loader from "@/components/Loader/Loader";
@@ -36,7 +36,7 @@ export default function CodeForm({
   const userName = session?.user?.name;
   const isAuthenticated = status === "authenticated";
   const initialCode = normalizeCode(
-    isAuthenticated && solution ? solution : task.starter_code || ""
+    isAuthenticated && solution ? solution : task.starter_code || "",
   );
   const indentExtensions = [indentUnit.of("    ")];
   const [code, setCode] = useState(initialCode);
@@ -73,13 +73,19 @@ export default function CodeForm({
       let results: string[] = [];
       if (language === "javascript") {
         results = runJavaScriptCode(codeToRun, tests);
-      } else if (language === "java") {
-        results = await runJavaCode(codeToRun, tests);
-      } else if (language === "python") {
-        results = await runPythonCode(codeToRun, tests);
-      } else {
+      } else if (language === "java" || language === "python") {
         results = [
-          `❌ Execution for language "${language}" is not supported yet.`,
+          "Python and Java execution temporarily unavailable. Try JavaScript for now.",
+        ];
+      }
+      // else if (language === "java") {
+      //   results = await runJavaCode(codeToRun, tests);
+      // } else if (language === "python") {
+      //   results = await runPythonCode(codeToRun, tests);
+      // }
+      else {
+        results = [
+          `Execution for language "${language}" is not supported yet.`,
         ];
       }
 
